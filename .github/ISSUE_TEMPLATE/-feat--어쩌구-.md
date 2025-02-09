@@ -1,16 +1,21 @@
 ---
 name: "[feat] 어쩌구~"
-about: Describe this issue template's purpose here.
+about: 이슈용 템플릿
 title: ''
 labels: ''
 assignees: 2hyunjinn
 
 ---
 
-### 💼 작업 설명
-<!-- 진행할 작업에 대해 간단하게 설명해주세요 -->
+## :wrench:어떤 기능인가요?
 
-### ✅ To-do
-<!-- 해당 작업을 수행하기 위해 해야 할 하위 태스크를 작성해주세요 -->
-- 
--
+> 추가하려는 기능에 대해 간결하게 설명해주세요
+> 
+
+## :memo:작업 상세 내용
+
+- [ ]  TODO
+- [ ]  TODO
+- [ ]  TODO
+
+## :mega: 참고할만한 자료(선택)
