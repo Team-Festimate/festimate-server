@@ -1,5 +1,5 @@
 ---
-name: "[feat] 어쩌구~"
+name: festimate Issue Template
 about: 이슈용 템플릿
 title: ''
 labels: ''
