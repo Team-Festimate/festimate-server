@@ -1,12 +1,3 @@
----
-name: "[feat] 어쩌구~"
-about: Describe this issue template's purpose here.
-title: ''
-labels: ''
-assignees: 2hyunjinn
-
----
-
 ### 💼 작업 설명
 <!-- 진행할 작업에 대해 간단하게 설명해주세요 -->
 
