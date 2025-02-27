@@ -1,4 +1,4 @@
-package org.festiamte.team;
+package org.festimate.team;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
