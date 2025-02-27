@@ -6,9 +6,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.festimate.team.common.BaseTimeEntity;
+import org.festimate.team.matching.entity.Matching;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -37,11 +39,11 @@ public class Festival extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String inviteCode;
 
-//    @OneToMany(mappedBy = "festival")
-//    private List<Participant> participants;
-//
-//    @OneToMany(mappedBy = "festival")
-//    private List<Matching> matchings;
+    @OneToMany(mappedBy = "festival")
+    private List<Participant> participants;
+
+    @OneToMany(mappedBy = "festival")
+    private List<Matching> matchings;
 
     @Builder
     public Festival(String title, Category category, LocalDateTime startDate, LocalDateTime endDate, String inviteCode) {
