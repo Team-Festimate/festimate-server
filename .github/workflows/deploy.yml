@@ -1,0 +1,47 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - release/*  # 🔥 release/ 브랜치에서만 실행됨!
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ✅ (1) GitHub Repository 코드 가져오기
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # ✅ (2) JDK 21 설정 (EC2에서도 동일한 버전 필요)
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # ✅ (3) Gradle 빌드 (Spring Boot 애플리케이션 패키징)
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build -x test
+
+      # ✅ (4) EC2로 JAR 및 application-prod.yml 파일 업로드
+      - name: Upload JAR & Config to EC2
+        run: |
+          echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > key.pem
+          chmod 600 key.pem
+          scp -i key.pem -o StrictHostKeyChecking=no build/libs/team-festimate-0.0.1-SNAPSHOT.jar ec2-user@${{ secrets.AWS_EC2_IP }}:/home/ec2-user/
+          scp -i key.pem -o StrictHostKeyChecking=no src/main/resources/application-prod.yml ec2-user@${{ secrets.AWS_EC2_IP }}:/home/ec2-user/
+
+      # ✅ (5) EC2에서 애플리케이션 실행 (환경 변수 적용)
+      - name: Restart Application on EC2
+        run: |
+          ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.AWS_EC2_IP }} << 'EOF'
+          sudo fuser -k 8080/tcp || true  # 기존 프로세스 종료
+          cd /home/ec2-user/
+          nohup java -jar -Dspring.config.location=/home/ec2-user/application-prod.yml -Dspring.profiles.active=prod team-festimate-0.0.1-SNAPSHOT.jar > output.log 2>&1 &
+          EOF
+          
+

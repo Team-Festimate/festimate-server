@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.festimate.team.common.BaseTimeEntity;
+import org.festimate.team.common.entity.BaseTimeEntity;
 import org.festimate.team.festival.entity.Participant;
 import org.hibernate.annotations.DynamicUpdate;
 
