@@ -1,4 +1,4 @@
-package org.festimate.team.common;
+package org.festimate.team.common.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

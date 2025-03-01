@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.festimate.team.Point.entity.Point;
-import org.festimate.team.common.BaseTimeEntity;
+import org.festimate.team.common.entity.BaseTimeEntity;
 import org.festimate.team.matching.entity.Matching;
 import org.festimate.team.user.entity.User;
 import org.hibernate.annotations.DynamicUpdate;
