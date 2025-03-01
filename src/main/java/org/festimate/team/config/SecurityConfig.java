@@ -1,4 +1,4 @@
-package org.festimate.team;
+package org.festimate.team.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
