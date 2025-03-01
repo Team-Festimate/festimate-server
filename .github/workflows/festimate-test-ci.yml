@@ -11,6 +11,21 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testdb
+          MYSQL_USER: testuser
+          MYSQL_PASSWORD: testpassword
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
     steps:
       - uses: actions/checkout@v4
       - name: Set up Jdk 21
@@ -23,6 +38,11 @@ jobs:
         run: chmod +x gradlew
 
       - name: Test with Gradle
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/testdb
+          SPRING_DATASOURCE_USERNAME: testuser
+          SPRING_DATASOURCE_PASSWORD: testpassword
+          SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
         run: ./gradlew --info test
 
       - name: Publish Test Results # for test report, after implement integration test  this file need modify
