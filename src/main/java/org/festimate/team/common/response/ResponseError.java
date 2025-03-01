@@ -9,6 +9,8 @@ public enum ResponseError {
     BAD_REQUEST(4000, "잘못된 요청입니다."),
     INVALID_PLATFORM_TYPE(4001, "유효하지 않은 플랫폼 타입입니다."),
     INVALID_REQUEST_PARAMETER(4002, "요청 파라미터가 잘못되었습니다."),
+    INVALID_INPUT_LENGTH(4003, "입력된 글자수가 허용된 범위를 벗어났습니다."),
+    INVALID_INPUT_NICKNAME(4004, "닉네임은 한글로만 입력 가능합니다."),
 
     // Unauthorized (401)
     INVALID_ACCESS_TOKEN(4011, "액세스 토큰의 값이 올바르지 않습니다."),
