@@ -11,13 +11,14 @@ import org.hibernate.annotations.DynamicUpdate;
 @Getter
 @Entity
 @DynamicUpdate
-@Table(name = "user")
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userId;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(nullable = false)
     private String name;
@@ -29,14 +30,14 @@ public class User extends BaseTimeEntity {
     private String nickname;
 
     @Column(nullable = false)
-    private Integer birthYear;
+    private int birthYear;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
     @Column(nullable = false)
-    private Integer appearance;
+    private int appearanceType;
 
     @Column(nullable = false)
     private String platformId;
@@ -50,13 +51,13 @@ public class User extends BaseTimeEntity {
 
     @Builder
     public User(String name, String phoneNumber, String nickname, Integer birthYear, Mbti mbti,
-                Integer appearance, String platformId, Platform platform, String refreshToken) {
+                Integer appearanceType, String platformId, Platform platform, String refreshToken) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;
         this.birthYear = birthYear;
         this.mbti = mbti;
-        this.appearance = appearance;
+        this.appearanceType = appearanceType;
         this.platformId = platformId;
         this.platform = platform;
         this.refreshToken = refreshToken;
