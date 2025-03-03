@@ -24,23 +24,39 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-web-services'
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    // Spring Boot 관련 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // JPA (Hibernate) 지원
+    implementation 'org.springframework.boot:spring-boot-starter-security'  // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'  // Thymeleaf 템플릿 엔진
+    implementation 'org.springframework.boot:spring-boot-starter-validation'  // Bean Validation (유효성 검사)
+    implementation 'org.springframework.boot:spring-boot-starter-web'  // Spring Web (MVC)
+    implementation 'org.springframework.boot:spring-boot-starter-web-services'  // Web Service 지원 (SOAP)
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'  // WebFlux (비동기 처리)
+
+    // Spring Security와 Thymeleaf 연동
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+    // Lombok (코드 간소화)
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
-    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'io.projectreactor:reactor-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // 개발용 도구
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'  // 자동 리로드 기능
+    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'  // Docker Compose 연동 지원
+
+    // MySQL 드라이버 (JPA 데이터베이스 연결용)
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // JWT (JSON Web Token) 관련 라이브러리
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'  // JSON 직렬화 및 역직렬화 지원
+
+    // 테스트 관련 라이브러리
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Spring Boot 테스트 지원
+    testImplementation 'io.projectreactor:reactor-test'  // WebFlux 테스트 지원
+    testImplementation 'org.springframework.security:spring-security-test'  // Security 테스트 지원
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  // JUnit 테스트 실행기
 }
 
 tasks.named('test') {
