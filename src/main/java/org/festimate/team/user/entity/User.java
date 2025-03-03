@@ -37,9 +37,9 @@ public class User extends BaseTimeEntity {
     private Mbti mbti;
 
     @Column(nullable = false)
-    private int appearanceType;
+    private AppearanceType appearanceType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String platformId;
 
     @Column(nullable = false)
@@ -51,15 +51,15 @@ public class User extends BaseTimeEntity {
 
     @Builder
     public User(String name, String phoneNumber, String nickname, Integer birthYear, Mbti mbti,
-                Integer appearanceType, String platformId, Platform platform, String refreshToken) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.nickname = nickname;
-        this.birthYear = birthYear;
-        this.mbti = mbti;
-        this.appearanceType = appearanceType;
-        this.platformId = platformId;
-        this.platform = platform;
+                AppearanceType appearanceType, String platformId, Platform platform, String refreshToken) {
+        this.name = (name != null) ? name : "페스티메이트";
+        this.phoneNumber = (phoneNumber != null) ? phoneNumber : "000-0000-0000";
+        this.nickname = (nickname != null) ? nickname : "메이트";
+        this.birthYear = (birthYear != null) ? birthYear : 2000;
+        this.mbti = (mbti != null) ? mbti : Mbti.ENFJ;
+        this.appearanceType = (appearanceType != null) ? appearanceType : AppearanceType.DOG;
+        this.platformId = (platformId != null) ? platformId : "KAKAO";
+        this.platform = (platform != null) ? platform : Platform.KAKAO;
         this.refreshToken = refreshToken;
     }
 
