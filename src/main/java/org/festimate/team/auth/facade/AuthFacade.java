@@ -26,10 +26,10 @@ public class AuthFacade {
             return new TokenResponse(null, accessToken, null);
         }
 
-        TokenResponse response = authService.login(userId, accessToken);
-        userService.updateRefreshToken(response.userId(), response.accessToken());
+        TokenResponse response = authService.login(userId);
+        userService.updateRefreshToken(response.userId(), response.refreshToken());
 
-        return authService.login(userId, accessToken);
+        return response;
     }
 
     public TokenResponse signUp(String token, SignUpRequest request) {

@@ -1,6 +1,8 @@
 package org.festimate.team.auth.infra;
 
 import lombok.RequiredArgsConstructor;
+import org.festimate.team.common.response.ResponseError;
+import org.festimate.team.exception.FestimateException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -30,14 +32,19 @@ public class KakaoApiClient {
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-        ResponseEntity<Map> response = restTemplate.exchange(
-                KAKAO_TOKEN_URL,
-                HttpMethod.POST,
-                request,
-                Map.class
-        );
 
-        return response.getBody().get("access_token").toString();
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    KAKAO_TOKEN_URL, HttpMethod.POST, request, Map.class);
+
+            if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
+                throw new FestimateException(ResponseError.INVALID_ACCESS_TOKEN);
+            }
+
+            return response.getBody().get("access_token").toString();
+        } catch (Exception e) {
+            throw new FestimateException(ResponseError.INVALID_ACCESS_TOKEN);
+        }
     }
 
     public String getPlatformId(String accessToken) {

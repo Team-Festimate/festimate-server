@@ -41,10 +41,15 @@ public class UserServiceImpl implements UserService {
                 .platform(request.platform())
                 .build();
 
-        userRepository.save(user);
         log.info("Checking user Info: {}", user);
 
-        return user.getUserId();
+        return userRepository.save(user).getUserId();
+    }
+
+    @Override
+    public String getUserNickname(Long userId) {
+        findByIdOrThrow(userId);
+        return userRepository.findNicknameByUserId(userId);
     }
 
     @Override
@@ -53,14 +58,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateRefreshToken(Long userId, String refreshToken) {
         User user = userRepository.findById(userId).orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
         user.updateRefreshToken(refreshToken);
         userRepository.save(user);
     }
 
-    private User findByIdOrThrow(Long userId) {
-        return userRepository.findById(userId)
+    private void findByIdOrThrow(Long userId) {
+        userRepository.findById(userId)
                 .orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
     }
 
