@@ -1,29 +1,25 @@
-package org.festimate.team.user.security;
+package org.festimate.team.auth.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtProvider {
-
-    @Value("${jwt.secret-key}")
-    private String secretKey;
-
-    private static final long ACCESS_TOKEN_EXPIRATION = 30 * 60 * 1000;
-    private static final long REFRESH_TOKEN_EXPIRATION = 14 * 24 * 60 * 60 * 1000;
+    private final JwtProperties jwtProperties;
 
     public String createAccessToken(String userId) {
-        return createToken(userId, ACCESS_TOKEN_EXPIRATION);
+        return createToken(userId, jwtProperties.getAccessExpiration());
     }
 
     public String createRefreshToken(String userId) {
-        return createToken(userId, REFRESH_TOKEN_EXPIRATION);
+        return createToken(userId, jwtProperties.getRefreshExpiration());
     }
 
     private String createToken(String userId, long expirationTime) {
@@ -31,7 +27,7 @@ public class JwtProvider {
                 .setSubject(userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
+                .signWith(Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
                 .compact();
     }
 }

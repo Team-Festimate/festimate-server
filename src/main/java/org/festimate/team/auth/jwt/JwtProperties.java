@@ -1,4 +1,4 @@
-package org.festimate.team.user.config;
+package org.festimate.team.auth.jwt;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +8,9 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "kakao")
-public class KakaoProperties {
-    private String clientId;
-    private String redirectUri;
+@ConfigurationProperties(prefix = "jwt")
+public class JwtProperties {
+    private String secretKey;
+    private Long accessExpiration;
+    private Long refreshExpiration;
 }

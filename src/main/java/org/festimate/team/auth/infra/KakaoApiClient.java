@@ -1,7 +1,6 @@
-package org.festimate.team.user.infra;
+package org.festimate.team.auth.infra;
 
 import lombok.RequiredArgsConstructor;
-import org.festimate.team.user.config.KakaoProperties;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
