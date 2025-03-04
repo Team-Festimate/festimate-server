@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 @RestControllerAdvice
 @Slf4j
@@ -18,6 +19,21 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleGlobalException(FestimateException e) {
         log.error("FestimateException occurred", e);
         return ResponseBuilder.error(e.getResponseError());
+    }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpClientErrorException(HttpClientErrorException e) {
+        log.error("HttpClientErrorException occurred: {}", e.getMessage());
+
+        String responseBody = e.getResponseBodyAsString();
+
+        if (responseBody.contains("KOE320")) {
+            return ResponseBuilder.error(ResponseError.INVALID_GRANT);
+        } else if(responseBody.contains("401")){
+            return ResponseBuilder.error(ResponseError.INVALID_ACCESS_TOKEN);
+        }
+
+        return ResponseBuilder.error(ResponseError.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
