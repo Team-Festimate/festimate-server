@@ -1,4 +1,4 @@
-package org.festimate.team.user.respository;
+package org.festimate.team.user.repository;
 
 import org.festimate.team.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
