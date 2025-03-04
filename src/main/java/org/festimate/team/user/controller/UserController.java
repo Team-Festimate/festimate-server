@@ -6,7 +6,6 @@ import org.festimate.team.auth.facade.AuthFacade;
 import org.festimate.team.common.response.ApiResponse;
 import org.festimate.team.common.response.ResponseBuilder;
 import org.festimate.team.user.dto.SignUpRequest;
-import org.festimate.team.user.dto.SignUpResponse;
 import org.festimate.team.user.dto.TokenResponse;
 import org.festimate.team.user.service.UserService;
 import org.festimate.team.user.validator.NicknameValidator;
@@ -38,11 +37,11 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<SignUpResponse>> signUp(
+    public ResponseEntity<ApiResponse<TokenResponse>> signUp(
             @RequestHeader("Authorization") String token,
             @RequestBody SignUpRequest request
     ) {
-        SignUpResponse response = authFacade.signUp(token, request);
+        TokenResponse response = authFacade.signUp(token, request);
         return ResponseBuilder.created(response);
     }
 }

@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         userRepository.save(user);
+        log.info("Checking user Info: {}", user);
 
         return user.getUserId();
     }

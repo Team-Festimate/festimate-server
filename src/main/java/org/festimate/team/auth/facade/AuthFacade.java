@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.festimate.team.auth.infra.KakaoApiClient;
 import org.festimate.team.auth.service.AuthService;
 import org.festimate.team.user.dto.SignUpRequest;
-import org.festimate.team.user.dto.SignUpResponse;
 import org.festimate.team.user.dto.TokenResponse;
 import org.festimate.team.user.service.UserService;
 import org.springframework.stereotype.Component;
@@ -33,7 +32,7 @@ public class AuthFacade {
         return authService.login(userId, accessToken);
     }
 
-    public SignUpResponse signUp(String token, SignUpRequest request) {
+    public TokenResponse signUp(String token, SignUpRequest request) {
         String platformId = kakaoApiClient.getPlatformId(token);
 
         userService.duplicateNickname(request.nickName());
