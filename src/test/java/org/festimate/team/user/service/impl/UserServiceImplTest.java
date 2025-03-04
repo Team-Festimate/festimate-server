@@ -3,7 +3,7 @@ package org.festimate.team.user.service.impl;
 import org.festimate.team.common.response.ResponseError;
 import org.festimate.team.user.validator.NicknameValidator;
 import org.festimate.team.exception.FestimateException;
-import org.festimate.team.user.respository.UserRepository;
+import org.festimate.team.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

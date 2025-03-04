@@ -5,11 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.festimate.team.common.response.ResponseError;
 import org.festimate.team.exception.FestimateException;
 import org.festimate.team.user.dto.SignUpRequest;
-import org.festimate.team.user.dto.SignUpResponse;
 import org.festimate.team.user.entity.User;
-import org.festimate.team.user.infra.KakaoApiClient;
-import org.festimate.team.user.respository.UserRepository;
-import org.festimate.team.user.security.JwtProvider;
+import org.festimate.team.user.repository.UserRepository;
 import org.festimate.team.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final JwtProvider jwtProvider;
-    private final KakaoApiClient kakaoApiClient;
-
 
     @Override
     public void duplicateNickname(String nickname) {
@@ -33,14 +27,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
     @Transactional
-    public SignUpResponse signUp(String token, SignUpRequest request) {
-        String platformId = kakaoApiClient.getPlatformId(token);
-
-        findByPlatformId(platformId);
-        duplicateNickname(request.nickName());
-
+    @Override
+    public Long saveUser(SignUpRequest request, String platformId) {
         User user = User.builder()
                 .name(request.name())
                 .phoneNumber(request.phoneNumber())
@@ -54,10 +43,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        String accessToken = jwtProvider.createAccessToken(user.getUserId().toString());
-        String refreshToken = jwtProvider.createRefreshToken(user.getUserId().toString());
-
-        return new SignUpResponse(user.getUserId(), accessToken, refreshToken);
+        return user.getUserId();
     }
 
     @Override
@@ -76,7 +62,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
     }
-
 
     private void findByPlatformId(String platformId) {
         if (userRepository.findByPlatformId(platformId).isPresent()) {
