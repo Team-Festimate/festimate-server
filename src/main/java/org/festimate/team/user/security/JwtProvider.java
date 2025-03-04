@@ -1,4 +1,4 @@
-package org.festimate.team.auth.security;
+package org.festimate.team.user.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

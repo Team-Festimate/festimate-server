@@ -1,5 +1,7 @@
-package org.festimate.team.auth.client;
+package org.festimate.team.user.infra;
 
+import lombok.RequiredArgsConstructor;
+import org.festimate.team.user.config.KakaoProperties;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -9,7 +11,9 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class KakaoApiClient {
+    private final KakaoProperties kakaoProperties;
 
     private final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
@@ -22,8 +26,8 @@ public class KakaoApiClient {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "155cde7d28e1e6103b97ee70ad067265");
-        params.add("redirect_uri", "http://localhost:8080/auth/login");
+        params.add("client_id", kakaoProperties.getClientId());
+        params.add("redirect_uri", kakaoProperties.getRedirectUri());
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);

@@ -1,18 +1,18 @@
-package org.festimate.team.auth.service;
+package org.festimate.team.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.festimate.team.auth.client.KakaoApiClient;
-import org.festimate.team.auth.dto.TokenResponse;
-import org.festimate.team.auth.security.JwtProvider;
-import org.festimate.team.user.entity.Platform;
+import org.festimate.team.user.dto.TokenResponse;
 import org.festimate.team.user.entity.User;
+import org.festimate.team.user.infra.KakaoApiClient;
 import org.festimate.team.user.respository.UserRepository;
+import org.festimate.team.user.security.JwtProvider;
+import org.festimate.team.user.service.AuthService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
@@ -22,14 +22,11 @@ public class AuthService {
     public TokenResponse kakaoLogin(String code) {
         String accessToken = kakaoApiClient.getAccessToken(code);
         String platformId = kakaoApiClient.getPlatformId(accessToken);
+        User user = userRepository.findByPlatformId(platformId).orElse(null);
 
-        User user = userRepository.findByPlatformId(platformId).orElseGet(() -> {
-            User newUser = User.builder()
-                    .platformId(platformId)
-                    .platform(Platform.KAKAO)
-                    .build();
-            return userRepository.save(newUser);
-        });
+        if (user == null) {
+            return new TokenResponse(null, accessToken, null);
+        }
 
         String newAccessToken = jwtProvider.createAccessToken(user.getUserId().toString());
         String newRefreshToken = jwtProvider.createRefreshToken(user.getUserId().toString());
@@ -37,6 +34,6 @@ public class AuthService {
         user.updateRefreshToken(newRefreshToken);
         userRepository.save(user);
 
-        return new TokenResponse(newAccessToken, newRefreshToken);
+        return new TokenResponse(user.getUserId(), newAccessToken, newRefreshToken);
     }
 }
