@@ -48,6 +48,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String getUserNickname(Long userId) {
+        findByIdOrThrow(userId);
+        return userRepository.findNicknameByUserId(userId);
+    }
+
+    @Override
     public Long getUserIdByPlatformId(String platformId) {
         return userRepository.findByPlatformId(platformId).map(User::getUserId).orElse(null);
     }
@@ -59,8 +65,8 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    private User findByIdOrThrow(Long userId) {
-        return userRepository.findById(userId)
+    private void findByIdOrThrow(Long userId) {
+        userRepository.findById(userId)
                 .orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
     }
 

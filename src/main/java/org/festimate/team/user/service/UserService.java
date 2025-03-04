@@ -10,4 +10,6 @@ public interface UserService {
     void updateRefreshToken(Long userId, String refreshToken);
 
     Long saveUser(SignUpRequest request, String platformId);
+
+    String getUserNickname(Long userId);
 }

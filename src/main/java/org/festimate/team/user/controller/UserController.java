@@ -3,6 +3,7 @@ package org.festimate.team.user.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.festimate.team.auth.facade.AuthFacade;
+import org.festimate.team.auth.jwt.JwtProvider;
 import org.festimate.team.common.response.ApiResponse;
 import org.festimate.team.common.response.ResponseBuilder;
 import org.festimate.team.user.dto.SignUpRequest;
@@ -21,6 +22,7 @@ public class UserController {
     private final UserService userService;
     private final NicknameValidator nicknameValidator;
     private final AuthFacade authFacade;
+    private final JwtProvider jwtProvider;
 
     @PostMapping("/validate/nickname")
     public ResponseEntity<ApiResponse<Void>> validateNickname(@RequestParam("nickname") String nickname) {
@@ -43,5 +45,14 @@ public class UserController {
     ) {
         TokenResponse response = authFacade.signUp(token, request);
         return ResponseBuilder.created(response);
+    }
+
+    @GetMapping("/nickname")
+    public ResponseEntity<ApiResponse<String>> getNickname(
+            @RequestHeader("Authorization") String accessToken
+    ) {
+        Long userId = jwtProvider.parseTokenAndGetUserId(accessToken);
+        String nickName = userService.getUserNickname(userId);
+        return ResponseBuilder.ok(nickName);
     }
 }
