@@ -4,13 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.festimate.team.common.response.ApiResponse;
 import org.festimate.team.common.response.ResponseBuilder;
+import org.festimate.team.user.dto.SignUpRequest;
+import org.festimate.team.user.dto.SignUpResponse;
 import org.festimate.team.user.service.UserService;
 import org.festimate.team.user.validator.NicknameValidator;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/user")
@@ -27,5 +26,14 @@ public class UserController {
         userService.duplicateNickname(nickname);
 
         return ResponseBuilder.ok(null);
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<SignUpResponse>> signUp(
+            @RequestHeader("Authorization") String token,
+            @RequestBody SignUpRequest request
+    ) {
+        SignUpResponse response = userService.signUp(token, request);
+        return ResponseBuilder.created(response);
     }
 }
