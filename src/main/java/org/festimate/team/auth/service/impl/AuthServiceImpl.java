@@ -14,9 +14,9 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProvider jwtProvider;
 
     @Transactional
-    public TokenResponse login(Long userId, String accessToken) {
-        String newAccessToken = jwtProvider.createAccessToken(userId.toString());
-        String newRefreshToken = jwtProvider.createRefreshToken(userId.toString());
+    public TokenResponse login(Long userId) {
+        String newAccessToken = jwtProvider.createAccessToken(userId);
+        String newRefreshToken = jwtProvider.createRefreshToken(userId);
 
         return new TokenResponse(userId, newAccessToken, newRefreshToken);
     }
@@ -25,8 +25,8 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public TokenResponse signUp(Long userId) {
 
-        String accessToken = jwtProvider.createAccessToken(userId.toString());
-        String refreshToken = jwtProvider.createRefreshToken(userId.toString());
+        String accessToken = jwtProvider.createAccessToken(userId);
+        String refreshToken = jwtProvider.createRefreshToken(userId);
 
         return new TokenResponse(userId, accessToken, refreshToken);
     }
