@@ -27,7 +27,7 @@ public class AuthFacade {
         }
 
         TokenResponse response = authService.login(userId);
-        userService.updateRefreshToken(response.userId(), response.accessToken());
+        userService.updateRefreshToken(response.userId(), response.refreshToken());
 
         return response;
     }

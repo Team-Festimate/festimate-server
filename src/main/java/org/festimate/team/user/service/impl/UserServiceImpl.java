@@ -41,10 +41,9 @@ public class UserServiceImpl implements UserService {
                 .platform(request.platform())
                 .build();
 
-        userRepository.save(user);
         log.info("Checking user Info: {}", user);
 
-        return user.getUserId();
+        return userRepository.save(user).getUserId();
     }
 
     @Override
@@ -59,6 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateRefreshToken(Long userId, String refreshToken) {
         User user = userRepository.findById(userId).orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
         user.updateRefreshToken(refreshToken);
