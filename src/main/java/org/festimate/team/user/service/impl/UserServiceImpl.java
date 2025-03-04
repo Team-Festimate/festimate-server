@@ -53,6 +53,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserById(Long userId) {
+        return userRepository.getUserByUserId(userId).orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
+    }
+
+    @Override
     public Long getUserIdByPlatformId(String platformId) {
         return userRepository.findByPlatformId(platformId).map(User::getUserId).orElse(null);
     }
