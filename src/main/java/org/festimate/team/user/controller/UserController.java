@@ -2,7 +2,7 @@ package org.festimate.team.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.festimate.team.auth.facade.AuthFacade;
+import org.festimate.team.facade.AuthFacade;
 import org.festimate.team.auth.jwt.JwtProvider;
 import org.festimate.team.common.response.ApiResponse;
 import org.festimate.team.common.response.ResponseBuilder;

@@ -15,4 +15,6 @@ public interface UserService {
     String getUserNickname(Long userId);
 
     User getUserById(Long userId);
+
+    void findByIdOrThrow(Long userId);
 }

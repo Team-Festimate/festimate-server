@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Long userId) {
-        return userRepository.getUserByUserId(userId).orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
+        return findById(userId);
     }
 
     @Override
@@ -65,19 +65,18 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateRefreshToken(Long userId, String refreshToken) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
+        User user = findById(userId);
         user.updateRefreshToken(refreshToken);
         userRepository.save(user);
     }
 
-    private void findByIdOrThrow(Long userId) {
+    @Override
+    public void findByIdOrThrow(Long userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
     }
 
-    private void findByPlatformId(String platformId) {
-        if (userRepository.findByPlatformId(platformId).isPresent()) {
-            throw new FestimateException(ResponseError.USER_ALREADY_EXISTS);
-        }
+    private User findById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
     }
 }
