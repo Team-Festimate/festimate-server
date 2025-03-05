@@ -7,6 +7,8 @@ import org.festimate.team.common.response.ResponseBuilder;
 import org.festimate.team.facade.FestivalFacade;
 import org.festimate.team.festival.dto.FestivalRequest;
 import org.festimate.team.festival.dto.FestivalResponse;
+import org.festimate.team.festival.dto.FestivalVerifyRequest;
+import org.festimate.team.festival.dto.FestivalVerifyResponse;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.festival.service.FestivalService;
 import org.springframework.http.ResponseEntity;
@@ -34,10 +36,15 @@ public class FestivalController {
         return ResponseBuilder.created(response);
     }
 
-    @GetMapping("/{inviteCode}")
-    public ResponseEntity<Festival> getFestivalByInviteCode(@PathVariable String inviteCode) {
-        Festival festival = festivalService.getFestivalByInviteCode(inviteCode);
-        return ResponseEntity.ok(festival);
+    @PostMapping("/verify")
+    public ResponseEntity<ApiResponse<FestivalVerifyResponse>> verifyFestival(
+            @RequestHeader("Authorization") String accessToken,
+            @RequestBody FestivalVerifyRequest request
+    ) {
+        jwtProvider.parseTokenAndGetUserId(accessToken);
+        Festival festival = festivalService.getFestivalByInviteCode(request.inviteCode().trim());
+
+        return ResponseBuilder.ok(FestivalVerifyResponse.of(festival));
     }
 
     @GetMapping
