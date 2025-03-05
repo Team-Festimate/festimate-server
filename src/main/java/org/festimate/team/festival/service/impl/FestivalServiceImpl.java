@@ -13,6 +13,7 @@ import org.festimate.team.user.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 
@@ -44,8 +45,9 @@ public class FestivalServiceImpl implements FestivalService {
     @Transactional
     public Festival getFestivalByInviteCode(String inviteCode) {
         log.info("inviteCode: {}", inviteCode);
-        return festivalRepository.findByInviteCode(inviteCode)
+        Festival festival = festivalRepository.findByInviteCode(inviteCode)
                 .orElseThrow(() -> new FestimateException(ResponseError.FESTIVAL_NOT_FOUND));
+        return validateNotPastDate(festival);
     }
 
     @Override
@@ -60,5 +62,12 @@ public class FestivalServiceImpl implements FestivalService {
             inviteCode = String.valueOf(100000 + random.nextInt(900000));
         } while (festivalRepository.existsByInviteCode(inviteCode));
         return inviteCode;
+    }
+
+    private Festival validateNotPastDate(Festival festival) {
+        if (festival.getEndDate().isBefore(LocalDate.now())) {
+            throw new FestimateException(ResponseError.TARGET_NOT_FOUND);
+        }
+        return festival;
     }
 }
