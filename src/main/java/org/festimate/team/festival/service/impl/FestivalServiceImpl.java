@@ -2,6 +2,7 @@ package org.festimate.team.festival.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.festival.dto.FestivalRequest;
+import org.festimate.team.festival.entity.Category;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.festival.repository.FestivalRepository;
 import org.festimate.team.festival.service.FestivalService;
@@ -26,7 +27,7 @@ public class FestivalServiceImpl implements FestivalService {
         Festival festival = Festival.builder()
                 .host(host)
                 .title(request.title())
-                .category(request.category())
+                .category(Category.toCategory(request.category()))
                 .startDate(request.startDate())
                 .endDate(request.endDate())
                 .inviteCode(inviteCode)
