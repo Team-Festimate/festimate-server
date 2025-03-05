@@ -9,6 +9,9 @@ import org.festimate.team.user.entity.User;
 import org.festimate.team.user.service.UserService;
 import org.springframework.stereotype.Component;
 
+import static org.festimate.team.festival.validator.DateValidator.isFestivalDateValid;
+import static org.festimate.team.festival.validator.FestivalRequestValidator.isFestivalValid;
+
 @Component
 @RequiredArgsConstructor
 public class FestivalFacade {
@@ -17,6 +20,10 @@ public class FestivalFacade {
 
     public FestivalResponse createFestival(Long userId, FestivalRequest request) {
         User host = userService.getUserById(userId);
+
+        isFestivalValid(request.title(), request.category());
+        isFestivalDateValid(request.startDate(), request.endDate());
+
         Festival festival = festivalService.createFestival(host, request);
 
         return FestivalResponse.from(festival.getFestivalId(), festival.getInviteCode());
