@@ -1,4 +1,4 @@
-package org.festimate.team.auth.facade;
+package org.festimate.team.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.auth.infra.KakaoApiClient;
@@ -26,10 +26,7 @@ public class AuthFacade {
             return new TokenResponse(null, accessToken, null);
         }
 
-        TokenResponse response = authService.login(userId);
-        userService.updateRefreshToken(response.userId(), response.refreshToken());
-
-        return response;
+        return generateRefreshToken(userId);
     }
 
     public TokenResponse signUp(String token, SignUpRequest request) {
@@ -38,6 +35,13 @@ public class AuthFacade {
         userService.duplicateNickname(request.nickName());
         Long userId = userService.saveUser(request, platformId);
 
-        return authService.signUp(userId);
+        return generateRefreshToken(userId);
+    }
+
+    private TokenResponse generateRefreshToken(Long userId) {
+        TokenResponse response = authService.generateTokens(userId);
+        userService.updateRefreshToken(response.userId(), response.refreshToken());
+
+        return response;
     }
 }

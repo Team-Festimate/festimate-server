@@ -13,21 +13,12 @@ public class AuthServiceImpl implements AuthService {
 
     private final JwtProvider jwtProvider;
 
+    @Override
     @Transactional
-    public TokenResponse login(Long userId) {
+    public TokenResponse generateTokens(Long userId) {
         String newAccessToken = jwtProvider.createAccessToken(userId);
         String newRefreshToken = jwtProvider.createRefreshToken(userId);
 
         return new TokenResponse(userId, newAccessToken, newRefreshToken);
-    }
-
-    @Override
-    @Transactional
-    public TokenResponse signUp(Long userId) {
-
-        String accessToken = jwtProvider.createAccessToken(userId);
-        String refreshToken = jwtProvider.createRefreshToken(userId);
-
-        return new TokenResponse(userId, accessToken, refreshToken);
     }
 }

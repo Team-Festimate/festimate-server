@@ -40,7 +40,10 @@ public class Participant extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private TypeResult typeResult;
 
+    @Column(nullable = false)
     private String introduction;
+
+    private String message;
 
     @OneToMany(mappedBy = "participant")
     private List<Point> points;
@@ -52,11 +55,12 @@ public class Participant extends BaseTimeEntity {
     private List<Matching> matchingsAsTarget;
 
     @Builder
-    public Participant(User user, Festival festival, Role role, TypeResult typeResult, String introduction) {
+    public Participant(User user, Festival festival, Role role, TypeResult typeResult, String introduction, String message) {
         this.user = user;
         this.festival = festival;
         this.role = role;
         this.typeResult = typeResult;
         this.introduction = introduction;
+        this.message = message;
     }
 }
