@@ -51,6 +51,14 @@ public class FestivalServiceImpl implements FestivalService {
     }
 
     @Override
+    public Festival getFestivalByIdOrThrow(Long festivalId) {
+        log.info("festivalId: {}", festivalId);
+        Festival festival = festivalRepository.findByFestivalId(festivalId)
+                .orElseThrow(() -> new FestimateException(ResponseError.FESTIVAL_NOT_FOUND));
+        return validateNotPastDate(festival);
+    }
+
+    @Override
     public List<Festival> getAllFestivals() {
         return festivalRepository.findAll();
     }
@@ -66,7 +74,7 @@ public class FestivalServiceImpl implements FestivalService {
 
     private Festival validateNotPastDate(Festival festival) {
         if (festival.getEndDate().isBefore(LocalDate.now())) {
-            throw new FestimateException(ResponseError.TARGET_NOT_FOUND);
+            throw new FestimateException(ResponseError.EXPIRED_INVITE_CODE);
         }
         return festival;
     }

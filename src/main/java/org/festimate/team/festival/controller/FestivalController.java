@@ -5,12 +5,10 @@ import org.festimate.team.auth.jwt.JwtProvider;
 import org.festimate.team.common.response.ApiResponse;
 import org.festimate.team.common.response.ResponseBuilder;
 import org.festimate.team.facade.FestivalFacade;
-import org.festimate.team.festival.dto.FestivalRequest;
-import org.festimate.team.festival.dto.FestivalResponse;
-import org.festimate.team.festival.dto.FestivalVerifyRequest;
-import org.festimate.team.festival.dto.FestivalVerifyResponse;
+import org.festimate.team.festival.dto.*;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.festival.service.FestivalService;
+import org.festimate.team.participant.dto.ProfileRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +43,26 @@ public class FestivalController {
         Festival festival = festivalService.getFestivalByInviteCode(request.inviteCode().trim());
 
         return ResponseBuilder.ok(FestivalVerifyResponse.of(festival));
+    }
+
+    @PostMapping("/{festivalId}/entry")
+    public ResponseEntity<ApiResponse<EntryResponse>> entryFestival(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId,
+            @RequestBody ProfileRequest request
+    ) {
+        // 유저의 액세스 토큰이 유효한지 확인
+        Long userId = jwtProvider.parseTokenAndGetUserId(accessToken);
+        // 유효한 페스티벌 아이디인지 확인
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+
+        // 유효한 리퀘스트인지 확인하기
+        // request
+
+        // 이미 페스티벌에 참가하는 참가자인지 확인하고 아니라면 입장시키기
+        EntryResponse response = festivalFacade.entryFestival(userId, festival, request);
+
+        return ResponseBuilder.created(response);
     }
 
     @GetMapping

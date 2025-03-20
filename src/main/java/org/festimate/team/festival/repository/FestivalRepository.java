@@ -9,4 +9,6 @@ public interface FestivalRepository extends JpaRepository<Festival, Integer> {
     boolean existsByInviteCode(String inviteCode);
 
     Optional<Festival> findByInviteCode(String inviteCode);
+
+    Optional<Festival> findByFestivalId(Long festivalId);
 }
