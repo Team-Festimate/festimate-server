@@ -1,4 +1,4 @@
-package org.festimate.team.festival.entity;
+package org.festimate.team.participant.entity;
 
 import lombok.Getter;
 
