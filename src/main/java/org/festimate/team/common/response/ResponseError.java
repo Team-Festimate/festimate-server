@@ -18,6 +18,7 @@ public enum ResponseError {
     INVALID_ACCESS_TOKEN(4011, "액세스 토큰의 값이 올바르지 않습니다."),
     EXPIRED_ACCESS_TOKEN(4012, "액세스 토큰이 만료되었습니다. 재발급 받아주세요."),
     EXPIRED_INVITE_CODE(4013, "초대코드가 만료되었습니다."),
+    EXPIRED_FESTIVAL(4013, "페스티벌 기간이 종료되었습니다."),
 
     // Forbidden (403)
     FORBIDDEN_RESOURCE(4030, "리소스 접근 권한이 없습니다."),
