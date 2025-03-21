@@ -51,16 +51,11 @@ public class FestivalController {
             @PathVariable("festivalId") Long festivalId,
             @RequestBody ProfileRequest request
     ) {
-        // 유저의 액세스 토큰이 유효한지 확인
         Long userId = jwtProvider.parseTokenAndGetUserId(accessToken);
-        // 유효한 페스티벌 아이디인지 확인
+
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
 
-        // 유효한 리퀘스트인지 확인하기
-        // request
-
-        // 이미 페스티벌에 참가하는 참가자인지 확인하고 아니라면 입장시키기
-        EntryResponse response = festivalFacade.entryFestival(userId, festival, request);
+        EntryResponse response = festivalFacade.enterFestival(userId, festival, request);
 
         return ResponseBuilder.created(response);
     }

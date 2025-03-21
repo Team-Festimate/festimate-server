@@ -14,6 +14,7 @@ import org.festimate.team.participant.service.ParticipantService;
 import org.festimate.team.user.entity.User;
 import org.festimate.team.user.service.UserService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.festimate.team.festival.validator.DateValidator.isFestivalDateValid;
 import static org.festimate.team.festival.validator.FestivalRequestValidator.isFestivalValid;
@@ -36,17 +37,23 @@ public class FestivalFacade {
         return FestivalResponse.from(festival.getFestivalId(), festival.getInviteCode());
     }
 
-    public EntryResponse entryFestival(Long userId, Festival festival, ProfileRequest request) {
+    @Transactional
+    public EntryResponse enterFestival(Long userId, Festival festival, ProfileRequest request) {
         User user = userService.getUserById(userId);
 
-        // 이미 참가자로 등록된 경우 예외 발생
-        if (participantService.isAlreadyParticipant(user, festival)) {
-            throw new FestimateException(ResponseError.PARTICIPANT_ALREADY_EXISTS);
+        return EntryResponse.of(getOrCreateParticipant(user, festival, request));
+    }
+
+    private Participant getOrCreateParticipant(User user, Festival festival, ProfileRequest request) {
+        Participant participant = participantService.getParticipant(user, festival);
+        if (participant == null) return createParticipantIfValid(user, festival, request);
+        return participant;
+    }
+
+    private Participant createParticipantIfValid(User user, Festival festival, ProfileRequest request) {
+        if (!festivalService.isFestivalExpired(festival)) {
+            throw new FestimateException(ResponseError.EXPIRED_FESTIVAL);
         }
-
-        // 참가자 생성
-        Participant participant = participantService.createParticipant(user, festival, request);
-
-        return EntryResponse.of(participant);
+        return participantService.createParticipant(user, festival, request);
     }
 }
