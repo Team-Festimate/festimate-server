@@ -11,5 +11,5 @@ public interface ParticipantService {
     @Transactional
     Participant createParticipant(User user, Festival festival, ProfileRequest request);
 
-    boolean isAlreadyParticipant(User user, Festival festival);
+    Participant getParticipant(User user, Festival festival);
 }

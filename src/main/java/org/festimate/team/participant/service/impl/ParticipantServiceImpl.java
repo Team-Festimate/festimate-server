@@ -7,9 +7,9 @@ import org.festimate.team.participant.dto.ProfileRequest;
 import org.festimate.team.participant.entity.Participant;
 import org.festimate.team.participant.repository.ParticipantRepository;
 import org.festimate.team.participant.service.ParticipantService;
+import org.festimate.team.user.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.festimate.team.user.entity.User;
 
 @Service
 @RequiredArgsConstructor
@@ -24,16 +24,16 @@ public class ParticipantServiceImpl implements ParticipantService {
         Participant participant = Participant.builder()
                 .user(user)
                 .festival(festival)
-                .typeResult(request.typeResult())  // 유형 테스트 결과
-                .introduction(request.introduction())  // 자기소개
-                .message(request.message())  // 상대에게 전달할 메시지
+                .typeResult(request.typeResult())
+                .introduction(request.introduction())
+                .message(request.message())
                 .build();
 
         return participantRepository.save(participant);
     }
 
     @Override
-    public boolean isAlreadyParticipant(User user, Festival festival) {
-        return participantRepository.existsByUserAndFestival(user, festival);
+    public Participant getParticipant(User user, Festival festival) {
+        return participantRepository.getParticipantByUserAndFestival(user, festival);
     }
 }

@@ -6,5 +6,5 @@ import org.festimate.team.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
-    boolean existsByUserAndFestival(User user, Festival festival);
+    Participant getParticipantByUserAndFestival(User user, Festival festival);
 }
