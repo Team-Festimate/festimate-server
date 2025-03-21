@@ -15,4 +15,5 @@ public interface FestivalService {
 
     List<Festival> getAllFestivals();
 
+    boolean isFestivalExpired(Festival festival);
 }

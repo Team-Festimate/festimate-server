@@ -47,6 +47,9 @@ public class FestivalServiceImpl implements FestivalService {
         log.info("inviteCode: {}", inviteCode);
         Festival festival = festivalRepository.findByInviteCode(inviteCode)
                 .orElseThrow(() -> new FestimateException(ResponseError.FESTIVAL_NOT_FOUND));
+        if(!isFestivalExpired(festival)) {
+            throw new FestimateException(ResponseError.EXPIRED_INVITE_CODE);
+        }
         return validateNotPastDate(festival);
     }
 
@@ -61,6 +64,11 @@ public class FestivalServiceImpl implements FestivalService {
     @Override
     public List<Festival> getAllFestivals() {
         return festivalRepository.findAll();
+    }
+
+    @Override
+    public boolean isFestivalExpired(Festival festival) {
+        return !festival.getEndDate().isBefore(LocalDate.now());
     }
 
     private String generateUniqueInviteCode() {
