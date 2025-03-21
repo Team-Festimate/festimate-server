@@ -11,6 +11,9 @@ public interface FestivalService {
 
     Festival getFestivalByInviteCode(String inviteCode);
 
+    Festival getFestivalByIdOrThrow(Long festivalId);
+
     List<Festival> getAllFestivals();
 
+    boolean isFestivalExpired(Festival festival);
 }

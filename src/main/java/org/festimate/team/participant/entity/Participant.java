@@ -1,4 +1,4 @@
-package org.festimate.team.festival.entity;
+package org.festimate.team.participant.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.festimate.team.Point.entity.Point;
 import org.festimate.team.common.entity.BaseTimeEntity;
+import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.matching.entity.Matching;
 import org.festimate.team.user.entity.User;
 import org.hibernate.annotations.DynamicUpdate;
@@ -22,7 +23,7 @@ public class Participant extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer participantId;
+    private Long participantId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -31,10 +32,6 @@ public class Participant extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "festival_id", nullable = false)
     private Festival festival;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -55,10 +52,9 @@ public class Participant extends BaseTimeEntity {
     private List<Matching> matchingsAsTarget;
 
     @Builder
-    public Participant(User user, Festival festival, Role role, TypeResult typeResult, String introduction, String message) {
+    public Participant(User user, Festival festival, TypeResult typeResult, String introduction, String message) {
         this.user = user;
         this.festival = festival;
-        this.role = role;
         this.typeResult = typeResult;
         this.introduction = introduction;
         this.message = message;

@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.festimate.team.common.entity.BaseTimeEntity;
 import org.festimate.team.festival.entity.Festival;
-import org.festimate.team.festival.entity.Participant;
+import org.festimate.team.participant.entity.Participant;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;

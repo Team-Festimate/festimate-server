@@ -5,12 +5,10 @@ import org.festimate.team.auth.jwt.JwtProvider;
 import org.festimate.team.common.response.ApiResponse;
 import org.festimate.team.common.response.ResponseBuilder;
 import org.festimate.team.facade.FestivalFacade;
-import org.festimate.team.festival.dto.FestivalRequest;
-import org.festimate.team.festival.dto.FestivalResponse;
-import org.festimate.team.festival.dto.FestivalVerifyRequest;
-import org.festimate.team.festival.dto.FestivalVerifyResponse;
+import org.festimate.team.festival.dto.*;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.festival.service.FestivalService;
+import org.festimate.team.participant.dto.ProfileRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +43,21 @@ public class FestivalController {
         Festival festival = festivalService.getFestivalByInviteCode(request.inviteCode().trim());
 
         return ResponseBuilder.ok(FestivalVerifyResponse.of(festival));
+    }
+
+    @PostMapping("/{festivalId}/entry")
+    public ResponseEntity<ApiResponse<EntryResponse>> entryFestival(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId,
+            @RequestBody ProfileRequest request
+    ) {
+        Long userId = jwtProvider.parseTokenAndGetUserId(accessToken);
+
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+
+        EntryResponse response = festivalFacade.enterFestival(userId, festival, request);
+
+        return ResponseBuilder.created(response);
     }
 
     @GetMapping
