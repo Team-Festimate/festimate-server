@@ -11,10 +11,13 @@ import org.festimate.team.festival.service.FestivalService;
 import org.festimate.team.participant.dto.ProfileRequest;
 import org.festimate.team.participant.entity.Participant;
 import org.festimate.team.participant.service.ParticipantService;
+import org.festimate.team.user.dto.UserFestivalResponse;
 import org.festimate.team.user.entity.User;
 import org.festimate.team.user.service.UserService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.festimate.team.festival.validator.DateValidator.isFestivalDateValid;
 import static org.festimate.team.festival.validator.FestivalRequestValidator.isFestivalValid;
@@ -42,6 +45,14 @@ public class FestivalFacade {
         User user = userService.getUserById(userId);
 
         return EntryResponse.of(getOrCreateParticipant(user, festival, request));
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserFestivalResponse> getUserFestivals(Long userId, String status) {
+        User user = userService.getUserById(userId);
+        return participantService.getFestivalsByUser(user, status).stream()
+                .map(UserFestivalResponse::from)
+                .toList();
     }
 
     private Participant getOrCreateParticipant(User user, Festival festival, ProfileRequest request) {
