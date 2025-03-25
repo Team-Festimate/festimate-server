@@ -11,6 +11,7 @@ import org.festimate.team.global.jwt.JwtService;
 import org.festimate.team.global.jwt.TokenResponse;
 import org.festimate.team.user.dto.SignUpRequest;
 import org.festimate.team.user.dto.UserFestivalResponse;
+import org.festimate.team.user.dto.UserNicknameResponse;
 import org.festimate.team.user.entity.Platform;
 import org.festimate.team.user.service.UserService;
 import org.festimate.team.user.validator.NicknameValidator;
@@ -77,12 +78,12 @@ public class UserController {
     }
 
     @GetMapping("/nickname")
-    public ResponseEntity<ApiResponse<String>> getNickname(
+    public ResponseEntity<ApiResponse<UserNicknameResponse>> getNickname(
             @RequestHeader("Authorization") String accessToken
     ) {
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
         String nickName = userService.getUserNickname(userId);
-        return ResponseBuilder.ok(nickName);
+        return ResponseBuilder.ok(UserNicknameResponse.from(nickName));
     }
 
     @GetMapping("/festival")
