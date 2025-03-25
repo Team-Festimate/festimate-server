@@ -66,4 +66,8 @@ public class User extends BaseTimeEntity {
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
+    public boolean validateRefreshToken(String refreshToken) {
+        return this.refreshToken.equals(refreshToken);
+    }
 }

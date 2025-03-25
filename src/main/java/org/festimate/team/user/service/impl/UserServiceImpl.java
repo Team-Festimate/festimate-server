@@ -5,11 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.festimate.team.common.response.ResponseError;
 import org.festimate.team.exception.FestimateException;
 import org.festimate.team.user.dto.SignUpRequest;
+import org.festimate.team.user.entity.Platform;
 import org.festimate.team.user.entity.User;
 import org.festimate.team.user.repository.UserRepository;
 import org.festimate.team.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public Long saveUser(SignUpRequest request, String platformId) {
+    public User saveUser(SignUpRequest request, String platformId) {
         User user = User.builder()
                 .name(request.name())
                 .phoneNumber(request.phoneNumber())
@@ -43,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
         log.info("Checking user Info: {}", user);
 
-        return userRepository.save(user).getUserId();
+        return userRepository.save(user);
     }
 
     @Override
@@ -68,6 +71,18 @@ public class UserServiceImpl implements UserService {
         User user = findById(userId);
         user.updateRefreshToken(refreshToken);
         userRepository.save(user);
+    }
+
+    @Override
+    public void validateRefreshToken(User user, String refreshToken) {
+        if (!user.validateRefreshToken(refreshToken))
+            throw new FestimateException(ResponseError.INVALID_TOKEN);
+    }
+
+    @Override
+    public Optional<Long> getUserIdByPlatformAndPlatformId(Platform platform, String platformId) {
+        return Optional.ofNullable(userRepository.findByPlatformAndPlatformId(platform, platformId))
+                .map(User::getUserId);
     }
 
     @Override

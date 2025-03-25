@@ -1,4 +1,4 @@
-package org.festimate.team.auth.jwt;
+package org.festimate.team.global.jwt;
 
 import lombok.Getter;
 import lombok.Setter;
