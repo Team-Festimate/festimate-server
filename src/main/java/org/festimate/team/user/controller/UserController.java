@@ -14,6 +14,7 @@ import org.festimate.team.user.dto.UserFestivalResponse;
 import org.festimate.team.user.entity.Platform;
 import org.festimate.team.user.service.UserService;
 import org.festimate.team.user.validator.NicknameValidator;
+import org.festimate.team.user.validator.UserRequestValidator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class UserController {
 
     private final UserService userService;
     private final NicknameValidator nicknameValidator;
+    private final UserRequestValidator userRequestValidator;
     private final LoginFacade loginFacade;
     private final SignUpFacade signUpFacade;
     private final FestivalFacade festivalFacade;
@@ -83,12 +85,12 @@ public class UserController {
         return ResponseBuilder.ok(nickName);
     }
 
-
     @GetMapping("/festival")
     public ResponseEntity<ApiResponse<List<UserFestivalResponse>>> getFestival(
             @RequestHeader("Authorization") String accessToken,
             @RequestParam("status") String status
     ) {
+        userRequestValidator.statusValidate(status);
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
         return ResponseBuilder.ok(festivalFacade.getUserFestivals(userId, status));
     }
