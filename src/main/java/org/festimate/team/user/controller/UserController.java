@@ -2,12 +2,14 @@ package org.festimate.team.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.festimate.team.facade.AuthFacade;
-import org.festimate.team.auth.jwt.JwtProvider;
 import org.festimate.team.common.response.ApiResponse;
 import org.festimate.team.common.response.ResponseBuilder;
+import org.festimate.team.facade.LoginFacade;
+import org.festimate.team.facade.SignUpFacade;
+import org.festimate.team.global.jwt.JwtService;
+import org.festimate.team.global.jwt.TokenResponse;
 import org.festimate.team.user.dto.SignUpRequest;
-import org.festimate.team.user.dto.TokenResponse;
+import org.festimate.team.user.entity.Platform;
 import org.festimate.team.user.service.UserService;
 import org.festimate.team.user.validator.NicknameValidator;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +23,9 @@ public class UserController {
 
     private final UserService userService;
     private final NicknameValidator nicknameValidator;
-    private final AuthFacade authFacade;
-    private final JwtProvider jwtProvider;
+    private final LoginFacade loginFacade;
+    private final SignUpFacade signUpFacade;
+    private final JwtService jwtService;
 
     @PostMapping("/validate/nickname")
     public ResponseEntity<ApiResponse<Void>> validateNickname(@RequestParam("nickname") String nickname) {
@@ -33,25 +36,44 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<TokenResponse>> kakaoLogin(@RequestParam String code) {
-        TokenResponse response = authFacade.login(code);
-        return ResponseBuilder.ok(response);
+    public ResponseEntity<ApiResponse<TokenResponse>> login(
+            @RequestHeader("Authorization") String authorization
+    ) {
+        log.info("social login - Code: {}", authorization);
+
+        String platformId = loginFacade.getPlatformId(authorization);
+
+        return userService.getUserIdByPlatformAndPlatformId(Platform.KAKAO, platformId)
+                .map(userId -> loginFacade.login(platformId, Platform.KAKAO))
+                .map(ResponseBuilder::ok)
+                .orElseGet(() -> ResponseBuilder.created(loginFacade.login(platformId, Platform.KAKAO)));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<TokenResponse>> signUp(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader("Authorization") String accessToken,
             @RequestBody SignUpRequest request
     ) {
-        TokenResponse response = authFacade.signUp(token, request);
+        log.info("Received Authorization Header: {}", accessToken);
+
+        String platformId = jwtService.extractPlatformUserIdFromToken(accessToken);
+        log.info("SignUp - platformId: {}", platformId);
+
+        TokenResponse response = signUpFacade.signUp(platformId, request);
         return ResponseBuilder.created(response);
+    }
+
+    @PatchMapping("/reissue/token")
+    public ResponseEntity<ApiResponse<TokenResponse>> reIssueToken(
+            @RequestHeader("Authorization") String refreshToken) {
+        return ResponseBuilder.ok(jwtService.reIssueToken(refreshToken));
     }
 
     @GetMapping("/nickname")
     public ResponseEntity<ApiResponse<String>> getNickname(
             @RequestHeader("Authorization") String accessToken
     ) {
-        Long userId = jwtProvider.parseTokenAndGetUserId(accessToken);
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
         String nickName = userService.getUserNickname(userId);
         return ResponseBuilder.ok(nickName);
     }
