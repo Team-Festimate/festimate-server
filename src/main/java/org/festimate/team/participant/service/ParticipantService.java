@@ -7,9 +7,14 @@ import org.festimate.team.participant.entity.Participant;
 import org.festimate.team.user.entity.User;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface ParticipantService {
     @Transactional
     Participant createParticipant(User user, Festival festival, ProfileRequest request);
 
     Participant getParticipant(User user, Festival festival);
+
+    @Transactional(readOnly = true)
+    List<Festival> getFestivalsByUser(User user, String status);
 }

@@ -11,6 +11,9 @@ import org.festimate.team.user.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -35,5 +38,13 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Override
     public Participant getParticipant(User user, Festival festival) {
         return participantRepository.getParticipantByUserAndFestival(user, festival);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Festival> getFestivalsByUser(User user, String status) {
+        return participantRepository.findAllByUser(user, status, LocalDate.now()).stream()
+                .map(Participant::getFestival)
+                .toList();
     }
 }
