@@ -48,6 +48,18 @@ public class FestivalController {
     @PostMapping("/{festivalId}/entry")
     public ResponseEntity<ApiResponse<EntryResponse>> entryFestival(
             @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        EntryResponse response = festivalFacade.enterFestival(userId, festival);
+
+        return ResponseBuilder.ok(response);
+    }
+
+    @PostMapping("/{festivalId}/participant")
+    public ResponseEntity<ApiResponse<EntryResponse>> createParticipant(
+            @RequestHeader("Authorization") String accessToken,
             @PathVariable("festivalId") Long festivalId,
             @RequestBody ProfileRequest request
     ) {
@@ -55,7 +67,7 @@ public class FestivalController {
 
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
 
-        EntryResponse response = festivalFacade.enterFestival(userId, festival, request);
+        EntryResponse response = festivalFacade.createParticipant(userId, festival, request);
 
         return ResponseBuilder.created(response);
     }
