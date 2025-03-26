@@ -1,6 +1,8 @@
 package org.festimate.team.participant.service;
 
 
+import org.festimate.team.festival.dto.TypeRequest;
+import org.festimate.team.festival.dto.TypeResponse;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.participant.dto.ProfileRequest;
 import org.festimate.team.participant.entity.Participant;
@@ -17,4 +19,6 @@ public interface ParticipantService {
 
     @Transactional(readOnly = true)
     List<Festival> getFestivalsByUser(User user, String status);
+
+    TypeResponse getTypeResult(TypeRequest request);
 }
