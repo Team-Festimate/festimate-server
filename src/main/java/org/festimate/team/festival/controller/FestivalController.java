@@ -77,4 +77,16 @@ public class FestivalController {
         List<Festival> festivals = festivalService.getAllFestivals();
         return ResponseEntity.ok(festivals);
     }
+
+    @GetMapping("/{festivalId}")
+    public ResponseEntity<ApiResponse<FestivalInfoResponse>> getFestivalInfo(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+
+        festivalFacade.validateUserParticipation(userId, festival);
+        return ResponseBuilder.ok(FestivalInfoResponse.of(festival));
+    }
 }

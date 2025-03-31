@@ -40,15 +40,12 @@ public class FestivalFacade {
         return FestivalResponse.from(festival.getFestivalId(), festival.getInviteCode());
     }
 
+    @Transactional(readOnly = true)
     public EntryResponse enterFestival(Long userId, Festival festival) {
         User user = userService.getUserById(userId);
-        Participant participant = getParticipantInfo(user, festival);
+        Participant participant = getExistingParticipantOrThrow(user, festival);
 
-        if (participant == null) {
-            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
-        }
-
-        return EntryResponse.of(getParticipantInfo(user, festival));
+        return EntryResponse.of(participant);
     }
 
     @Transactional
@@ -66,6 +63,11 @@ public class FestivalFacade {
                 .toList();
     }
 
+    public void validateUserParticipation(Long userId, Festival festival) {
+        User user = userService.getUserById(userId);
+        getExistingParticipantOrThrow(user, festival);
+    }
+
     private Participant createParticipantIfValid(User user, Festival festival, ProfileRequest request) {
         if (getParticipantInfo(user, festival) != null) {
             throw new FestimateException(ResponseError.USER_ALREADY_EXISTS);
@@ -75,6 +77,14 @@ public class FestivalFacade {
             throw new FestimateException(ResponseError.EXPIRED_FESTIVAL);
         }
         return participantService.createParticipant(user, festival, request);
+    }
+
+    private Participant getExistingParticipantOrThrow(User user, Festival festival) {
+        Participant participant = participantService.getParticipant(user, festival);
+        if (participant == null) {
+            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
+        }
+        return participant;
     }
 
     private Participant getParticipantInfo(User user, Festival festival) {
