@@ -72,7 +72,7 @@ public class FestivalController {
         return ResponseBuilder.created(response);
     }
 
-    @GetMapping("/{festivalId}/participant/info")
+    @GetMapping("/{festivalId}/my/info")
     public ResponseEntity<ApiResponse<MainUserInfoResponse>> getParticipantAndPoint(
             @RequestHeader("Authorization") String accessToken,
             @PathVariable("festivalId") Long festivalId
@@ -101,5 +101,17 @@ public class FestivalController {
 
         festivalFacade.validateUserParticipation(userId, festival);
         return ResponseBuilder.ok(FestivalInfoResponse.of(festival));
+    }
+
+    @GetMapping("/{festivalId}/my")
+    public ResponseEntity<ApiResponse<ProfileResponse>> getMyProfile(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+
+        ProfileResponse response = festivalFacade.getParticipantProfile(userId, festival);
+        return ResponseBuilder.ok(response);
     }
 }
