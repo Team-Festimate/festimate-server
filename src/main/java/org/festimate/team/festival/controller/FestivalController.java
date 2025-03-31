@@ -114,4 +114,17 @@ public class FestivalController {
         ProfileResponse response = festivalFacade.getParticipantProfile(userId, festival);
         return ResponseBuilder.ok(response);
     }
+
+    @GetMapping("/{festivalId}/my/type")
+    public ResponseEntity<ApiResponse<DetailProfileResponse>> getParticipantType(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+
+        DetailProfileResponse response = festivalFacade.getParticipantType(userId, festival);
+
+        return ResponseBuilder.ok(response);
+    }
 }
