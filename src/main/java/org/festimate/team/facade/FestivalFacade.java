@@ -3,10 +3,7 @@ package org.festimate.team.facade;
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.common.response.ResponseError;
 import org.festimate.team.exception.FestimateException;
-import org.festimate.team.festival.dto.EntryResponse;
-import org.festimate.team.festival.dto.FestivalRequest;
-import org.festimate.team.festival.dto.FestivalResponse;
-import org.festimate.team.festival.dto.MainUserInfoResponse;
+import org.festimate.team.festival.dto.*;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.festival.service.FestivalService;
 import org.festimate.team.participant.dto.ProfileRequest;
@@ -71,6 +68,12 @@ public class FestivalFacade {
         int point = participantService.getTotalPointByParticipant(participant);
 
         return MainUserInfoResponse.from(participant, point);
+    }
+
+    public ProfileResponse getParticipantProfile(Long userId, Festival festival) {
+        User user = userService.getUserById(userId);
+        Participant participant = getExistingParticipantOrThrow(user, festival);
+        return ProfileResponse.of(participant.getTypeResult(), user.getNickname());
     }
 
     public void validateUserParticipation(Long userId, Festival festival) {
