@@ -76,6 +76,12 @@ public class FestivalFacade {
         return ProfileResponse.of(participant.getTypeResult(), user.getNickname());
     }
 
+    public DetailProfileResponse getParticipantType(Long userId, Festival festival) {
+        User user = userService.getUserById(userId);
+        Participant participant = getExistingParticipantOrThrow(user, festival);
+        return DetailProfileResponse.from(user, participant);
+    }
+
     public void validateUserParticipation(Long userId, Festival festival) {
         User user = userService.getUserById(userId);
         getExistingParticipantOrThrow(user, festival);
