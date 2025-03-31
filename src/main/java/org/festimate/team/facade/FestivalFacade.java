@@ -6,6 +6,7 @@ import org.festimate.team.exception.FestimateException;
 import org.festimate.team.festival.dto.EntryResponse;
 import org.festimate.team.festival.dto.FestivalRequest;
 import org.festimate.team.festival.dto.FestivalResponse;
+import org.festimate.team.festival.dto.MainUserInfoResponse;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.festival.service.FestivalService;
 import org.festimate.team.participant.dto.ProfileRequest;
@@ -61,6 +62,15 @@ public class FestivalFacade {
         return participantService.getFestivalsByUser(user, status).stream()
                 .map(UserFestivalResponse::from)
                 .toList();
+    }
+
+    public MainUserInfoResponse getParticipantAndPoint(Long userId, Festival festival) {
+        User user = userService.getUserById(userId);
+        Participant participant = getExistingParticipantOrThrow(user, festival);
+
+        int point = participantService.getTotalPointByParticipant(participant);
+
+        return MainUserInfoResponse.from(participant, point);
     }
 
     public void validateUserParticipation(Long userId, Festival festival) {

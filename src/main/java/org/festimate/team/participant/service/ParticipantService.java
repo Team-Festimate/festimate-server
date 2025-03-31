@@ -21,4 +21,6 @@ public interface ParticipantService {
     List<Festival> getFestivalsByUser(User user, String status);
 
     TypeResponse getTypeResult(TypeRequest request);
+
+    int getTotalPointByParticipant(Participant participant);
 }
