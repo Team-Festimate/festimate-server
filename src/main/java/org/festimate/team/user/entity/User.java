@@ -33,6 +33,9 @@ public class User extends BaseTimeEntity {
     private int birthYear;
 
     @Column(nullable = false)
+    private Gender gender;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
@@ -50,12 +53,13 @@ public class User extends BaseTimeEntity {
     private String refreshToken;
 
     @Builder
-    public User(String name, String phoneNumber, String nickname, Integer birthYear, Mbti mbti,
+    public User(String name, String phoneNumber, String nickname, Integer birthYear, Gender gender, Mbti mbti,
                 AppearanceType appearanceType, String platformId, Platform platform, String refreshToken) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;
         this.birthYear = birthYear;
+        this.gender = gender;
         this.mbti = mbti;
         this.appearanceType = appearanceType;
         this.platformId = platformId;

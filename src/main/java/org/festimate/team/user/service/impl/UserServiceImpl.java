@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(request.phoneNumber())
                 .nickname(request.nickName())
                 .birthYear(request.birthYear())
+                .gender(request.gender())
                 .mbti(request.mbti())
                 .appearanceType(request.appearanceType())
                 .platformId(platformId)
