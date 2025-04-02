@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/v1/participant")
+@RequestMapping("/v1/participants")
 @RequiredArgsConstructor
 public class ParticipantController {
 
