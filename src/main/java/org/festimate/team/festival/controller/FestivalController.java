@@ -108,4 +108,19 @@ public class FestivalController {
 
         return ResponseBuilder.ok(response);
     }
+
+    @PatchMapping("/{festivalId}/me/message")
+    public ResponseEntity<ApiResponse<Void>> modifyMyMessage(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId,
+            @RequestBody MessageRequest request
+    ){
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+
+        festivalFacade.modifyMyMessage(userId, festival, request);
+
+        return ResponseBuilder.created(null);
+    }
+
 }
