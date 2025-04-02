@@ -77,10 +77,4 @@ public class ParticipantServiceImpl implements ParticipantService {
 
         return TypeResponse.from(TypeResult.values()[maxIdx]);
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public int getTotalPointByParticipant(Participant participant){
-        return participantRepository.getTotalPointByParticipant(participant);
-    }
 }
