@@ -64,7 +64,8 @@ public class FestivalServiceImpl implements FestivalService {
 
     @Override
     public boolean isFestivalExpired(Festival festival) {
-        return !festival.getEndDate().isBefore(LocalDate.now());
+        log.info("localdate now : {}", LocalDate.now());
+        return festival.getEndDate().isAfter(LocalDate.now());
     }
 
     private String generateUniqueInviteCode() {
