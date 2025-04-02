@@ -40,8 +40,7 @@ public class FestivalFacade {
 
     @Transactional(readOnly = true)
     public EntryResponse enterFestival(Long userId, Festival festival) {
-        User user = userService.getUserById(userId);
-        Participant participant = getExistingParticipantOrThrow(user, festival);
+        Participant participant = getExistingParticipantOrThrow(userId, festival);
 
         return EntryResponse.of(participant);
     }
@@ -62,8 +61,7 @@ public class FestivalFacade {
     }
 
     public MainUserInfoResponse getParticipantAndPoint(Long userId, Festival festival) {
-        User user = userService.getUserById(userId);
-        Participant participant = getExistingParticipantOrThrow(user, festival);
+        Participant participant = getExistingParticipantOrThrow(userId, festival);
 
         int point = participantService.getTotalPointByParticipant(participant);
 
@@ -71,20 +69,26 @@ public class FestivalFacade {
     }
 
     public ProfileResponse getParticipantProfile(Long userId, Festival festival) {
-        User user = userService.getUserById(userId);
-        Participant participant = getExistingParticipantOrThrow(user, festival);
-        return ProfileResponse.of(participant.getTypeResult(), user.getNickname());
+        Participant participant = getExistingParticipantOrThrow(userId, festival);
+        return ProfileResponse.of(participant.getTypeResult(), participant.getUser().getNickname());
     }
 
     public DetailProfileResponse getParticipantType(Long userId, Festival festival) {
-        User user = userService.getUserById(userId);
-        Participant participant = getExistingParticipantOrThrow(user, festival);
-        return DetailProfileResponse.from(user, participant);
+        Participant participant = getExistingParticipantOrThrow(userId, festival);
+        return DetailProfileResponse.from(participant.getUser(), participant);
     }
 
     public void validateUserParticipation(Long userId, Festival festival) {
-        User user = userService.getUserById(userId);
-        getExistingParticipantOrThrow(user, festival);
+        getExistingParticipantOrThrow(userId, festival);
+    }
+
+    @Transactional
+    public void modifyMyMessage(Long userId, Festival festival, MessageRequest messageRequest) {
+        Participant participant = getExistingParticipantOrThrow(userId, festival);
+        if (messageRequest.introduction() == null) {
+            throw new FestimateException(ResponseError.BAD_REQUEST);
+        }
+        participant.modifyIntroductionAndMessage(messageRequest.introduction(), messageRequest.message());
     }
 
     private Participant createParticipantIfValid(User user, Festival festival, ProfileRequest request) {
@@ -98,7 +102,8 @@ public class FestivalFacade {
         return participantService.createParticipant(user, festival, request);
     }
 
-    private Participant getExistingParticipantOrThrow(User user, Festival festival) {
+    private Participant getExistingParticipantOrThrow(Long userId, Festival festival) {
+        User user = userService.getUserById(userId);
         Participant participant = participantService.getParticipant(user, festival);
         if (participant == null) {
             throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);

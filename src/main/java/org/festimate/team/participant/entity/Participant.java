@@ -59,4 +59,9 @@ public class Participant extends BaseTimeEntity {
         this.introduction = introduction;
         this.message = message;
     }
+
+    public void modifyIntroductionAndMessage(String introduction, String message) {
+        this.introduction = introduction;
+        this.message = message;
+    }
 }

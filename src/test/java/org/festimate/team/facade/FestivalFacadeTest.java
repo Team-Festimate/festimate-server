@@ -3,6 +3,7 @@ package org.festimate.team.facade;
 import org.festimate.team.common.response.ResponseError;
 import org.festimate.team.exception.FestimateException;
 import org.festimate.team.festival.dto.FestivalInfoResponse;
+import org.festimate.team.festival.dto.MessageRequest;
 import org.festimate.team.festival.entity.Category;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.festival.service.FestivalService;
@@ -130,4 +131,131 @@ class FestivalFacadeTest {
                 .isInstanceOf(FestimateException.class)
                 .hasMessageContaining(ResponseError.FORBIDDEN_RESOURCE.getMessage());
     }
+
+    @Test
+    @DisplayName("자기소개 및 메시지 수정 - 정상 케이스 (message 생략 가능)")
+    void modifyMessage_success() {
+        // given
+        Long userId = 1L;
+        Festival mockFestival = mockFestival();
+        User mockUser = mockUser();
+        Participant mockParticipant = Participant.builder()
+                .user(mockUser)
+                .festival(mockFestival)
+                .typeResult(TypeResult.HEALING)
+                .introduction("이전 자기소개")
+                .message("이전 메세지")
+                .build();
+
+        MessageRequest request = new MessageRequest("메세지 수정했지롱 ~", null);
+
+        when(userService.getUserById(userId)).thenReturn(mockUser);
+        when(participantService.getParticipant(mockUser, mockFestival)).thenReturn(mockParticipant);
+
+        // when
+        festivalFacade.modifyMyMessage(userId, mockFestival, request);
+
+        // then
+        assertThat(mockParticipant.getIntroduction()).isEqualTo("메세지 수정했지롱 ~");
+        assertThat(mockParticipant.getMessage()).isNull();
+    }
+
+    @Test
+    @DisplayName("자기소개 및 메시지 수정 - message 생략, introduction null일 경우 예외 발생")
+    void modifyMessage_fail_if_introduction_missing() {
+        // given
+        Long userId = 1L;
+        Festival mockFestival = mockFestival();
+        User mockUser = mockUser();
+        Participant mockParticipant = Participant.builder()
+                .user(mockUser)
+                .festival(mockFestival)
+                .typeResult(TypeResult.HEALING)
+                .introduction("이전 자기소개")
+                .message("이전 메세지")
+                .build();
+
+        MessageRequest request = new MessageRequest(null, "롱롱소세지");
+
+        when(userService.getUserById(userId)).thenReturn(mockUser);
+        when(participantService.getParticipant(mockUser, mockFestival)).thenReturn(mockParticipant);
+
+        // when & then
+        assertThatThrownBy(() -> festivalFacade.modifyMyMessage(userId, mockFestival, request))
+                .isInstanceOf(FestimateException.class)
+                .hasMessageContaining(ResponseError.BAD_REQUEST.getMessage());
+    }
+
+    @Test
+    @DisplayName("자기소개 및 메시지 수정 - 유저가 페스티벌 참가자가 아닌 경우")
+    void modifyMessage_fail_if_not_participant() {
+        // given
+        Long userId = 2L;
+        Festival mockFestival = mockFestival();
+        User mockUser = mockUser();
+
+        MessageRequest request = new MessageRequest("메세지 수정했지롱 ~", "롱롱소세지");
+
+        when(userService.getUserById(userId)).thenReturn(mockUser);
+        when(participantService.getParticipant(mockUser, mockFestival)).thenReturn(null);
+
+        // when & then
+        assertThatThrownBy(() -> festivalFacade.modifyMyMessage(userId, mockFestival, request))
+                .isInstanceOf(FestimateException.class)
+                .hasMessageContaining(ResponseError.FORBIDDEN_RESOURCE.getMessage());
+    }
+
+    @Test
+    @DisplayName("자기소개 및 메시지 수정 - 모든 항목 올바르게 입력한 경우")
+    void modifyMessage_success_if_all_fields_given() {
+        // given
+        Long userId = 1L;
+        Festival mockFestival = mockFestival();
+        User mockUser = mockUser();
+        Participant mockParticipant = Participant.builder()
+                .user(mockUser)
+                .festival(mockFestival)
+                .typeResult(TypeResult.HEALING)
+                .introduction("이전 자기소개")
+                .message("이전 메세지")
+                .build();
+
+        MessageRequest request = new MessageRequest("새로운 소개", "새로운 메시지");
+
+        when(userService.getUserById(userId)).thenReturn(mockUser);
+        when(participantService.getParticipant(mockUser, mockFestival)).thenReturn(mockParticipant);
+
+        // when
+        festivalFacade.modifyMyMessage(userId, mockFestival, request);
+
+        // then
+        assertThat(mockParticipant.getIntroduction()).isEqualTo("새로운 소개");
+        assertThat(mockParticipant.getMessage()).isEqualTo("새로운 메시지");
+    }
+
+    private User mockUser() {
+        return User.builder()
+                .name("테스트 유저")
+                .phoneNumber("010-1234-5678")
+                .nickname("현진")
+                .birthYear(1999)
+                .mbti(Mbti.INFP)
+                .appearanceType(AppearanceType.BEAR)
+                .platformId("kakao_123456")
+                .platform(Platform.KAKAO)
+                .refreshToken("dummy_refresh_token")
+                .build();
+    }
+
+    private Festival mockFestival() {
+        return Festival.builder()
+                .host(mockUser())
+                .title("가톨릭대학교 다맛제")
+                .category(Category.LIFE)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(2))
+                .inviteCode("ABC123")
+                .build();
+    }
+
 }
