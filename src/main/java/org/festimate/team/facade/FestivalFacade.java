@@ -85,6 +85,9 @@ public class FestivalFacade {
     @Transactional
     public void modifyMyMessage(Long userId, Festival festival, MessageRequest messageRequest) {
         Participant participant = getExistingParticipantOrThrow(userId, festival);
+        if (messageRequest.introduction() == null) {
+            throw new FestimateException(ResponseError.BAD_REQUEST);
+        }
         participant.modifyIntroductionAndMessage(messageRequest.introduction(), messageRequest.message());
     }
 
