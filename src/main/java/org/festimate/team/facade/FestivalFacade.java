@@ -1,6 +1,8 @@
 package org.festimate.team.facade;
 
 import lombok.RequiredArgsConstructor;
+import org.festimate.team.Point.dto.PointHistoryResponse;
+import org.festimate.team.Point.service.PointService;
 import org.festimate.team.common.response.ResponseError;
 import org.festimate.team.exception.FestimateException;
 import org.festimate.team.festival.dto.*;
@@ -26,6 +28,7 @@ public class FestivalFacade {
     private final UserService userService;
     private final FestivalService festivalService;
     private final ParticipantService participantService;
+    private final PointService pointService;
 
     public FestivalResponse createFestival(Long userId, FestivalRequest request) {
         User host = userService.getUserById(userId);
@@ -63,7 +66,7 @@ public class FestivalFacade {
     public MainUserInfoResponse getParticipantAndPoint(Long userId, Festival festival) {
         Participant participant = getExistingParticipantOrThrow(userId, festival);
 
-        int point = participantService.getTotalPointByParticipant(participant);
+        int point = pointService.getTotalPointByParticipant(participant);
 
         return MainUserInfoResponse.from(participant, point);
     }
@@ -89,6 +92,13 @@ public class FestivalFacade {
             throw new FestimateException(ResponseError.BAD_REQUEST);
         }
         participant.modifyIntroductionAndMessage(messageRequest.introduction(), messageRequest.message());
+    }
+
+    @Transactional(readOnly = true)
+    public PointHistoryResponse getMyPointHistory(Long userId, Festival festival) {
+        Participant participant = getExistingParticipantOrThrow(userId, festival);
+
+        return pointService.getPointHistory(participant);
     }
 
     private Participant createParticipantIfValid(User user, Festival festival, ProfileRequest request) {
