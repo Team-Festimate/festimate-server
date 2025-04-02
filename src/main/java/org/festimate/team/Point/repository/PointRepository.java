@@ -1,7 +1,6 @@
 package org.festimate.team.Point.repository;
 
 import org.festimate.team.Point.entity.Point;
-import org.festimate.team.participant.entity.Participant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
