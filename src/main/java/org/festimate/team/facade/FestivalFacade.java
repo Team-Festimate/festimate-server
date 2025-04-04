@@ -119,7 +119,7 @@ public class FestivalFacade {
         Optional<Participant> targetParticipantOptional = matchingService.findBestCandidateByPriority(festivalId, participant);
 
         Matching matching = matchingService.createMatching(festival, targetParticipantOptional, participant);
-        return MatchingStatusResponse.of(matching.getStatus(), matching.getMatchingId(), matching.getMatchDate());
+        return MatchingStatusResponse.of(matching.getStatus(), matching.getMatchingId());
     }
 
     private Participant createParticipantIfValid(User user, Festival festival, ProfileRequest request) {
