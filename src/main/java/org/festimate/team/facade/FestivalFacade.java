@@ -8,6 +8,9 @@ import org.festimate.team.exception.FestimateException;
 import org.festimate.team.festival.dto.*;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.festival.service.FestivalService;
+import org.festimate.team.matching.dto.MatchingStatusResponse;
+import org.festimate.team.matching.entity.Matching;
+import org.festimate.team.matching.service.MatchingService;
 import org.festimate.team.participant.dto.ProfileRequest;
 import org.festimate.team.participant.entity.Participant;
 import org.festimate.team.participant.service.ParticipantService;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.festimate.team.festival.validator.DateValidator.isFestivalDateValid;
 import static org.festimate.team.festival.validator.FestivalRequestValidator.isFestivalValid;
@@ -29,6 +33,7 @@ public class FestivalFacade {
     private final FestivalService festivalService;
     private final ParticipantService participantService;
     private final PointService pointService;
+    private final MatchingService matchingService;
 
     public FestivalResponse createFestival(Long userId, FestivalRequest request) {
         User host = userService.getUserById(userId);
@@ -52,7 +57,10 @@ public class FestivalFacade {
     public EntryResponse createParticipant(Long userId, Festival festival, ProfileRequest request) {
         User user = userService.getUserById(userId);
 
-        return EntryResponse.of(createParticipantIfValid(user, festival, request));
+        Participant participant = createParticipantIfValid(user, festival, request);
+
+        matchingService.matchPendingParticipants(participant);
+        return EntryResponse.of(participant);
     }
 
     @Transactional(readOnly = true)
@@ -99,6 +107,19 @@ public class FestivalFacade {
         Participant participant = getExistingParticipantOrThrow(userId, festival);
 
         return pointService.getPointHistory(participant);
+    }
+
+    @Transactional
+    public MatchingStatusResponse createMatching(Long userId, long festivalId) {
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        Participant participant = getExistingParticipantOrThrow(userId, festival);
+
+        pointService.usePoint(participant);
+
+        Optional<Participant> targetParticipantOptional = matchingService.findBestCandidateByPriority(festivalId, participant);
+
+        Matching matching = matchingService.createMatching(festival, targetParticipantOptional, participant);
+        return MatchingStatusResponse.of(matching.getStatus(), matching.getMatchingId());
     }
 
     private Participant createParticipantIfValid(User user, Festival festival, ProfileRequest request) {
