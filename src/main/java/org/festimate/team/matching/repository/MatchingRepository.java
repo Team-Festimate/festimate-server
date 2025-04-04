@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MatchingRepository extends JpaRepository<Matching, Long> {
@@ -43,20 +44,28 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
             @Param("festivalId") Long festivalId
     );
 
-
     @Query("""
                 SELECT m FROM Matching m
                 WHERE m.festival.festivalId = :festivalId
                   AND m.status = 'PENDING'
-                  AND m.applicantParticipant.typeResult = :typeResult
                   AND m.applicantParticipant.user.gender != :gender
                 ORDER BY m.createdAt ASC
-                LIMIT 1
             """)
-    Optional<Matching> findFirstPendingMatchingByTypeAndOppositeGender(
+    List<Matching> findAllPendingMatchingsByFestivalAndOppositeGender(
             @Param("festivalId") Long festivalId,
-            @Param("typeResult") TypeResult typeResult,
             @Param("gender") Gender gender
+    );
+
+    @Query("""
+                SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END
+                FROM Matching m
+                WHERE m.applicantParticipant.participantId = :participantId
+                  AND m.targetParticipant.participantId = :targetParticipantId
+                  AND m.status = 'COMPLETED'
+            """)
+    boolean existsCompletedMatching(
+            @Param("participantId") Long participantId,
+            @Param("targetParticipantId") Long targetParticipantId
     );
 
 }
