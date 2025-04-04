@@ -116,7 +116,7 @@ public class FestivalFacade {
 
         pointService.usePoint(participant);
 
-        Optional<Participant> targetParticipantOptional = matchingService.findMatchingCandidate(festivalId, participant);
+        Optional<Participant> targetParticipantOptional = matchingService.findBestCandidateByPriority(festivalId, participant);
 
         Matching matching = matchingService.createMatching(festival, targetParticipantOptional, participant);
         return MatchingStatusResponse.of(matching.getStatus(), matching.getMatchingId(), matching.getMatchDate());
