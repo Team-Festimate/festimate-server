@@ -41,10 +41,10 @@ public class MatchingServiceTest {
     @Test
     @DisplayName("매칭 리스트 조회 - PENDING과 COMPLETED 매칭을 포함한 정상 케이스")
     void getMatchingListByParticipant_success() {
-        // given
 
-        User applicationUser = mockMan("신청자");
-        User targetUser = mockWoman("타켓");
+        // given
+        User applicationUser = mockUser("신청자", Gender.MAN);
+        User targetUser = mockUser("타겟", Gender.WOMAN);
 
         Participant applicant = Participant.builder()
                 .user(applicationUser)
@@ -76,15 +76,16 @@ public class MatchingServiceTest {
 
         // then
         assertThat(result).hasSize(2);
-        assertThat(result.get(0).nickname()).isEqualTo("타켓");
+        assertThat(result.get(0).nickname()).isEqualTo("타겟");
         assertThat(result.get(1).nickname()).isNull();
     }
 
     @Test
     @DisplayName("우선순위 기반 매칭 - 매칭 가능한 사람이 있을 때")
     void findBestCandidateByPriority_success() {
-        User applicationUser = mockMan("신청자");
-        User targetUser = mockWoman("타켓");
+        // given
+        User applicationUser = mockUser("신청자", Gender.MAN);
+        User targetUser = mockUser("타겟", Gender.WOMAN);
 
         Festival festival = mockFestival(applicationUser);
 
@@ -116,7 +117,7 @@ public class MatchingServiceTest {
     @Test
     @DisplayName("우선순위 기반 매칭 - 매칭 가능한 사람이 없을 때")
     void findBestCandidateByPriority_empty() {
-        User user = mockMan("신청자");
+        User user = mockUser("신청자", Gender.MAN);
         Festival festival = mockFestival(user);
         Participant applicant = Participant.builder()
                 .user(user)
@@ -135,28 +136,13 @@ public class MatchingServiceTest {
         assertThat(result).isEmpty();
     }
 
-    private User mockMan(String nickname) {
+    private User mockUser(String nickname, Gender gender) {
         return User.builder()
                 .name("남자")
                 .phoneNumber("010-1234-5678")
                 .nickname(nickname)
                 .birthYear(1999)
-                .gender(Gender.MAN)
-                .mbti(Mbti.INFP)
-                .appearanceType(AppearanceType.BEAR)
-                .platformId("1")
-                .platform(Platform.KAKAO)
-                .refreshToken("dummy_refresh_token")
-                .build();
-    }
-
-    private User mockWoman(String nickname) {
-        return User.builder()
-                .name("여자")
-                .phoneNumber("010-1234-5678")
-                .nickname(nickname)
-                .birthYear(1999)
-                .gender(Gender.WOMAN)
+                .gender(gender)
                 .mbti(Mbti.INFP)
                 .appearanceType(AppearanceType.BEAR)
                 .platformId("1")
