@@ -68,5 +68,12 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
             @Param("targetParticipantId") Long targetParticipantId
     );
 
+    @Query("""
+                SELECT m FROM Matching m
+                WHERE m.applicantParticipant = :participant
+                ORDER BY m.createdAt DESC
+            """)
+    List<Matching> findAllMatchingsByApplicantParticipant(Participant participant);
+
 }
 
