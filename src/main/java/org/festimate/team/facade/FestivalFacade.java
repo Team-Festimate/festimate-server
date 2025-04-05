@@ -8,6 +8,8 @@ import org.festimate.team.exception.FestimateException;
 import org.festimate.team.festival.dto.*;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.festival.service.FestivalService;
+import org.festimate.team.matching.dto.MatchingInfo;
+import org.festimate.team.matching.dto.MatchingListResponse;
 import org.festimate.team.matching.dto.MatchingStatusResponse;
 import org.festimate.team.matching.entity.Matching;
 import org.festimate.team.matching.service.MatchingService;
@@ -120,6 +122,14 @@ public class FestivalFacade {
 
         Matching matching = matchingService.createMatching(festival, targetParticipantOptional, participant);
         return MatchingStatusResponse.of(matching.getStatus(), matching.getMatchingId());
+    }
+
+    public MatchingListResponse getMatchingList(Long userId, Long festivalId) {
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        Participant participant = getExistingParticipantOrThrow(userId, festival);
+
+        List<MatchingInfo> matchings = matchingService.getMatchingListByParticipant(participant);
+        return MatchingListResponse.from(matchings);
     }
 
     private Participant createParticipantIfValid(User user, Festival festival, ProfileRequest request) {

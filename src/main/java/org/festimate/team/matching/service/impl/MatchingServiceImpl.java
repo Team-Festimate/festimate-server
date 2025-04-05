@@ -3,6 +3,7 @@ package org.festimate.team.matching.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.festimate.team.festival.entity.Festival;
+import org.festimate.team.matching.dto.MatchingInfo;
 import org.festimate.team.matching.entity.Matching;
 import org.festimate.team.matching.entity.MatchingStatus;
 import org.festimate.team.matching.repository.MatchingRepository;
@@ -75,6 +76,14 @@ public class MatchingServiceImpl implements MatchingService {
                 matchingRepository.save(pendingMatching);
             }
         }
+    }
+
+    @Override
+    public List<MatchingInfo> getMatchingListByParticipant(Participant participant) {
+        List<Matching> matchings = matchingRepository.findAllMatchingsByApplicantParticipant(participant);
+        return matchings.stream()
+                .map(MatchingInfo::fromMatching)
+                .toList();
     }
 
     private boolean isValidMatch(Participant applicant, Participant candidate) {
