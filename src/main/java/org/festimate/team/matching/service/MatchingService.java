@@ -18,6 +18,4 @@ public interface MatchingService {
     void matchPendingParticipants(Participant newParticipant);
 
     List<MatchingInfo> getMatchingListByParticipant(Participant participant);
-
-    Matching getMatchingDetailById(Participant participant, long matchingId);
 }
