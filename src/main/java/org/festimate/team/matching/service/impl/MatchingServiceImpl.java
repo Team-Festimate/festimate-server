@@ -2,6 +2,8 @@ package org.festimate.team.matching.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.festimate.team.common.response.ResponseError;
+import org.festimate.team.exception.FestimateException;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.matching.dto.MatchingInfo;
 import org.festimate.team.matching.entity.Matching;
@@ -84,6 +86,17 @@ public class MatchingServiceImpl implements MatchingService {
         return matchings.stream()
                 .map(MatchingInfo::fromMatching)
                 .toList();
+    }
+
+    @Override
+    public Matching getMatchingDetailById(Participant participant, long matchingId) {
+        Matching matching = matchingRepository.findMatchingByMatchingId(matchingId)
+                .orElseThrow(() -> new FestimateException(ResponseError.TARGET_NOT_FOUND));
+
+        if(matching.getApplicantParticipant() != participant){
+            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
+        }
+        return matching;
     }
 
     private boolean isValidMatch(Participant applicant, Participant candidate) {
