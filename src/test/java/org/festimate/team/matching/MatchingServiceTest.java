@@ -1,5 +1,7 @@
 package org.festimate.team.matching;
 
+import org.festimate.team.common.response.ResponseError;
+import org.festimate.team.exception.FestimateException;
 import org.festimate.team.festival.entity.Category;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.matching.dto.MatchingInfo;
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -134,6 +137,122 @@ public class MatchingServiceTest {
         );
 
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("매칭 상세 조회 - 성공")
+    void getMatchingDetailByMatchingId_success() {
+        User user1 = mockUser("신청자", Gender.MAN);
+        User user2 = mockUser("타겟", Gender.MAN);
+
+        Festival festival = mockFestival(user1);
+        Participant applicant = Participant.builder()
+                .user(user1)
+                .typeResult(TypeResult.INFLUENCER)
+                .festival(festival)
+                .build();
+        ReflectionTestUtils.setField(applicant, "participantId", 1L);
+
+        Participant matchedParticipant = Participant.builder()
+                .user(user2)
+                .typeResult(TypeResult.INFLUENCER)
+                .festival(festival)
+                .build();
+        ReflectionTestUtils.setField(matchedParticipant, "participantId", 2L);
+
+        Matching completedMatching = Matching.builder()
+                .applicantParticipant(applicant)
+                .targetParticipant(matchedParticipant)
+                .status(MatchingStatus.COMPLETED)
+                .matchDate(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(completedMatching, "matchingId", 1L);
+
+        when(matchingRepository.findMatchingByMatchingId(1L))
+                .thenReturn(Optional.of(completedMatching));
+
+        // when
+        Matching result = matchingService.getMatchingDetailById(applicant, 1L);
+
+        // then
+        assertThat(result.getMatchingId()).isEqualTo(1L);
+        assertThat(result.getStatus()).isEqualTo(MatchingStatus.COMPLETED);
+    }
+
+    @Test
+    @DisplayName("매칭 상세 조회 - 매칭 신청한 사람이 아닌 유저가 조회했을 경우")
+    void getMatchingDetailByMatchingId_Participant() {
+        User user1 = mockUser("신청자", Gender.MAN);
+        User user2 = mockUser("타겟", Gender.MAN);
+
+        Festival festival = mockFestival(user1);
+        Participant applicant = Participant.builder()
+                .user(user1)
+                .typeResult(TypeResult.INFLUENCER)
+                .festival(festival)
+                .build();
+        ReflectionTestUtils.setField(applicant, "participantId", 1L);
+
+        Participant matchedParticipant = Participant.builder()
+                .user(user2)
+                .typeResult(TypeResult.INFLUENCER)
+                .festival(festival)
+                .build();
+        ReflectionTestUtils.setField(matchedParticipant, "participantId", 2L);
+
+        Matching completedMatching = Matching.builder()
+                .applicantParticipant(applicant)
+                .targetParticipant(matchedParticipant)
+                .status(MatchingStatus.COMPLETED)
+                .matchDate(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(completedMatching, "matchingId", 1L);
+
+        when(matchingRepository.findMatchingByMatchingId(1L))
+                .thenReturn(Optional.of(completedMatching));
+
+        // when & then
+        assertThatThrownBy(() -> matchingService.getMatchingDetailById(matchedParticipant, 1L))
+                .isInstanceOf(FestimateException.class)
+                .hasMessageContaining(ResponseError.FORBIDDEN_RESOURCE.getMessage());
+    }
+
+    @Test
+    @DisplayName("매칭 상세 조회 - 매칭 아이디에 맞는 매칭이 없을 경우")
+    void getMatchingDetailByMatchingId_empty() {
+        User user1 = mockUser("신청자", Gender.MAN);
+        User user2 = mockUser("타겟", Gender.MAN);
+
+        Festival festival = mockFestival(user1);
+        Participant applicant = Participant.builder()
+                .user(user1)
+                .typeResult(TypeResult.INFLUENCER)
+                .festival(festival)
+                .build();
+        ReflectionTestUtils.setField(applicant, "participantId", 1L);
+
+        Participant matchedParticipant = Participant.builder()
+                .user(user2)
+                .typeResult(TypeResult.INFLUENCER)
+                .festival(festival)
+                .build();
+        ReflectionTestUtils.setField(matchedParticipant, "participantId", 2L);
+
+        Matching completedMatching = Matching.builder()
+                .applicantParticipant(applicant)
+                .targetParticipant(matchedParticipant)
+                .status(MatchingStatus.COMPLETED)
+                .matchDate(LocalDateTime.now())
+                .build();
+        ReflectionTestUtils.setField(completedMatching, "matchingId", 1L);
+
+        when(matchingRepository.findMatchingByMatchingId(1L))
+                .thenReturn(Optional.of(completedMatching));
+
+        // when & then
+        assertThatThrownBy(() -> matchingService.getMatchingDetailById(applicant, 2L))
+                .isInstanceOf(FestimateException.class)
+                .hasMessageContaining(ResponseError.TARGET_NOT_FOUND.getMessage());
     }
 
     private User mockUser(String nickname, Gender gender) {
