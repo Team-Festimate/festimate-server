@@ -58,8 +58,9 @@ public class FestivalServiceImpl implements FestivalService {
     }
 
     @Override
-    public List<Festival> getAllFestivals() {
-        return festivalRepository.findAll();
+    public List<Festival> getAllFestivals(User user) {
+        log.info("user: {}", user);
+        return festivalRepository.findFestivalByHost(user);
     }
 
     @Override
