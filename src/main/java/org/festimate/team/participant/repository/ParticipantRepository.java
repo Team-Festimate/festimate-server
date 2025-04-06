@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
+public interface ParticipantRepository extends JpaRepository<Participant, Long> {
     Participant getParticipantByUserAndFestival(User user, Festival festival);
 
     @Query("SELECT p FROM Participant p WHERE p.user = :user AND " +

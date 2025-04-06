@@ -1,6 +1,7 @@
 package org.festimate.team.festival.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.festimate.team.Point.dto.PointHistoryResponse;
 import org.festimate.team.common.response.ApiResponse;
 import org.festimate.team.common.response.ResponseBuilder;
 import org.festimate.team.facade.FestivalFacade;
@@ -61,6 +62,19 @@ public class AdminFestivalController {
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
         AdminFestivalDetailResponse response
                 = AdminFestivalDetailResponse.of(festivalService.getFestivalDetailByIdOrThrow(festivalId, userId));
+
+        return ResponseBuilder.ok(response);
+    }
+
+    @GetMapping("/festivals/{festivalId}/participants/{participantId}/points")
+    public ResponseEntity<ApiResponse<PointHistoryResponse>> getParticipantPointHistory(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId,
+            @PathVariable("participantId") Long participantId
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+
+        PointHistoryResponse response = festivalFacade.getParticipantPointHistory(userId, festivalId, participantId);
 
         return ResponseBuilder.ok(response);
     }

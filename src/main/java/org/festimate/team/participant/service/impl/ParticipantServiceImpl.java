@@ -2,6 +2,8 @@ package org.festimate.team.participant.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.festimate.team.common.response.ResponseError;
+import org.festimate.team.exception.FestimateException;
 import org.festimate.team.festival.dto.TypeRequest;
 import org.festimate.team.festival.dto.TypeResponse;
 import org.festimate.team.festival.entity.Festival;
@@ -41,6 +43,13 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Override
     public Participant getParticipant(User user, Festival festival) {
         return participantRepository.getParticipantByUserAndFestival(user, festival);
+    }
+
+    @Override
+    public Participant getParticipantById(Long participantId) {
+        return participantRepository.findById(participantId).orElseThrow(
+                () -> new FestimateException(ResponseError.PARTICIPANT_NOT_FOUND)
+        );
     }
 
     @Override

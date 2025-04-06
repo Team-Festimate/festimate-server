@@ -79,6 +79,12 @@ public class FestivalServiceImpl implements FestivalService {
         return festival.getEndDate().isAfter(LocalDate.now());
     }
 
+    @Override
+    public boolean isHost(User user, Festival festival) {
+        log.info("user is: {}, host is {}", user, festival.getHost());
+        return festival.getHost().equals(user);
+    }
+
     private String generateUniqueInviteCode() {
         Random random = new Random();
         String inviteCode;
