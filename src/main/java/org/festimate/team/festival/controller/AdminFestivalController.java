@@ -5,6 +5,7 @@ import org.festimate.team.common.response.ApiResponse;
 import org.festimate.team.common.response.ResponseBuilder;
 import org.festimate.team.facade.FestivalFacade;
 import org.festimate.team.facade.UserFacade;
+import org.festimate.team.festival.dto.AdminFestivalDetailResponse;
 import org.festimate.team.festival.dto.AdminFestivalResponse;
 import org.festimate.team.festival.dto.FestivalRequest;
 import org.festimate.team.festival.dto.FestivalResponse;
@@ -49,6 +50,18 @@ public class AdminFestivalController {
         List<AdminFestivalResponse> response = festivals.stream()
                 .map(AdminFestivalResponse::of)
                 .toList();
+        return ResponseBuilder.ok(response);
+    }
+
+    @GetMapping("/festivals/{festivalId}")
+    public ResponseEntity<ApiResponse<AdminFestivalDetailResponse>> getFestivalDetail(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable Long festivalId
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        AdminFestivalDetailResponse response
+                = AdminFestivalDetailResponse.of(festivalService.getFestivalDetailByIdOrThrow(festivalId, userId));
+
         return ResponseBuilder.ok(response);
     }
 }

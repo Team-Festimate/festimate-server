@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 @Service
@@ -61,6 +62,15 @@ public class FestivalServiceImpl implements FestivalService {
     public List<Festival> getAllFestivals(User user) {
         log.info("user: {}", user);
         return festivalRepository.findFestivalByHost(user);
+    }
+
+    @Override
+    public Festival getFestivalDetailByIdOrThrow(Long festivalId, Long userId) {
+        Festival festival = getFestivalByIdOrThrow(festivalId);
+        if (!Objects.equals(festival.getHost().getUserId(), userId)) {
+            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
+        }
+        return festival;
     }
 
     @Override
