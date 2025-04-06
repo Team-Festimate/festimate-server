@@ -60,4 +60,20 @@ public class Festival extends BaseTimeEntity {
         this.endDate = endDate;
         this.inviteCode = inviteCode;
     }
+
+    public FestivalStatus getFestivalStatus() {
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = this.getStartDate();
+        LocalDate endDate = this.getEndDate();
+
+        if (now.isBefore(startDate)) {
+            return FestivalStatus.BEFORE;
+        } else if (now.isBefore(endDate.plusDays(1))) {
+            return FestivalStatus.PROGRESS;
+        } else if (now.isBefore(endDate.plusDays(8))) {
+            return FestivalStatus.REFUND;
+        } else {
+            return FestivalStatus.END;
+        }
+    }
 }
