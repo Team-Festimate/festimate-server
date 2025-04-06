@@ -26,7 +26,7 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.when;
 
-public class MatchingServiceTest {
+public class MatchingServiceImplTest {
     @Mock
     private MatchingRepository matchingRepository;
 
