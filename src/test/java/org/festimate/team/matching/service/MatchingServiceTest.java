@@ -1,4 +1,4 @@
-package org.festimate.team.matching;
+package org.festimate.team.matching.service;
 
 import org.festimate.team.festival.entity.Category;
 import org.festimate.team.festival.entity.Festival;
