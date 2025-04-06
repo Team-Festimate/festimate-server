@@ -1,6 +1,7 @@
-package org.festimate.team.user.service.impl;
+package org.festimate.team.user.service;
 
 import org.festimate.team.common.response.ResponseError;
+import org.festimate.team.user.service.impl.UserServiceImpl;
 import org.festimate.team.user.validator.NicknameValidator;
 import org.festimate.team.exception.FestimateException;
 import org.festimate.team.user.repository.UserRepository;

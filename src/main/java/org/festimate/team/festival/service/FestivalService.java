@@ -13,7 +13,7 @@ public interface FestivalService {
 
     Festival getFestivalByIdOrThrow(Long festivalId);
 
-    List<Festival> getAllFestivals();
+    List<Festival> getAllFestivals(User user);
 
     boolean isFestivalExpired(Festival festival);
 }

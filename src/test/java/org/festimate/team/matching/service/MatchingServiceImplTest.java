@@ -1,4 +1,4 @@
-package org.festimate.team.matching;
+package org.festimate.team.matching.service;
 
 import org.festimate.team.festival.entity.Category;
 import org.festimate.team.festival.entity.Festival;
@@ -26,7 +26,7 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.when;
 
-public class MatchingServiceTest {
+public class MatchingServiceImplTest {
     @Mock
     private MatchingRepository matchingRepository;
 
