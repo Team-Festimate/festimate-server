@@ -2,7 +2,6 @@ package org.festimate.team.festival.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.Point.dto.PointHistoryResponse;
-import org.festimate.team.Point.dto.PointHistoryResponse;
 import org.festimate.team.common.response.ApiResponse;
 import org.festimate.team.common.response.ResponseBuilder;
 import org.festimate.team.facade.FestivalFacade;
