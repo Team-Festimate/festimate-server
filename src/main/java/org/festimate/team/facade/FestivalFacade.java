@@ -111,8 +111,19 @@ public class FestivalFacade {
         return pointService.getPointHistory(participant);
     }
 
+    @Transactional(readOnly = true)
+    public PointHistoryResponse getParticipantPointHistory(Long userId, Long festivalId, Long participantId) {
+        User user = userService.getUserById(userId);
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        if (!festivalService.isHost(user, festival)) {
+            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
+        }
+        Participant participant = participantService.getParticipantById(participantId);
+        return pointService.getPointHistory(participant);
+    }
+
     @Transactional
-    public MatchingStatusResponse createMatching(Long userId, long festivalId) {
+    public MatchingStatusResponse createMatching(Long userId, Long festivalId) {
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
         Participant participant = getExistingParticipantOrThrow(userId, festival);
 
