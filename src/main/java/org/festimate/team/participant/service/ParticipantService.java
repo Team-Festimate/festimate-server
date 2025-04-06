@@ -17,6 +17,8 @@ public interface ParticipantService {
 
     Participant getParticipant(User user, Festival festival);
 
+    Participant getParticipantById(Long participantId);
+
     @Transactional(readOnly = true)
     List<Festival> getFestivalsByUser(User user, String status);
 
