@@ -16,4 +16,6 @@ public interface FestivalService {
     List<Festival> getAllFestivals(User user);
 
     boolean isFestivalExpired(Festival festival);
+
+    boolean isHost(User user, Festival festival);
 }
