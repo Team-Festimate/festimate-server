@@ -6,10 +6,7 @@ import org.festimate.team.common.response.ApiResponse;
 import org.festimate.team.common.response.ResponseBuilder;
 import org.festimate.team.facade.FestivalFacade;
 import org.festimate.team.facade.UserFacade;
-import org.festimate.team.festival.dto.AdminFestivalDetailResponse;
-import org.festimate.team.festival.dto.AdminFestivalResponse;
-import org.festimate.team.festival.dto.FestivalRequest;
-import org.festimate.team.festival.dto.FestivalResponse;
+import org.festimate.team.festival.dto.*;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.festival.service.FestivalService;
 import org.festimate.team.global.jwt.JwtService;
@@ -76,6 +73,18 @@ public class AdminFestivalController {
 
         PointHistoryResponse response = festivalFacade.getParticipantPointHistory(userId, festivalId, participantId);
 
+        return ResponseBuilder.ok(response);
+    }
+
+    @GetMapping("/festivals/{festivalId}/participants/search")
+    public ResponseEntity<ApiResponse<List<SearchParticipantResponse>>> getParticipantByNickname(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId,
+            @RequestParam("nickname") String nickname
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+
+        List<SearchParticipantResponse> response = festivalFacade.getParticipantByNickname(userId, festivalId, nickname);
         return ResponseBuilder.ok(response);
     }
 }
