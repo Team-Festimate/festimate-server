@@ -87,4 +87,16 @@ public class AdminFestivalController {
         List<SearchParticipantResponse> response = festivalFacade.getParticipantByNickname(userId, festivalId, nickname);
         return ResponseBuilder.ok(response);
     }
+
+    @PostMapping("/festival/{festivalId}/points")
+    public ResponseEntity<ApiResponse<FestivalResponse>> rechargePoints(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId,
+            @RequestBody RechargePointRequest request
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        festivalFacade.rechargePoints(userId, festivalId, request);
+
+        return ResponseBuilder.created(null);
+    }
 }

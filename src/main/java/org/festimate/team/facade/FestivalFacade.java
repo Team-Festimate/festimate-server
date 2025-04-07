@@ -130,6 +130,19 @@ public class FestivalFacade {
     }
 
     @Transactional
+    public void rechargePoints(Long userId, Long festivalId, RechargePointRequest request) {
+        User user = userService.getUserById(userId);
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        isHost(user, festival);
+
+        Participant participant = participantService.getParticipantById(request.participantId());
+        if (participant.getFestival() != festival) {
+            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
+        }
+        pointService.rechargePoint(participant, request.point());
+    }
+
+    @Transactional
     public MatchingStatusResponse createMatching(Long userId, Long festivalId) {
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
         Participant participant = getExistingParticipantOrThrow(userId, festival);
