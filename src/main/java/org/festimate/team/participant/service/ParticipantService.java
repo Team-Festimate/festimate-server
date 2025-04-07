@@ -22,5 +22,7 @@ public interface ParticipantService {
     @Transactional(readOnly = true)
     List<Festival> getFestivalsByUser(User user, String status);
 
+    List<Participant> getParticipantByNickname(Festival festival, String nickname);
+
     TypeResponse getTypeResult(TypeRequest request);
 }
