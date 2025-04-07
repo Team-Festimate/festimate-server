@@ -26,6 +26,7 @@ Festimate는 페스티벌에서 이성과의 네트워킹을 지원하는 **맞�
 ## API 명세서
 
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/36e010bb-c5e2-416c-8053-c3515730a132" />
+
 [API 명세서 바로가기](https://psychedelic-perigee-94e.notion.site/API-1ceaebccb8e480309a37d1ca2f466a93)
 
 | **HTTP Status**          | **Code** | **Message**                                   |
