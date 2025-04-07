@@ -11,4 +11,7 @@ public interface PointService {
 
     @Transactional
     void usePoint(Participant participant);
+
+    @Transactional
+    void rechargePoint(Participant participant, int amount);
 }

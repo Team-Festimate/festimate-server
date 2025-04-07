@@ -43,13 +43,22 @@ public class PointServiceImpl implements PointService {
             throw new FestimateException(ResponseError.INSUFFICIENT_POINTS);
         }
 
-        Point pointUsage = Point.builder()
-                .participant(participant)
-                .point(1)
-                .transactionType(TransactionType.DEBIT)
-                .build();
-
+        Point pointUsage = createPointTransaction(participant, 1, TransactionType.DEBIT);
         pointRepository.save(pointUsage);
     }
 
+    @Transactional
+    @Override
+    public void rechargePoint(Participant participant, int amount) {
+        Point pointUsage = createPointTransaction(participant, amount, TransactionType.CREDIT);
+        pointRepository.save(pointUsage);
+    }
+
+    private Point createPointTransaction(Participant participant, int amount, TransactionType type) {
+        return Point.builder()
+                .participant(participant)
+                .point(amount)
+                .transactionType(type)
+                .build();
+    }
 }
