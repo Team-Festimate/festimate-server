@@ -7,9 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.festimate.team.common.entity.BaseTimeEntity;
 import org.festimate.team.matching.entity.Matching;
+import org.festimate.team.participant.entity.Participant;
+import org.festimate.team.user.entity.User;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -21,7 +23,11 @@ public class Festival extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer festivalId;
+    private Long festivalId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "host_id", nullable = false)
+    private User host;
 
     @Column(nullable = false)
     private String title;
@@ -31,10 +37,10 @@ public class Festival extends BaseTimeEntity {
     private Category category;
 
     @Column(nullable = false)
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(nullable = false)
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @Column(nullable = false, unique = true)
     private String inviteCode;
@@ -46,11 +52,28 @@ public class Festival extends BaseTimeEntity {
     private List<Matching> matchings;
 
     @Builder
-    public Festival(String title, Category category, LocalDateTime startDate, LocalDateTime endDate, String inviteCode) {
+    public Festival(User host, String title, Category category, LocalDate startDate, LocalDate endDate, String inviteCode) {
+        this.host = host;
         this.title = title;
         this.category = category;
         this.startDate = startDate;
         this.endDate = endDate;
         this.inviteCode = inviteCode;
+    }
+
+    public FestivalStatus getFestivalStatus() {
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = this.getStartDate();
+        LocalDate endDate = this.getEndDate();
+
+        if (now.isBefore(startDate)) {
+            return FestivalStatus.BEFORE;
+        } else if (now.isBefore(endDate.plusDays(1))) {
+            return FestivalStatus.PROGRESS;
+        } else if (now.isBefore(endDate.plusDays(8))) {
+            return FestivalStatus.REFUND;
+        } else {
+            return FestivalStatus.END;
+        }
     }
 }

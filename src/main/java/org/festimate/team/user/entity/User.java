@@ -33,13 +33,16 @@ public class User extends BaseTimeEntity {
     private int birthYear;
 
     @Column(nullable = false)
+    private Gender gender;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
     @Column(nullable = false)
-    private int appearanceType;
+    private AppearanceType appearanceType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String platformId;
 
     @Column(nullable = false)
@@ -50,12 +53,13 @@ public class User extends BaseTimeEntity {
     private String refreshToken;
 
     @Builder
-    public User(String name, String phoneNumber, String nickname, Integer birthYear, Mbti mbti,
-                Integer appearanceType, String platformId, Platform platform, String refreshToken) {
+    public User(String name, String phoneNumber, String nickname, Integer birthYear, Gender gender, Mbti mbti,
+                AppearanceType appearanceType, String platformId, Platform platform, String refreshToken) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;
         this.birthYear = birthYear;
+        this.gender = gender;
         this.mbti = mbti;
         this.appearanceType = appearanceType;
         this.platformId = platformId;
@@ -65,5 +69,9 @@ public class User extends BaseTimeEntity {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public boolean validateRefreshToken(String refreshToken) {
+        return this.refreshToken.equals(refreshToken);
     }
 }

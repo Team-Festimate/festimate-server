@@ -1,7 +1,11 @@
 package org.festimate.team.festival.entity;
 
 public enum Category {
-    CONCERT,
-    FESTIVAL,
+    LIFE,
+    MUSIC,
     SCHOOL;
+
+    public static Category toCategory(String category) {
+        return Category.valueOf(category.toUpperCase());
+    }
 }

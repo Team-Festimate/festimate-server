@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.festimate.team.common.entity.BaseTimeEntity;
 import org.festimate.team.festival.entity.Festival;
-import org.festimate.team.festival.entity.Participant;
+import org.festimate.team.participant.entity.Participant;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
@@ -21,7 +21,7 @@ public class Matching extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer matchingId;
+    private Long matchingId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "festival_id", nullable = false)
@@ -32,7 +32,7 @@ public class Matching extends BaseTimeEntity {
     private Participant applicantParticipant;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "target_participant_id", nullable = false)
+    @JoinColumn(name = "target_participant_id")
     private Participant targetParticipant;
 
     @Column(nullable = false)
@@ -51,4 +51,11 @@ public class Matching extends BaseTimeEntity {
         this.status = status;
         this.matchDate = matchDate;
     }
+
+    public void completeMatching(Participant targetParticipant) {
+        this.targetParticipant = targetParticipant;
+        this.status = MatchingStatus.COMPLETED;
+        this.matchDate = LocalDateTime.now();
+    }
+
 }

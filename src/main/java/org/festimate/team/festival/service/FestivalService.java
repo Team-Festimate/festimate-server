@@ -1,31 +1,23 @@
 package org.festimate.team.festival.service;
 
-import lombok.RequiredArgsConstructor;
+import org.festimate.team.festival.dto.FestivalRequest;
 import org.festimate.team.festival.entity.Festival;
-import org.festimate.team.festival.repository.FestivalRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.festimate.team.user.entity.User;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class FestivalService {
+public interface FestivalService {
+    Festival createFestival(User host, FestivalRequest request);
 
-    private final FestivalRepository festivalRepository;
+    Festival getFestivalByInviteCode(String inviteCode);
 
-    @Transactional
-    public Festival createFestival(Festival festival) {
-        return festivalRepository.save(festival);
-    }
+    Festival getFestivalByIdOrThrow(Long festivalId);
 
-    @Transactional(readOnly = true)
-    public Festival getFestivalByInviteCode(String inviteCode) {
-        return festivalRepository.findByInviteCode(inviteCode);
-    }
+    List<Festival> getAllFestivals(User user);
 
-    @Transactional(readOnly = true)
-    public List<Festival> getAllFestivals() {
-        return festivalRepository.findAll();
-    }
+    Festival getFestivalDetailByIdOrThrow(Long festivalId, Long userId);
+
+    boolean isFestivalExpired(Festival festival);
+
+    boolean isHost(User user, Festival festival);
 }
