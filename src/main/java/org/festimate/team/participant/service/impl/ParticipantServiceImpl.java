@@ -61,6 +61,16 @@ public class ParticipantServiceImpl implements ParticipantService {
     }
 
     @Override
+    public List<Participant> getParticipantByNickname(Festival festival, String nickname) {
+        log.info("닉네임 검색 요청 - festivalId: {}, nickname: {}", festival.getFestivalId(), nickname);
+
+        List<Participant> result = participantRepository.findAllByFestivalAndUser_NicknameContaining(festival, nickname);
+
+        log.info("닉네임 검색 결과 개수: {}", result.size());
+        return result;
+    }
+
+    @Override
     public TypeResponse getTypeResult(TypeRequest typeRequest) {
         int[][] weights = new int[5][];
         weights[0] = typeRequest.q1() ? new int[]{3, 1, 1, -1, -1} : new int[]{-3, -1, -1, 1, 1};

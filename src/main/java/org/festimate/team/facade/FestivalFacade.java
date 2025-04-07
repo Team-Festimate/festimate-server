@@ -115,11 +115,18 @@ public class FestivalFacade {
     public PointHistoryResponse getParticipantPointHistory(Long userId, Long festivalId, Long participantId) {
         User user = userService.getUserById(userId);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        if (!festivalService.isHost(user, festival)) {
-            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
-        }
+        isHost(user, festival);
         Participant participant = participantService.getParticipantById(participantId);
         return pointService.getPointHistory(participant);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SearchParticipantResponse> getParticipantByNickname(Long userId, Long festivalId, String nickname) {
+        User user = userService.getUserById(userId);
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        isHost(user, festival);
+        List<Participant> participants = participantService.getParticipantByNickname(festival, nickname);
+        return SearchParticipantResponse.from(participants);
     }
 
     @Transactional
@@ -165,5 +172,11 @@ public class FestivalFacade {
 
     private Participant getParticipantInfo(User user, Festival festival) {
         return participantService.getParticipant(user, festival);
+    }
+
+    private void isHost(User user, Festival festival) {
+        if (!festivalService.isHost(user, festival)) {
+            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
+        }
     }
 }
