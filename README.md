@@ -25,7 +25,7 @@
 
 <br><br>
 ## 🧾 ERD
-![festimate-erd](https://github.com/user-attachments/assets/66cb66b6-a8d0-4bbd-8fc5-def7c467e951)
+![festimate-erd (1)](https://github.com/user-attachments/assets/19b1721c-b572-4d7a-a46a-4b64b0a5b463)
 
 
 ## 📋 Branch Convention
