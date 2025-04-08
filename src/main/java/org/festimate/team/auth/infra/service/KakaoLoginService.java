@@ -15,9 +15,9 @@ public class KakaoLoginService {
 
     @Transactional
     public String getKakaoPlatformId(String accessToken) {
-        String kakaoAccessToken = kakaoOAuthClient.getAccessToken(accessToken);
-        log.info("kakaoAccessToken: {}", kakaoAccessToken);
+        // String kakaoAccessToken = kakaoOAuthClient.getAccessToken(accessToken);
+        log.info("kakaoAccessToken: {}", accessToken);
 
-        return kakaoOAuthClient.getPlatformId(kakaoAccessToken);
+        return kakaoOAuthClient.getPlatformId(accessToken);
     }
 }

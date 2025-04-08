@@ -24,11 +24,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenResponse>> login(
-            @RequestHeader("Authorization") String authorization
+            @RequestHeader("Authorization") String kakaoAccessToken
     ) {
-        log.info("social login - Code: {}", authorization);
+        log.info("social login - Code: {}", kakaoAccessToken);
 
-        String platformId = loginFacade.getPlatformId(authorization);
+        String platformId = loginFacade.getPlatformId(kakaoAccessToken);
 
         return userService.getUserIdByPlatformAndPlatformId(Platform.KAKAO, platformId)
                 .map(userId -> loginFacade.login(platformId, Platform.KAKAO))
