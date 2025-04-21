@@ -82,12 +82,12 @@ public class FestivalFacade {
 
         int point = pointService.getTotalPointByParticipant(participant);
 
-        return MainUserInfoResponse.from(participant, point);
+        return MainUserInfoResponse.from(participant, point, festival.getMatchingStartTimeStatus());
     }
 
     public ProfileResponse getParticipantProfile(Long userId, Festival festival) {
         Participant participant = getExistingParticipantOrThrow(userId, festival);
-        return ProfileResponse.of(participant.getTypeResult(), participant.getUser().getNickname());
+        return ProfileResponse.of(participant.getTypeResult(), participant.getUser().getNickname(), festival.getMatchingStartTimeStatus());
     }
 
     public DetailProfileResponse getParticipantType(Long userId, Festival festival) {
