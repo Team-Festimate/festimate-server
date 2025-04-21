@@ -25,7 +25,7 @@ public class DateValidator {
         log.info("Festival dates are valid.");
     }
 
-    public static void isMatchingDateValid(final LocalDate startDateStr, final LocalDateTime matchingStartAt) {
+    public static void isMatchingStartTimeValid(final LocalDate startDateStr, final LocalDateTime matchingStartAt) {
         log.info("Validating matchingStartAt. startDate={}, matchingStartAt={}", startDateStr, matchingStartAt);
 
         LocalDateTime startTime = parseAndValidateTime(matchingStartAt);
