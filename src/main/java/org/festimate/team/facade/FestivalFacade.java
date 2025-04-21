@@ -22,11 +22,14 @@ import org.festimate.team.user.service.UserService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.festimate.team.festival.validator.DateValidator.isFestivalDateValid;
+import static org.festimate.team.festival.validator.DateValidator.isMatchingStartTimeValid;
 import static org.festimate.team.festival.validator.FestivalRequestValidator.isFestivalValid;
+import static org.festimate.team.matching.validator.MatchingValidator.isMatchingDateValid;
 
 @Component
 @RequiredArgsConstructor
@@ -42,6 +45,7 @@ public class FestivalFacade {
 
         isFestivalValid(request.title(), request.category());
         isFestivalDateValid(request.startDate(), request.endDate());
+        isMatchingStartTimeValid(request.startDate(), request.matchingStartAt());
 
         Festival festival = festivalService.createFestival(host, request);
 
@@ -78,12 +82,12 @@ public class FestivalFacade {
 
         int point = pointService.getTotalPointByParticipant(participant);
 
-        return MainUserInfoResponse.from(participant, point);
+        return MainUserInfoResponse.from(participant, point, festival.getMatchingStartTimeStatus());
     }
 
     public ProfileResponse getParticipantProfile(Long userId, Festival festival) {
         Participant participant = getExistingParticipantOrThrow(userId, festival);
-        return ProfileResponse.of(participant.getTypeResult(), participant.getUser().getNickname());
+        return ProfileResponse.of(participant.getTypeResult(), participant.getUser().getNickname(), festival.getMatchingStartTimeStatus());
     }
 
     public DetailProfileResponse getParticipantType(Long userId, Festival festival) {
@@ -146,6 +150,8 @@ public class FestivalFacade {
     public MatchingStatusResponse createMatching(Long userId, Long festivalId) {
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
         Participant participant = getExistingParticipantOrThrow(userId, festival);
+
+        isMatchingDateValid(LocalDateTime.now(), festival.getMatchingStartAt());
 
         pointService.usePoint(participant);
 
