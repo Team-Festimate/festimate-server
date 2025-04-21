@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.festimate.team.festival.validator.DateValidator.isFestivalDateValid;
+import static org.festimate.team.festival.validator.DateValidator.isMatchingDateValid;
 import static org.festimate.team.festival.validator.FestivalRequestValidator.isFestivalValid;
 
 @Component
@@ -42,6 +43,7 @@ public class FestivalFacade {
 
         isFestivalValid(request.title(), request.category());
         isFestivalDateValid(request.startDate(), request.endDate());
+        isMatchingDateValid(request.startDate(), request.matchingStartAt());
 
         Festival festival = festivalService.createFestival(host, request);
 
