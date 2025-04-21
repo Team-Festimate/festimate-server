@@ -12,6 +12,7 @@ import org.festimate.team.user.entity.User;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -42,6 +43,9 @@ public class Festival extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDate endDate;
 
+    @Column(nullable = false)
+    private LocalDateTime matchingStartAt;
+
     @Column(nullable = false, unique = true)
     private String inviteCode;
 
@@ -52,12 +56,13 @@ public class Festival extends BaseTimeEntity {
     private List<Matching> matchings;
 
     @Builder
-    public Festival(User host, String title, Category category, LocalDate startDate, LocalDate endDate, String inviteCode) {
+    public Festival(User host, String title, Category category, LocalDate startDate, LocalDate endDate, LocalDateTime matchingStartAt, String inviteCode) {
         this.host = host;
         this.title = title;
         this.category = category;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.matchingStartAt = matchingStartAt;
         this.inviteCode = inviteCode;
     }
 
