@@ -81,4 +81,13 @@ public class Festival extends BaseTimeEntity {
             return FestivalStatus.END;
         }
     }
+
+    public FestivalStatus getMatchingStartTimeStatus() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime matchingStartAt = this.matchingStartAt;
+
+        if (now.isBefore(matchingStartAt)) {
+            return FestivalStatus.BEFORE;
+        } else return getFestivalStatus();
+    }
 }
