@@ -102,11 +102,10 @@ public class MatchingServiceImpl implements MatchingService {
     }
 
     private static final Map<TypeResult, List<TypeResult>> MATCHING_PRIORITIES = Map.of(
-            TypeResult.INFLUENCER, List.of(TypeResult.PHOTO, TypeResult.INFLUENCER, TypeResult.NEWBIE, TypeResult.PLANNER, TypeResult.HEALING),
-            TypeResult.NEWBIE, List.of(TypeResult.PLANNER, TypeResult.NEWBIE, TypeResult.HEALING, TypeResult.INFLUENCER, TypeResult.PHOTO),
-            TypeResult.PHOTO, List.of(TypeResult.INFLUENCER, TypeResult.PHOTO, TypeResult.PLANNER, TypeResult.HEALING, TypeResult.NEWBIE),
-            TypeResult.PLANNER, List.of(TypeResult.NEWBIE, TypeResult.HEALING, TypeResult.INFLUENCER, TypeResult.PHOTO, TypeResult.PLANNER),
-            TypeResult.HEALING, List.of(TypeResult.HEALING, TypeResult.PLANNER, TypeResult.PHOTO, TypeResult.NEWBIE, TypeResult.INFLUENCER)
+            TypeResult.INFLUENCER, List.of(TypeResult.PHOTO, TypeResult.INFLUENCER, TypeResult.NEWBIE),
+            TypeResult.NEWBIE, List.of(TypeResult.PLANNER, TypeResult.NEWBIE, TypeResult.HEALING),
+            TypeResult.PHOTO, List.of(TypeResult.INFLUENCER, TypeResult.PHOTO, TypeResult.PLANNER),
+            TypeResult.PLANNER, List.of(TypeResult.NEWBIE, TypeResult.HEALING, TypeResult.INFLUENCER),
+            TypeResult.HEALING, List.of(TypeResult.HEALING, TypeResult.PLANNER, TypeResult.PHOTO)
     );
-
 }

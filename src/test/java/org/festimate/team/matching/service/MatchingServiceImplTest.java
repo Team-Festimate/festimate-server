@@ -1,6 +1,5 @@
 package org.festimate.team.matching.service;
 
-import org.festimate.team.festival.entity.Category;
 import org.festimate.team.festival.entity.Festival;
 import org.festimate.team.matching.dto.MatchingInfo;
 import org.festimate.team.matching.entity.Matching;
@@ -9,7 +8,8 @@ import org.festimate.team.matching.repository.MatchingRepository;
 import org.festimate.team.matching.service.impl.MatchingServiceImpl;
 import org.festimate.team.participant.entity.Participant;
 import org.festimate.team.participant.entity.TypeResult;
-import org.festimate.team.user.entity.*;
+import org.festimate.team.user.entity.Gender;
+import org.festimate.team.user.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.festimate.team.common.mock.MockFactory.*;
 import static org.mockito.Mockito.when;
 
 public class MatchingServiceImplTest {
@@ -43,11 +44,11 @@ public class MatchingServiceImplTest {
     void getMatchingListByParticipant_success() {
 
         // given
-        User applicationUser = mockUser("신청자", Gender.MAN);
-        User targetUser = mockUser("타겟", Gender.WOMAN);
+        User applicantUser = mockUser("신청자", Gender.MAN, 1L);
+        User targetUser = mockUser("타겟", Gender.WOMAN, 2L);
 
         Participant applicant = Participant.builder()
-                .user(applicationUser)
+                .user(applicantUser)
                 .build();
 
         Participant matchedParticipant = Participant.builder()
@@ -84,13 +85,12 @@ public class MatchingServiceImplTest {
     @DisplayName("우선순위 기반 매칭 - 매칭 가능한 사람이 있을 때")
     void findBestCandidateByPriority_success() {
         // given
-        User applicationUser = mockUser("신청자", Gender.MAN);
-        User targetUser = mockUser("타겟", Gender.WOMAN);
-
-        Festival festival = mockFestival(applicationUser);
+        User applicantUser = mockUser("신청자", Gender.MAN, 1L);
+        User targetUser = mockUser("타겟", Gender.WOMAN, 2L);
+        Festival festival = mockFestival(applicantUser, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
 
         Participant applicant = Participant.builder()
-                .user(applicationUser)
+                .user(applicantUser)
                 .typeResult(TypeResult.INFLUENCER)
                 .festival(festival)
                 .build();
@@ -115,10 +115,98 @@ public class MatchingServiceImplTest {
     }
 
     @Test
+    @DisplayName("우선순위 기반 매칭 - 1순위 없고 2순위에서 매칭 성공")
+    void findBestCandidate_prioritySecond_success() {
+        User applicantUser = mockUser("신청자", Gender.MAN, 1L);
+        User secondPriorityUser = mockUser("2순위타겟", Gender.WOMAN, 2L);
+        Festival festival = mockFestival(applicantUser, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+
+        Participant applicant = Participant.builder()
+                .user(applicantUser)
+                .typeResult(TypeResult.INFLUENCER)
+                .festival(festival)
+                .build();
+        ReflectionTestUtils.setField(applicant, "participantId", 1L);
+
+        // 1순위 PHOTO에 대상 없음
+        when(matchingRepository.findMatchingCandidate(1L, TypeResult.PHOTO, Gender.MAN, 1L))
+                .thenReturn(Optional.empty());
+
+        // 2순위 INFLUENCER에 대상 있음
+        Participant secondPriorityCandidate = Participant.builder()
+                .user(secondPriorityUser)
+                .typeResult(TypeResult.INFLUENCER)
+                .festival(festival)
+                .build();
+        when(matchingRepository.findMatchingCandidate(1L, TypeResult.INFLUENCER, Gender.MAN, 1L))
+                .thenReturn(Optional.of(secondPriorityCandidate));
+
+        Optional<Participant> result = matchingService.findBestCandidateByPriority(festival.getFestivalId(), applicant);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getTypeResult()).isEqualTo(TypeResult.INFLUENCER);
+    }
+
+
+    @Test
+    @DisplayName("우선순위 기반 매칭 - 1,2순위 없고 3순위에서 매칭 성공")
+    void findBestCandidate_priorityThird_success() {
+        User applicantUser = mockUser("신청자", Gender.MAN, 1L);
+        User thirdPriorityUser = mockUser("3순위타겟", Gender.WOMAN, 2L);
+        Festival festival = mockFestival(applicantUser, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+
+        Participant applicant = mockParticipant(applicantUser, festival, TypeResult.INFLUENCER, 1L);
+
+        // 1순위 PHOTO, 2순위 INFLUENCER 대상 없음
+        when(matchingRepository.findMatchingCandidate(applicant.getParticipantId(), TypeResult.PHOTO, Gender.MAN, festival.getFestivalId()))
+                .thenReturn(Optional.empty());
+        when(matchingRepository.findMatchingCandidate(applicant.getParticipantId(), TypeResult.INFLUENCER, Gender.MAN, festival.getFestivalId()))
+                .thenReturn(Optional.empty());
+
+        // 3순위 NEWBIE에 대상 있음
+        Participant thirdPriorityCandidate = mockParticipant(thirdPriorityUser, festival, TypeResult.NEWBIE, 2L);
+
+        when(matchingRepository.findMatchingCandidate(applicant.getParticipantId(), TypeResult.NEWBIE, Gender.MAN, festival.getFestivalId()))
+                .thenReturn(Optional.of(thirdPriorityCandidate));
+
+        Optional<Participant> result = matchingService.findBestCandidateByPriority(festival.getFestivalId(), applicant);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getTypeResult()).isEqualTo(TypeResult.NEWBIE);
+    }
+
+    @Test
+    @DisplayName("우선순위 기반 매칭 - 이미 매칭된 이력 있는 상대만 존재하는 경우 보류 처리")
+    void findBestCandidate_alreadyMatchedCandidate_empty() {
+        User applicantUser = mockUser("신청자", Gender.MAN, 1L);
+        Festival festival = mockFestival(applicantUser, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+
+        Participant applicant = Participant.builder()
+                .user(applicantUser)
+                .typeResult(TypeResult.INFLUENCER)
+                .festival(festival)
+                .build();
+        ReflectionTestUtils.setField(applicant, "participantId", 1L);
+
+        // 대상이 존재하나 이미 매칭됨 (Repository에서 필터링 됨)
+        when(matchingRepository.findMatchingCandidate(1L, TypeResult.PHOTO, Gender.MAN, 1L))
+                .thenReturn(Optional.empty());
+        when(matchingRepository.findMatchingCandidate(1L, TypeResult.INFLUENCER, Gender.MAN, 1L))
+                .thenReturn(Optional.empty());
+        when(matchingRepository.findMatchingCandidate(1L, TypeResult.NEWBIE, Gender.MAN, 1L))
+                .thenReturn(Optional.empty());
+
+        Optional<Participant> result = matchingService.findBestCandidateByPriority(festival.getFestivalId(), applicant);
+
+        assertThat(result).isEmpty();
+    }
+
+
+    @Test
     @DisplayName("우선순위 기반 매칭 - 매칭 가능한 사람이 없을 때")
     void findBestCandidateByPriority_empty() {
-        User user = mockUser("신청자", Gender.MAN);
-        Festival festival = mockFestival(user);
+        User user = mockUser("신청자", Gender.MAN, 1L);
+        Festival festival = mockFestival(user, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
         Participant applicant = Participant.builder()
                 .user(user)
                 .typeResult(TypeResult.INFLUENCER)
@@ -134,35 +222,6 @@ public class MatchingServiceImplTest {
         );
 
         assertThat(result).isEmpty();
-    }
-
-    private User mockUser(String nickname, Gender gender) {
-        return User.builder()
-                .name("남자")
-                .phoneNumber("010-1234-5678")
-                .nickname(nickname)
-                .birthYear(1999)
-                .gender(gender)
-                .mbti(Mbti.INFP)
-                .appearanceType(AppearanceType.BEAR)
-                .platformId("1")
-                .platform(Platform.KAKAO)
-                .refreshToken("dummy_refresh_token")
-                .build();
-    }
-
-    private Festival mockFestival(User mockUser) {
-        Festival festival = Festival.builder()
-                .host(mockUser)
-                .title("가톨릭대학교 다맛제")
-                .category(Category.LIFE)
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now().plusDays(2))
-                .inviteCode("ABC123")
-                .build();
-
-        ReflectionTestUtils.setField(festival, "festivalId", 1L);
-        return festival;
     }
 
 }
