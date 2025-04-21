@@ -36,6 +36,7 @@ public class FestivalServiceImpl implements FestivalService {
                 .category(Category.toCategory(request.category()))
                 .startDate(request.startDate())
                 .endDate(request.endDate())
+                .matchingStartAt(request.matchingStartAt())
                 .inviteCode(inviteCode)
                 .build();
 
