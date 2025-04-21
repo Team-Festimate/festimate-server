@@ -26,39 +26,35 @@ Festimate는 페스티벌에서 이성과의 네트워킹을 지원하는 **맞�
 
 ![festimate-erd (1)](https://github.com/user-attachments/assets/19b1721c-b572-4d7a-a46a-4b64b0a5b463)
 
+
+## Teck Stack ✨
+
+| 항목 | 내용 |
+| --- | --- |
+| **IDE** | IntelliJ IDEA |
+| **Language** | Java 21 |
+| **Framework** | Spring Boot 3.4.3 / Gradle |
+| **Build Tool** | Gradle |
+| **Authentication** | OAuth 2.0 (Kakao), JSON Web Token (JWT) |
+| **Security** | Spring Security |
+| **ORM** | Spring Data JPA + Hibernate |
+| **Database** | MySQL |
+| **Infra/Cloud** | AWS EC2, AWS RDS, Nginx, Route 53 |
+| **CI/CD** | GitHub Actions + Docker + Blue-Green Deployment |
+| **Monitoring/Logging** | AOP 기반 API 요청 로깅 |
+| **Documentation** | Notion (API 명세), ERDCloud (ERD 설계 도구) |
+| **API Test** | Postman |
+| **Collab Tools** | Discord, Figma, GitHub Projects |
+| **Design Tool** | Figma (UI/UX 시안 및 협업) |
+---
+
 ## API 명세서
 
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/36e010bb-c5e2-416c-8053-c3515730a132" />
 
 [API 명세서 바로가기](https://psychedelic-perigee-94e.notion.site/API-1ceaebccb8e480309a37d1ca2f466a93)
 
-| **HTTP Status**          | **Code** | **Message**                                   |
-|--------------------------|----------|-----------------------------------------------|
-| **400 Bad Request**      | 4000     | 잘못된 요청입니다.                           |
-|                          | 4001     | 유효하지 않은 플랫폼 타입입니다.             |
-|                          | 4002     | 요청 파라미터가 잘못되었습니다.             |
-|                          | 4003     | 입력된 글자수가 허용된 범위를 벗어났습니다. |
-|                          | 4004     | 닉네임은 한글로만 입력 가능합니다.          |
-|                          | 4005     | 유효하지 않은 인가 코드입니다.              |
-|                          | 4006     | 유효하지 않은 날짜 형식입니다.              |
-| **401 Unauthorized**     | 4011     | 액세스 토큰의 값이 올바르지 않습니다.         |
-|                          | 4012     | 액세스 토큰이 만료되었습니다. 재발급 받아주세요. |
-|                          | 4013     | 초대코드가 만료되었습니다.                   |
-|                          | 4014     | 페스티벌 기간이 종료되었습니다.             |
-|                          | 4015     | 토큰 값이 올바르지 않습니다.                |
-| **403 Forbidden**        | 4030     | 리소스 접근 권한이 없습니다.                |
-| **404 Not Found**        | 4040     | 대상을 찾을 수 없습니다.                   |
-|                          | 4041     | 존재하지 않는 회원입니다.                   |
-|                          | 4042     | 존재하지 않는 페스티벌입니다.               |
-|                          | 4043     | 존재하지 않는 참가자입니다.                |
-| **405 Method Not Allowed**| 4050     | 잘못된 HTTP method 요청입니다.               |
-| **409 Conflict**         | 4090     | 이미 존재하는 리소스입니다.                 |
-|                          | 4091     | 이미 존재하는 회원입니다.                   |
-|                          | 4092     | 이미 존재하는 참여자입니다.                 |
-|                          | 4093     | 포인트가 부족합니다.                       |
-| **500 Internal Server Error** | 5000 | 서버 내부 오류입니다.                       |
 ---
-
 ## 📋 Branch Convention
 
 - `release` : 프로덕트를 배포하는 브랜치입니다.
@@ -113,23 +109,6 @@ Festimate는 페스티벌에서 이성과의 네트워킹을 지원하는 **맞�
 | 8️⃣ **어드민 페이지** | 운영자가 사용자 정보 및 포인트를 실시간으로 관리 | - 관리자 전용 로그인 및 역할 분리<br>- 사용자/포인트/페스티벌 정보 실시간 조회 및 수정 |
 
 ---
-
-## Teck Stack ✨
-
-| IDE              | IntelliJ               |
-|------------------|------------------------|
-| Language         | Java 21                |
-| Framework        | Spring Boot 3.4.1, Gradle|
-| Authentication   | JSON Web Tokens        |
-| ORM              | Spring Data JPA        |
-| Database         | MySQL                  |
-| External         | AWS EC2, AWS RDS, Nginx|
-| CI/CD            | Github Action          |
-| API Docs         | Notion                 |
-| Other Tools      | Discord, Postman, Figma|
-
----
-
 ## 팀 소개
 
 ![image](https://github.com/user-attachments/assets/6cb8fc52-b037-459d-91aa-e233de98d1c1)
