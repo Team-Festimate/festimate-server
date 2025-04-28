@@ -1,19 +1,11 @@
 package org.festimate.team.api.facade;
 
-import org.festimate.team.api.facade.FestivalFacade;
-import org.festimate.team.global.response.ResponseError;
-import org.festimate.team.global.exception.FestimateException;
-import org.festimate.team.api.festival.dto.FestivalInfoResponse;
-import org.festimate.team.api.festival.dto.MessageRequest;
-import org.festimate.team.domain.festival.entity.Category;
+import org.festimate.team.api.festival.dto.FestivalRequest;
+import org.festimate.team.common.mock.MockFactory;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
-import org.festimate.team.domain.participant.entity.Participant;
-import org.festimate.team.domain.participant.entity.TypeResult;
 import org.festimate.team.domain.participant.service.ParticipantService;
-import org.festimate.team.domain.user.entity.AppearanceType;
-import org.festimate.team.domain.user.entity.Mbti;
-import org.festimate.team.domain.user.entity.Platform;
+import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.entity.User;
 import org.festimate.team.domain.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,239 +16,70 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 class FestivalFacadeTest {
 
     @Mock
     private UserService userService;
-
     @Mock
     private FestivalService festivalService;
-
     @Mock
     private ParticipantService participantService;
 
     @InjectMocks
     private FestivalFacade festivalFacade;
 
+    private User user;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        user = MockFactory.mockUser("호스트", Gender.MAN, 1L);
     }
 
     @Test
-    @DisplayName("페스티벌 상세 조회 - 성공")
-    void getFestivalInfo_success() {
+    @DisplayName("페스티벌 생성 성공")
+    void createFestival_success() {
         // given
-        Long userId = 1L;
-        Long festivalId = 100L;
-        User mockUser = User.builder()
-                .name("테스트 유저")
-                .phoneNumber("010-1234-5678")
-                .nickname("현진")
-                .birthYear(1999)
-                .mbti(Mbti.INFP)
-                .appearanceType(AppearanceType.BEAR)
-                .platformId("kakao_123456")
-                .platform(Platform.KAKAO)
-                .refreshToken("dummy_refresh_token")
-                .build();
+        FestivalRequest request = new FestivalRequest(
+                "테스트축제",
+                "LIFE",
+                LocalDate.now(),
+                LocalDate.now().plusDays(2),
+                LocalDateTime.now().plusDays(1)
+        );
 
+        Festival festival = MockFactory.mockFestival(user, 100L, request.startDate(), request.endDate());
 
-        Festival mockFestival = Festival.builder()
-                .host(mockUser)
-                .title("가톨릭대학교 다맛제")
-                .category(Category.LIFE)
-                .startDate(LocalDate.of(2025, 5, 18))
-                .endDate(LocalDate.of(2025, 5, 20))
-                .inviteCode("ABC123")
-                .build();
-
-        Participant mockParticipant = Participant.builder()
-                .user(mockUser)
-                .festival(mockFestival)
-                .typeResult(TypeResult.HEALING)
-                .introduction("안녕하세요~ 제 전화번호는요~")
-                .message("잘 부탁드려요 :)")
-                .build();
-
-        when(userService.getUserById(userId)).thenReturn(mockUser);
-        when(festivalService.getFestivalByIdOrThrow(festivalId)).thenReturn(mockFestival);
-        when(participantService.getParticipant(mockUser, mockFestival)).thenReturn(mockParticipant);
+        when(userService.getUserById(1L)).thenReturn(user);
+        when(festivalService.createFestival(user, request)).thenReturn(festival);
 
         // when
-        festivalFacade.validateUserParticipation(userId, mockFestival);
-        FestivalInfoResponse response = FestivalInfoResponse.of(mockFestival);
+        var response = festivalFacade.createFestival(1L, request);
 
         // then
-        assertThat(response.festivalName()).isEqualTo("가톨릭대학교 다맛제");
-        assertThat(response.festivalDate()).isEqualTo("2025.05.18 ~ 2025.05.20");
+        assertThat(response.festivalId()).isEqualTo(100L);
     }
 
     @Test
-    @DisplayName("페스티벌 상세 조회 - 유저가 참가자가 아닌 경우 예외 발생")
-    void getFestivalInfo_fail_if_not_participant() {
+    @DisplayName("내가 참가한 페스티벌 목록 조회 성공")
+    void getUserFestivals_success() {
         // given
-        Long userId = 2L;
+        Festival festival = MockFactory.mockFestival(user, 200L, LocalDate.now(), LocalDate.now().plusDays(2));
 
-        User mockUser = User.builder()
-                .name("테스트 유저")
-                .phoneNumber("010-1234-5678")
-                .nickname("현진")
-                .birthYear(1999)
-                .mbti(Mbti.INFP)
-                .appearanceType(AppearanceType.BEAR)
-                .platformId("kakao_123456")
-                .platform(Platform.KAKAO)
-                .refreshToken("dummy_refresh_token")
-                .build();
-
-        Festival mockFestival = Festival.builder()
-                .host(mockUser)
-                .title("가톨릭대학교 다맛제")
-                .category(Category.LIFE)
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now().plusDays(2))
-                .inviteCode("ABC123")
-                .build();
-
-        when(userService.getUserById(userId)).thenReturn(mockUser);
-        when(participantService.getParticipant(mockUser, mockFestival)).thenReturn(null);
-
-        // when & then
-        assertThatThrownBy(() -> festivalFacade.validateUserParticipation(userId, mockFestival))
-                .isInstanceOf(FestimateException.class)
-                .hasMessageContaining(ResponseError.FORBIDDEN_RESOURCE.getMessage());
-    }
-
-    @Test
-    @DisplayName("자기소개 및 메시지 수정 - 정상 케이스 (message 생략 가능)")
-    void modifyMessage_success() {
-        // given
-        Long userId = 1L;
-        Festival mockFestival = mockFestival();
-        User mockUser = mockUser();
-        Participant mockParticipant = Participant.builder()
-                .user(mockUser)
-                .festival(mockFestival)
-                .typeResult(TypeResult.HEALING)
-                .introduction("이전 자기소개")
-                .message("이전 메세지")
-                .build();
-
-        MessageRequest request = new MessageRequest("메세지 수정했지롱 ~", null);
-
-        when(userService.getUserById(userId)).thenReturn(mockUser);
-        when(participantService.getParticipant(mockUser, mockFestival)).thenReturn(mockParticipant);
+        when(userService.getUserById(1L)).thenReturn(user);
+        when(participantService.getFestivalsByUser(user, "ALL")).thenReturn(List.of(festival));
 
         // when
-        festivalFacade.modifyMyMessage(userId, mockFestival, request);
+        var responses = festivalFacade.getUserFestivals(1L, "ALL");
 
         // then
-        assertThat(mockParticipant.getIntroduction()).isEqualTo("메세지 수정했지롱 ~");
-        assertThat(mockParticipant.getMessage()).isNull();
+        assertThat(responses).hasSize(1);
+        assertThat(responses.get(0).festivalId()).isEqualTo(200L);
     }
-
-    @Test
-    @DisplayName("자기소개 및 메시지 수정 - message 생략, introduction null일 경우 예외 발생")
-    void modifyMessage_fail_if_introduction_missing() {
-        // given
-        Long userId = 1L;
-        Festival mockFestival = mockFestival();
-        User mockUser = mockUser();
-        Participant mockParticipant = Participant.builder()
-                .user(mockUser)
-                .festival(mockFestival)
-                .typeResult(TypeResult.HEALING)
-                .introduction("이전 자기소개")
-                .message("이전 메세지")
-                .build();
-
-        MessageRequest request = new MessageRequest(null, "롱롱소세지");
-
-        when(userService.getUserById(userId)).thenReturn(mockUser);
-        when(participantService.getParticipant(mockUser, mockFestival)).thenReturn(mockParticipant);
-
-        // when & then
-        assertThatThrownBy(() -> festivalFacade.modifyMyMessage(userId, mockFestival, request))
-                .isInstanceOf(FestimateException.class)
-                .hasMessageContaining(ResponseError.BAD_REQUEST.getMessage());
-    }
-
-    @Test
-    @DisplayName("자기소개 및 메시지 수정 - 유저가 페스티벌 참가자가 아닌 경우")
-    void modifyMessage_fail_if_not_participant() {
-        // given
-        Long userId = 2L;
-        Festival mockFestival = mockFestival();
-        User mockUser = mockUser();
-
-        MessageRequest request = new MessageRequest("메세지 수정했지롱 ~", "롱롱소세지");
-
-        when(userService.getUserById(userId)).thenReturn(mockUser);
-        when(participantService.getParticipant(mockUser, mockFestival)).thenReturn(null);
-
-        // when & then
-        assertThatThrownBy(() -> festivalFacade.modifyMyMessage(userId, mockFestival, request))
-                .isInstanceOf(FestimateException.class)
-                .hasMessageContaining(ResponseError.FORBIDDEN_RESOURCE.getMessage());
-    }
-
-    @Test
-    @DisplayName("자기소개 및 메시지 수정 - 모든 항목 올바르게 입력한 경우")
-    void modifyMessage_success_if_all_fields_given() {
-        // given
-        Long userId = 1L;
-        Festival mockFestival = mockFestival();
-        User mockUser = mockUser();
-        Participant mockParticipant = Participant.builder()
-                .user(mockUser)
-                .festival(mockFestival)
-                .typeResult(TypeResult.HEALING)
-                .introduction("이전 자기소개")
-                .message("이전 메세지")
-                .build();
-
-        MessageRequest request = new MessageRequest("새로운 소개", "새로운 메시지");
-
-        when(userService.getUserById(userId)).thenReturn(mockUser);
-        when(participantService.getParticipant(mockUser, mockFestival)).thenReturn(mockParticipant);
-
-        // when
-        festivalFacade.modifyMyMessage(userId, mockFestival, request);
-
-        // then
-        assertThat(mockParticipant.getIntroduction()).isEqualTo("새로운 소개");
-        assertThat(mockParticipant.getMessage()).isEqualTo("새로운 메시지");
-    }
-
-    private User mockUser() {
-        return User.builder()
-                .name("테스트 유저")
-                .phoneNumber("010-1234-5678")
-                .nickname("현진")
-                .birthYear(1999)
-                .mbti(Mbti.INFP)
-                .appearanceType(AppearanceType.BEAR)
-                .platformId("kakao_123456")
-                .platform(Platform.KAKAO)
-                .refreshToken("dummy_refresh_token")
-                .build();
-    }
-
-    private Festival mockFestival() {
-        return Festival.builder()
-                .host(mockUser())
-                .title("가톨릭대학교 다맛제")
-                .category(Category.LIFE)
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now().plusDays(2))
-                .inviteCode("ABC123")
-                .build();
-    }
-
 }
