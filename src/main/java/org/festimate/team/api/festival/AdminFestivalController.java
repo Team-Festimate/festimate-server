@@ -3,7 +3,10 @@ package org.festimate.team.api.festival;
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.api.facade.FestivalFacade;
 import org.festimate.team.api.facade.UserFacade;
-import org.festimate.team.api.festival.dto.*;
+import org.festimate.team.api.festival.dto.AdminFestivalDetailResponse;
+import org.festimate.team.api.festival.dto.AdminFestivalResponse;
+import org.festimate.team.api.festival.dto.FestivalRequest;
+import org.festimate.team.api.festival.dto.FestivalResponse;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.global.response.ApiResponse;
@@ -59,18 +62,6 @@ public class AdminFestivalController {
         AdminFestivalDetailResponse response
                 = AdminFestivalDetailResponse.of(festivalService.getFestivalDetailByIdOrThrow(festivalId, userId));
 
-        return ResponseBuilder.ok(response);
-    }
-
-    @GetMapping("/festivals/{festivalId}/participants/search")
-    public ResponseEntity<ApiResponse<List<SearchParticipantResponse>>> getParticipantByNickname(
-            @RequestHeader("Authorization") String accessToken,
-            @PathVariable("festivalId") Long festivalId,
-            @RequestParam("nickname") String nickname
-    ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-
-        List<SearchParticipantResponse> response = festivalFacade.getParticipantByNickname(userId, festivalId, nickname);
         return ResponseBuilder.ok(response);
     }
 }

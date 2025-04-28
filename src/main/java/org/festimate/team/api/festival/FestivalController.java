@@ -1,9 +1,10 @@
 package org.festimate.team.api.festival;
 
 import lombok.RequiredArgsConstructor;
-import org.festimate.team.api.facade.FestivalFacade;
-import org.festimate.team.api.festival.dto.*;
-import org.festimate.team.api.participant.dto.ProfileRequest;
+import org.festimate.team.api.facade.ParticipantFacade;
+import org.festimate.team.api.festival.dto.FestivalInfoResponse;
+import org.festimate.team.api.festival.dto.FestivalVerifyRequest;
+import org.festimate.team.api.festival.dto.FestivalVerifyResponse;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.global.response.ApiResponse;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class FestivalController {
 
     private final FestivalService festivalService;
-    private final FestivalFacade festivalFacade;
+    private final ParticipantFacade participantFacade;
     private final JwtService jwtService;
 
     @PostMapping("/verify-code")
@@ -32,33 +33,6 @@ public class FestivalController {
         return ResponseBuilder.ok(FestivalVerifyResponse.of(festival));
     }
 
-    @PostMapping("/{festivalId}/entry")
-    public ResponseEntity<ApiResponse<EntryResponse>> entryFestival(
-            @RequestHeader("Authorization") String accessToken,
-            @PathVariable("festivalId") Long festivalId
-    ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        EntryResponse response = festivalFacade.enterFestival(userId, festival);
-
-        return ResponseBuilder.ok(response);
-    }
-
-    @PostMapping("/{festivalId}/participants")
-    public ResponseEntity<ApiResponse<EntryResponse>> createParticipant(
-            @RequestHeader("Authorization") String accessToken,
-            @PathVariable("festivalId") Long festivalId,
-            @RequestBody ProfileRequest request
-    ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-
-        EntryResponse response = festivalFacade.createParticipant(userId, festival, request);
-
-        return ResponseBuilder.created(response);
-    }
-
     @GetMapping("/{festivalId}")
     public ResponseEntity<ApiResponse<FestivalInfoResponse>> getFestivalInfo(
             @RequestHeader("Authorization") String accessToken,
@@ -67,59 +41,7 @@ public class FestivalController {
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
 
-        festivalFacade.validateUserParticipation(userId, festival);
+        participantFacade.getParticipant(userId, festivalId);
         return ResponseBuilder.ok(FestivalInfoResponse.of(festival));
-    }
-
-    @GetMapping("/{festivalId}/me")
-    public ResponseEntity<ApiResponse<ProfileResponse>> getMyProfile(
-            @RequestHeader("Authorization") String accessToken,
-            @PathVariable("festivalId") Long festivalId
-    ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-
-        ProfileResponse response = festivalFacade.getParticipantProfile(userId, festival);
-        return ResponseBuilder.ok(response);
-    }
-
-    @GetMapping("/{festivalId}/me/summary")
-    public ResponseEntity<ApiResponse<MainUserInfoResponse>> getParticipantAndPoint(
-            @RequestHeader("Authorization") String accessToken,
-            @PathVariable("festivalId") Long festivalId
-    ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-
-        MainUserInfoResponse response = festivalFacade.getParticipantAndPoint(userId, festival);
-
-        return ResponseBuilder.ok(response);
-    }
-
-    @GetMapping("/{festivalId}/me/type")
-    public ResponseEntity<ApiResponse<DetailProfileResponse>> getParticipantType(
-            @RequestHeader("Authorization") String accessToken,
-            @PathVariable("festivalId") Long festivalId
-    ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-
-        DetailProfileResponse response = festivalFacade.getParticipantType(userId, festival);
-
-        return ResponseBuilder.ok(response);
-    }
-
-    @PatchMapping("/{festivalId}/me/message")
-    public ResponseEntity<ApiResponse<Void>> modifyMyMessage(
-            @RequestHeader("Authorization") String accessToken,
-            @PathVariable("festivalId") Long festivalId,
-            @RequestBody MessageRequest request
-    ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-
-        festivalFacade.modifyMyMessage(userId, festival, request);
-
-        return ResponseBuilder.created(null);
     }
 }
