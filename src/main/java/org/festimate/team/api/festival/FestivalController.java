@@ -1,26 +1,22 @@
 package org.festimate.team.api.festival;
 
 import lombok.RequiredArgsConstructor;
-import org.festimate.team.api.facade.ParticipantFacade;
-import org.festimate.team.api.festival.dto.FestivalInfoResponse;
-import org.festimate.team.api.festival.dto.FestivalVerifyRequest;
-import org.festimate.team.api.festival.dto.FestivalVerifyResponse;
-import org.festimate.team.domain.festival.entity.Festival;
-import org.festimate.team.domain.festival.service.FestivalService;
+import org.festimate.team.api.facade.FestivalFacade;
+import org.festimate.team.api.festival.dto.*;
 import org.festimate.team.global.response.ApiResponse;
 import org.festimate.team.global.response.ResponseBuilder;
 import org.festimate.team.infra.jwt.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/festivals")
 @RequiredArgsConstructor
 public class FestivalController {
-
-    private final FestivalService festivalService;
-    private final ParticipantFacade participantFacade;
     private final JwtService jwtService;
+    private final FestivalFacade festivalFacade;
 
     @PostMapping("/verify-code")
     public ResponseEntity<ApiResponse<FestivalVerifyResponse>> verifyFestival(
@@ -28,9 +24,8 @@ public class FestivalController {
             @RequestBody FestivalVerifyRequest request
     ) {
         jwtService.parseTokenAndGetUserId(accessToken);
-        Festival festival = festivalService.getFestivalByInviteCode(request.inviteCode().trim());
-
-        return ResponseBuilder.ok(FestivalVerifyResponse.of(festival));
+        FestivalVerifyResponse response = festivalFacade.verifyFestival(request);
+        return ResponseBuilder.ok(response);
     }
 
     @GetMapping("/{festivalId}")
@@ -39,9 +34,36 @@ public class FestivalController {
             @PathVariable("festivalId") Long festivalId
     ) {
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        FestivalInfoResponse response = festivalFacade.getFestivalInfo(userId, festivalId);
+        return ResponseBuilder.ok(response);
+    }
 
-        participantFacade.getParticipant(userId, festivalId);
-        return ResponseBuilder.ok(FestivalInfoResponse.of(festival));
+    @PostMapping("/admin/festival")
+    public ResponseEntity<ApiResponse<FestivalResponse>> createFestival(
+            @RequestHeader("Authorization") String accessToken,
+            @RequestBody FestivalRequest request
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        FestivalResponse response = festivalFacade.createFestival(userId, request);
+        return ResponseBuilder.created(response);
+    }
+
+    @GetMapping("/admin/festivals")
+    public ResponseEntity<ApiResponse<List<AdminFestivalResponse>>> getAllFestivals(
+            @RequestHeader("Authorization") String accessToken
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        List<AdminFestivalResponse> response = festivalFacade.getAllFestivals(userId);
+        return ResponseBuilder.ok(response);
+    }
+
+    @GetMapping("/admin/festivals/{festivalId}")
+    public ResponseEntity<ApiResponse<AdminFestivalDetailResponse>> getFestivalDetail(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable Long festivalId
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        AdminFestivalDetailResponse response = festivalFacade.getFestivalDetail(userId, festivalId);
+        return ResponseBuilder.ok(response);
     }
 }

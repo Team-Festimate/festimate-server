@@ -2,17 +2,17 @@ package org.festimate.team.domain.participant.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.festimate.team.global.response.ResponseError;
-import org.festimate.team.global.exception.FestimateException;
+import org.festimate.team.api.participant.dto.ProfileRequest;
 import org.festimate.team.api.participant.dto.TypeRequest;
 import org.festimate.team.api.participant.dto.TypeResponse;
 import org.festimate.team.domain.festival.entity.Festival;
-import org.festimate.team.api.participant.dto.ProfileRequest;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.entity.TypeResult;
 import org.festimate.team.domain.participant.repository.ParticipantRepository;
 import org.festimate.team.domain.participant.service.ParticipantService;
 import org.festimate.team.domain.user.entity.User;
+import org.festimate.team.global.exception.FestimateException;
+import org.festimate.team.global.response.ResponseError;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +43,13 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Override
     public Participant getParticipant(User user, Festival festival) {
         return participantRepository.getParticipantByUserAndFestival(user, festival);
+    }
+
+    @Override
+    public void validateParticipation(User user, Festival festival) {
+        if (getParticipant(user, festival) == null) {
+            throw new FestimateException(ResponseError.PARTICIPANT_NOT_FOUND);
+        }
     }
 
     @Override

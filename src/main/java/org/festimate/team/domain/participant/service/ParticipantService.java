@@ -1,10 +1,10 @@
 package org.festimate.team.domain.participant.service;
 
 
+import org.festimate.team.api.participant.dto.ProfileRequest;
 import org.festimate.team.api.participant.dto.TypeRequest;
 import org.festimate.team.api.participant.dto.TypeResponse;
 import org.festimate.team.domain.festival.entity.Festival;
-import org.festimate.team.api.participant.dto.ProfileRequest;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.user.entity.User;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +16,8 @@ public interface ParticipantService {
     Participant createParticipant(User user, Festival festival, ProfileRequest request);
 
     Participant getParticipant(User user, Festival festival);
+
+    void validateParticipation(User user, Festival festival);
 
     Participant getParticipantById(Long participantId);
 

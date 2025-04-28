@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import static org.festimate.team.domain.festival.validator.DateValidator.isFestivalDateValid;
+import static org.festimate.team.domain.festival.validator.DateValidator.isMatchingStartTimeValid;
+import static org.festimate.team.domain.festival.validator.FestivalRequestValidator.isFestivalValid;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -75,15 +79,16 @@ public class FestivalServiceImpl implements FestivalService {
     }
 
     @Override
-    public boolean isFestivalExpired(Festival festival) {
-        log.info("localdate now : {}", LocalDate.now());
-        return festival.getEndDate().isAfter(LocalDate.now());
-    }
-
-    @Override
     public boolean isHost(User user, Festival festival) {
         log.info("user is: {}, host is {}", user, festival.getHost());
         return festival.getHost().equals(user);
+    }
+
+    @Override
+    public void validateCreateFestival(FestivalRequest request) {
+        isFestivalValid(request.title(), request.category());
+        isFestivalDateValid(request.startDate(), request.endDate());
+        isMatchingStartTimeValid(request.startDate(), request.matchingStartAt());
     }
 
     private String generateUniqueInviteCode() {
