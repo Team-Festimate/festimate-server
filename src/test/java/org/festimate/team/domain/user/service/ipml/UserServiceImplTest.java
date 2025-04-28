@@ -34,26 +34,26 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("닉네임_중복_검증_테스트 - 실패")
-    void nicknameDuplicateNicknameFail() {
+    void nicknameValidateDuplicateNicknameFail() {
         // given
         String nickname = "테스트닉네임";
         when(userRepository.existsUserByNickname(nickname)).thenReturn(true);
 
         // when & then
-        assertThatThrownBy(() -> userService.duplicateNickname(nickname))
+        assertThatThrownBy(() -> userService.validateDuplicateNickname(nickname))
                 .isInstanceOf(FestimateException.class)
                 .hasMessageContaining(ResponseError.USER_ALREADY_EXISTS.getMessage());
     }
 
     @Test
     @DisplayName("닉네임_중복_검증_테스트 - 성공")
-    void nicknameDuplicateNicknameSuccess() {
+    void nicknameValidateDuplicateNicknameSuccess() {
         // given
         String nickname = "테스트닉네임";
         when(userRepository.existsUserByNickname(nickname)).thenReturn(false);
 
         // when & then (예외가 발생하지 않음을 검증)
-        userService.duplicateNickname(nickname);
+        userService.validateDuplicateNickname(nickname);
         assertThat(userRepository.existsUserByNickname(nickname)).isFalse();
     }
 
