@@ -1,9 +1,8 @@
-package org.festimate.team.festival.service;
+package org.festimate.team.domain.festival.service.impl;
 
 import org.festimate.team.common.mock.MockFactory;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.repository.FestivalRepository;
-import org.festimate.team.domain.festival.service.impl.FestivalServiceImpl;
 import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.entity.User;
 import org.junit.jupiter.api.BeforeEach;

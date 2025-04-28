@@ -1,11 +1,10 @@
-package org.festimate.team.matching.service;
+package org.festimate.team.domain.matching.service.impl;
 
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.api.matching.dto.MatchingInfo;
 import org.festimate.team.domain.matching.entity.Matching;
 import org.festimate.team.domain.matching.entity.MatchingStatus;
 import org.festimate.team.domain.matching.repository.MatchingRepository;
-import org.festimate.team.domain.matching.service.impl.MatchingServiceImpl;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.entity.TypeResult;
 import org.festimate.team.domain.user.entity.Gender;

@@ -1,4 +1,4 @@
-package org.festimate.team.festival.entity;
+package org.festimate.team.domain.festival.entity;
 
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.entity.FestivalStatus;

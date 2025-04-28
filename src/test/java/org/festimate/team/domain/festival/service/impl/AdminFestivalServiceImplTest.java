@@ -1,6 +1,6 @@
-package org.festimate.team.festival.service;
+package org.festimate.team.domain.festival.service.impl;
 
-import org.festimate.team.domain.Point.service.PointService;
+import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.common.mock.MockFactory;
 import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.global.exception.FestimateException;

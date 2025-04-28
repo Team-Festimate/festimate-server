@@ -1,4 +1,4 @@
-package org.festimate.team.facade;
+package org.festimate.team.api.facade;
 
 import org.festimate.team.api.facade.FestivalFacade;
 import org.festimate.team.global.response.ResponseError;

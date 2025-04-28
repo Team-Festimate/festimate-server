@@ -1,4 +1,4 @@
-package org.festimate.team.user.service;
+package org.festimate.team.domain.user.service.ipml;
 
 import org.festimate.team.global.response.ResponseError;
 import org.festimate.team.domain.user.service.impl.UserServiceImpl;
