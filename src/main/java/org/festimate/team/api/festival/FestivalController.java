@@ -1,15 +1,14 @@
 package org.festimate.team.api.festival;
 
 import lombok.RequiredArgsConstructor;
-import org.festimate.team.api.festival.dto.*;
-import org.festimate.team.api.point.dto.PointHistoryResponse;
-import org.festimate.team.global.response.ApiResponse;
-import org.festimate.team.global.response.ResponseBuilder;
 import org.festimate.team.api.facade.FestivalFacade;
+import org.festimate.team.api.festival.dto.*;
+import org.festimate.team.api.participant.dto.ProfileRequest;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
+import org.festimate.team.global.response.ApiResponse;
+import org.festimate.team.global.response.ResponseBuilder;
 import org.festimate.team.infra.jwt.JwtService;
-import org.festimate.team.api.participant.dto.ProfileRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -115,25 +114,12 @@ public class FestivalController {
             @RequestHeader("Authorization") String accessToken,
             @PathVariable("festivalId") Long festivalId,
             @RequestBody MessageRequest request
-    ){
+    ) {
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
 
         festivalFacade.modifyMyMessage(userId, festival, request);
 
         return ResponseBuilder.created(null);
-    }
-
-    @GetMapping("/{festivalId}/me/points")
-    public ResponseEntity<ApiResponse<PointHistoryResponse>> getMyPointHistory(
-            @RequestHeader("Authorization") String accessToken,
-            @PathVariable("festivalId") Long festivalId
-    ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-
-        PointHistoryResponse response = festivalFacade.getMyPointHistory(userId, festival);
-
-        return ResponseBuilder.ok(response);
     }
 }

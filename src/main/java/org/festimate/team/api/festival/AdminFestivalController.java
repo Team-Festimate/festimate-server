@@ -1,14 +1,13 @@
 package org.festimate.team.api.festival;
 
 import lombok.RequiredArgsConstructor;
-import org.festimate.team.api.festival.dto.*;
-import org.festimate.team.api.point.dto.PointHistoryResponse;
-import org.festimate.team.global.response.ApiResponse;
-import org.festimate.team.global.response.ResponseBuilder;
 import org.festimate.team.api.facade.FestivalFacade;
 import org.festimate.team.api.facade.UserFacade;
+import org.festimate.team.api.festival.dto.*;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
+import org.festimate.team.global.response.ApiResponse;
+import org.festimate.team.global.response.ResponseBuilder;
 import org.festimate.team.infra.jwt.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,19 +62,6 @@ public class AdminFestivalController {
         return ResponseBuilder.ok(response);
     }
 
-    @GetMapping("/festivals/{festivalId}/participants/{participantId}/points")
-    public ResponseEntity<ApiResponse<PointHistoryResponse>> getParticipantPointHistory(
-            @RequestHeader("Authorization") String accessToken,
-            @PathVariable("festivalId") Long festivalId,
-            @PathVariable("participantId") Long participantId
-    ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-
-        PointHistoryResponse response = festivalFacade.getParticipantPointHistory(userId, festivalId, participantId);
-
-        return ResponseBuilder.ok(response);
-    }
-
     @GetMapping("/festivals/{festivalId}/participants/search")
     public ResponseEntity<ApiResponse<List<SearchParticipantResponse>>> getParticipantByNickname(
             @RequestHeader("Authorization") String accessToken,
@@ -86,17 +72,5 @@ public class AdminFestivalController {
 
         List<SearchParticipantResponse> response = festivalFacade.getParticipantByNickname(userId, festivalId, nickname);
         return ResponseBuilder.ok(response);
-    }
-
-    @PostMapping("/festival/{festivalId}/points")
-    public ResponseEntity<ApiResponse<FestivalResponse>> rechargePoints(
-            @RequestHeader("Authorization") String accessToken,
-            @PathVariable("festivalId") Long festivalId,
-            @RequestBody RechargePointRequest request
-    ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-        festivalFacade.rechargePoints(userId, festivalId, request);
-
-        return ResponseBuilder.created(null);
     }
 }

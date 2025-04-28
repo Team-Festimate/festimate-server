@@ -3,7 +3,6 @@ package org.festimate.team.api.facade;
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.api.festival.dto.*;
 import org.festimate.team.api.participant.dto.ProfileRequest;
-import org.festimate.team.api.point.dto.PointHistoryResponse;
 import org.festimate.team.api.user.dto.UserFestivalResponse;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
@@ -102,41 +101,12 @@ public class FestivalFacade {
     }
 
     @Transactional(readOnly = true)
-    public PointHistoryResponse getMyPointHistory(Long userId, Festival festival) {
-        Participant participant = getExistingParticipantOrThrow(userId, festival);
-
-        return pointService.getPointHistory(participant);
-    }
-
-    @Transactional(readOnly = true)
-    public PointHistoryResponse getParticipantPointHistory(Long userId, Long festivalId, Long participantId) {
-        User user = userService.getUserById(userId);
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        isHost(user, festival);
-        Participant participant = participantService.getParticipantById(participantId);
-        return pointService.getPointHistory(participant);
-    }
-
-    @Transactional(readOnly = true)
     public List<SearchParticipantResponse> getParticipantByNickname(Long userId, Long festivalId, String nickname) {
         User user = userService.getUserById(userId);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
         isHost(user, festival);
         List<Participant> participants = participantService.getParticipantByNickname(festival, nickname);
         return SearchParticipantResponse.from(participants);
-    }
-
-    @Transactional
-    public void rechargePoints(Long userId, Long festivalId, RechargePointRequest request) {
-        User user = userService.getUserById(userId);
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        isHost(user, festival);
-
-        Participant participant = participantService.getParticipantById(request.participantId());
-        if (participant.getFestival() != festival) {
-            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
-        }
-        pointService.rechargePoint(participant, request.point());
     }
 
     private Participant createParticipantIfValid(User user, Festival festival, ProfileRequest request) {
