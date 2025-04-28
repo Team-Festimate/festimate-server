@@ -1,6 +1,6 @@
 package org.festimate.team.api.facade;
 
-import org.festimate.team.api.festival.dto.MessageRequest;
+import org.festimate.team.api.participant.dto.MessageRequest;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.matching.service.MatchingService;

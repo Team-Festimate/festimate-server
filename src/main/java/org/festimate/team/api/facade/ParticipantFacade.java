@@ -1,8 +1,7 @@
 package org.festimate.team.api.facade;
 
 import lombok.RequiredArgsConstructor;
-import org.festimate.team.api.festival.dto.*;
-import org.festimate.team.api.participant.dto.ProfileRequest;
+import org.festimate.team.api.participant.dto.*;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.matching.service.MatchingService;

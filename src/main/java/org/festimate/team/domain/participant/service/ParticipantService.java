@@ -1,8 +1,8 @@
 package org.festimate.team.domain.participant.service;
 
 
-import org.festimate.team.api.festival.dto.TypeRequest;
-import org.festimate.team.api.festival.dto.TypeResponse;
+import org.festimate.team.api.participant.dto.TypeRequest;
+import org.festimate.team.api.participant.dto.TypeResponse;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.api.participant.dto.ProfileRequest;
 import org.festimate.team.domain.participant.entity.Participant;

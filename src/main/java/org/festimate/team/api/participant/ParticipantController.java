@@ -2,8 +2,7 @@ package org.festimate.team.api.participant;
 
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.api.facade.ParticipantFacade;
-import org.festimate.team.api.festival.dto.*;
-import org.festimate.team.api.participant.dto.ProfileRequest;
+import org.festimate.team.api.participant.dto.*;
 import org.festimate.team.domain.participant.service.ParticipantService;
 import org.festimate.team.global.response.ApiResponse;
 import org.festimate.team.global.response.ResponseBuilder;

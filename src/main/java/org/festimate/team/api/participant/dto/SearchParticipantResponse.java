@@ -1,4 +1,4 @@
-package org.festimate.team.api.festival.dto;
+package org.festimate.team.api.participant.dto;
 
 import org.festimate.team.domain.participant.entity.Participant;
 

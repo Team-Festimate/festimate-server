@@ -1,4 +1,4 @@
-package org.festimate.team.api.festival.dto;
+package org.festimate.team.api.participant.dto;
 
 public record MessageRequest(
         String introduction,
