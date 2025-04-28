@@ -1,6 +1,7 @@
 package org.festimate.team.api.facade;
 
 import org.festimate.team.api.participant.dto.MessageRequest;
+import org.festimate.team.common.mock.MockFactory;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.matching.service.MatchingService;
@@ -8,6 +9,7 @@ import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.entity.TypeResult;
 import org.festimate.team.domain.participant.service.ParticipantService;
 import org.festimate.team.domain.point.service.PointService;
+import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.entity.User;
 import org.festimate.team.domain.user.service.UserService;
 import org.festimate.team.global.exception.FestimateException;
@@ -48,9 +50,9 @@ class ParticipantFacadeTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        user = User.builder().nickname("테스터").build();
-        festival = Festival.builder().host(user).startDate(LocalDate.now()).endDate(LocalDate.now().plusDays(1)).build();
-        participant = Participant.builder().user(user).festival(festival).typeResult(TypeResult.HEALING).build();
+        user = MockFactory.mockUser("테스터", Gender.MAN, 1L);
+        festival = MockFactory.mockFestival(user, 1L, LocalDate.now(), LocalDate.now().plusDays(1));
+        participant = MockFactory.mockParticipant(user, festival, TypeResult.HEALING, 1L);
     }
 
     @Test

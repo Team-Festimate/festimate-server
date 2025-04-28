@@ -5,6 +5,7 @@ import org.festimate.team.api.user.dto.SignUpRequest;
 import org.festimate.team.common.mock.MockFactory;
 import org.festimate.team.domain.user.entity.*;
 import org.festimate.team.domain.user.service.UserService;
+import org.festimate.team.domain.user.validator.NicknameValidator;
 import org.festimate.team.global.exception.FestimateException;
 import org.festimate.team.global.response.ResponseError;
 import org.festimate.team.infra.jwt.JwtService;
@@ -26,6 +27,8 @@ class SignUpFacadeTest {
     private UserService userService;
     @Mock
     private JwtService jwtService;
+    @Mock
+    private NicknameValidator nicknameValidator;
 
     @InjectMocks
     private SignUpFacade signUpFacade;
