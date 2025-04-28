@@ -3,7 +3,7 @@ package org.festimate.team.api.facade;
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.api.festival.dto.*;
 import org.festimate.team.api.point.dto.PointHistoryResponse;
-import org.festimate.team.domain.Point.service.PointService;
+import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.global.response.ResponseError;
 import org.festimate.team.global.exception.FestimateException;
 import org.festimate.team.domain.festival.entity.Festival;

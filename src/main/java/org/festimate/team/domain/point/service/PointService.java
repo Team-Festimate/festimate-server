@@ -1,4 +1,4 @@
-package org.festimate.team.domain.Point.service;
+package org.festimate.team.domain.point.service;
 
 import org.festimate.team.api.point.dto.PointHistoryResponse;
 import org.festimate.team.domain.participant.entity.Participant;

@@ -1,7 +1,7 @@
 package org.festimate.team.api.point.dto;
 
-import org.festimate.team.domain.Point.entity.Point;
-import org.festimate.team.domain.Point.entity.TransactionType;
+import org.festimate.team.domain.point.entity.Point;
+import org.festimate.team.domain.point.entity.TransactionType;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.festimate.team.domain.Point.entity;
+package org.festimate.team.domain.point.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

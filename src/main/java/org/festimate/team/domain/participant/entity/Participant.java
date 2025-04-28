@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.festimate.team.domain.Point.entity.Point;
+import org.festimate.team.domain.point.entity.Point;
 import org.festimate.team.global.entity.BaseTimeEntity;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.matching.entity.Matching;

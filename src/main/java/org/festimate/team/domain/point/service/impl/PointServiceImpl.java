@@ -1,13 +1,13 @@
-package org.festimate.team.domain.Point.service.impl;
+package org.festimate.team.domain.point.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.festimate.team.api.point.dto.PointHistory;
 import org.festimate.team.api.point.dto.PointHistoryResponse;
-import org.festimate.team.domain.Point.entity.Point;
-import org.festimate.team.domain.Point.entity.TransactionType;
-import org.festimate.team.domain.Point.repository.PointRepository;
-import org.festimate.team.domain.Point.service.PointService;
+import org.festimate.team.domain.point.entity.Point;
+import org.festimate.team.domain.point.entity.TransactionType;
+import org.festimate.team.domain.point.repository.PointRepository;
+import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.global.response.ResponseError;
 import org.festimate.team.global.exception.FestimateException;
 import org.festimate.team.domain.participant.entity.Participant;
