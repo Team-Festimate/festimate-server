@@ -1,13 +1,12 @@
 package org.festimate.team.api.matching;
 
 import lombok.RequiredArgsConstructor;
-import org.festimate.team.global.response.ApiResponse;
-import org.festimate.team.global.response.ResponseBuilder;
-import org.festimate.team.api.facade.FestivalFacade;
-import org.festimate.team.infra.jwt.JwtService;
 import org.festimate.team.api.matching.dto.MatchingListResponse;
 import org.festimate.team.api.matching.dto.MatchingStatusResponse;
 import org.festimate.team.domain.matching.service.MatchingService;
+import org.festimate.team.global.response.ApiResponse;
+import org.festimate.team.global.response.ResponseBuilder;
+import org.festimate.team.infra.jwt.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MatchingController {
     private final MatchingService matchingService;
-    private final FestivalFacade festivalFacade;
     private final JwtService jwtService;
 
     @PostMapping("/{festivalId}/matchings")
@@ -26,7 +24,7 @@ public class MatchingController {
     ) {
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
 
-        MatchingStatusResponse response = festivalFacade.createMatching(userId, festivalId);
+        MatchingStatusResponse response = matchingService.createMatching(userId, festivalId);
         return ResponseBuilder.created(response);
     }
 
@@ -37,7 +35,7 @@ public class MatchingController {
     ) {
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
 
-        MatchingListResponse response = festivalFacade.getMatchingList(userId, festivalId);
+        MatchingListResponse response = matchingService.getMatchingList(userId, festivalId);
         return ResponseBuilder.ok(response);
     }
 }

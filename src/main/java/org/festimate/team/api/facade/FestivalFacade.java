@@ -2,34 +2,27 @@ package org.festimate.team.api.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.api.festival.dto.*;
+import org.festimate.team.api.participant.dto.ProfileRequest;
 import org.festimate.team.api.point.dto.PointHistoryResponse;
-import org.festimate.team.domain.point.service.PointService;
-import org.festimate.team.global.response.ResponseError;
-import org.festimate.team.global.exception.FestimateException;
+import org.festimate.team.api.user.dto.UserFestivalResponse;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
-import org.festimate.team.api.matching.dto.MatchingInfo;
-import org.festimate.team.api.matching.dto.MatchingListResponse;
-import org.festimate.team.api.matching.dto.MatchingStatusResponse;
-import org.festimate.team.domain.matching.entity.Matching;
 import org.festimate.team.domain.matching.service.MatchingService;
-import org.festimate.team.api.participant.dto.ProfileRequest;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.service.ParticipantService;
-import org.festimate.team.api.user.dto.UserFestivalResponse;
+import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.domain.user.entity.User;
 import org.festimate.team.domain.user.service.UserService;
+import org.festimate.team.global.exception.FestimateException;
+import org.festimate.team.global.response.ResponseError;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.festimate.team.domain.festival.validator.DateValidator.isFestivalDateValid;
 import static org.festimate.team.domain.festival.validator.DateValidator.isMatchingStartTimeValid;
 import static org.festimate.team.domain.festival.validator.FestivalRequestValidator.isFestivalValid;
-import static org.festimate.team.domain.matching.validator.MatchingValidator.isMatchingDateValid;
 
 @Component
 @RequiredArgsConstructor
@@ -144,29 +137,6 @@ public class FestivalFacade {
             throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
         }
         pointService.rechargePoint(participant, request.point());
-    }
-
-    @Transactional
-    public MatchingStatusResponse createMatching(Long userId, Long festivalId) {
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        Participant participant = getExistingParticipantOrThrow(userId, festival);
-
-        isMatchingDateValid(LocalDateTime.now(), festival.getMatchingStartAt());
-
-        pointService.usePoint(participant);
-
-        Optional<Participant> targetParticipantOptional = matchingService.findBestCandidateByPriority(festivalId, participant);
-
-        Matching matching = matchingService.createMatching(festival, targetParticipantOptional, participant);
-        return MatchingStatusResponse.of(matching.getStatus(), matching.getMatchingId());
-    }
-
-    public MatchingListResponse getMatchingList(Long userId, Long festivalId) {
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        Participant participant = getExistingParticipantOrThrow(userId, festival);
-
-        List<MatchingInfo> matchings = matchingService.getMatchingListByParticipant(participant);
-        return MatchingListResponse.from(matchings);
     }
 
     private Participant createParticipantIfValid(User user, Festival festival, ProfileRequest request) {
