@@ -1,7 +1,9 @@
 package org.festimate.team.festival.entity;
 
-import org.festimate.team.user.entity.Gender;
-import org.festimate.team.user.entity.User;
+import org.festimate.team.domain.festival.entity.Festival;
+import org.festimate.team.domain.festival.entity.FestivalStatus;
+import org.festimate.team.domain.user.entity.Gender;
+import org.festimate.team.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

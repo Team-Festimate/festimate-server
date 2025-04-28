@@ -1,15 +1,15 @@
 package org.festimate.team.matching.service;
 
-import org.festimate.team.festival.entity.Festival;
-import org.festimate.team.matching.dto.MatchingInfo;
-import org.festimate.team.matching.entity.Matching;
-import org.festimate.team.matching.entity.MatchingStatus;
-import org.festimate.team.matching.repository.MatchingRepository;
-import org.festimate.team.matching.service.impl.MatchingServiceImpl;
-import org.festimate.team.participant.entity.Participant;
-import org.festimate.team.participant.entity.TypeResult;
-import org.festimate.team.user.entity.Gender;
-import org.festimate.team.user.entity.User;
+import org.festimate.team.domain.festival.entity.Festival;
+import org.festimate.team.api.matching.dto.MatchingInfo;
+import org.festimate.team.domain.matching.entity.Matching;
+import org.festimate.team.domain.matching.entity.MatchingStatus;
+import org.festimate.team.domain.matching.repository.MatchingRepository;
+import org.festimate.team.domain.matching.service.impl.MatchingServiceImpl;
+import org.festimate.team.domain.participant.entity.Participant;
+import org.festimate.team.domain.participant.entity.TypeResult;
+import org.festimate.team.domain.user.entity.Gender;
+import org.festimate.team.domain.user.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

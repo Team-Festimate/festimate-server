@@ -1,16 +1,17 @@
 package org.festimate.team.festival.service;
 
-import org.festimate.team.Point.service.PointService;
+import org.festimate.team.domain.Point.service.PointService;
 import org.festimate.team.common.mock.MockFactory;
-import org.festimate.team.exception.FestimateException;
-import org.festimate.team.facade.FestivalFacade;
-import org.festimate.team.festival.dto.RechargePointRequest;
-import org.festimate.team.festival.entity.Festival;
-import org.festimate.team.participant.entity.Participant;
-import org.festimate.team.participant.service.ParticipantService;
-import org.festimate.team.user.entity.Gender;
-import org.festimate.team.user.entity.User;
-import org.festimate.team.user.service.UserService;
+import org.festimate.team.domain.festival.service.FestivalService;
+import org.festimate.team.global.exception.FestimateException;
+import org.festimate.team.api.facade.FestivalFacade;
+import org.festimate.team.api.festival.dto.RechargePointRequest;
+import org.festimate.team.domain.festival.entity.Festival;
+import org.festimate.team.domain.participant.entity.Participant;
+import org.festimate.team.domain.participant.service.ParticipantService;
+import org.festimate.team.domain.user.entity.Gender;
+import org.festimate.team.domain.user.entity.User;
+import org.festimate.team.domain.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

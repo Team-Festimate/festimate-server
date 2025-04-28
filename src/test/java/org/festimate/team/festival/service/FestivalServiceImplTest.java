@@ -1,11 +1,11 @@
 package org.festimate.team.festival.service;
 
 import org.festimate.team.common.mock.MockFactory;
-import org.festimate.team.festival.entity.Festival;
-import org.festimate.team.festival.repository.FestivalRepository;
-import org.festimate.team.festival.service.impl.FestivalServiceImpl;
-import org.festimate.team.user.entity.Gender;
-import org.festimate.team.user.entity.User;
+import org.festimate.team.domain.festival.entity.Festival;
+import org.festimate.team.domain.festival.repository.FestivalRepository;
+import org.festimate.team.domain.festival.service.impl.FestivalServiceImpl;
+import org.festimate.team.domain.user.entity.Gender;
+import org.festimate.team.domain.user.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
