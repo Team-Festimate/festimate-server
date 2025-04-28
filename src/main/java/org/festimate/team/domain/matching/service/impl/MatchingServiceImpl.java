@@ -2,15 +2,23 @@ package org.festimate.team.domain.matching.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.api.matching.dto.MatchingInfo;
+import org.festimate.team.api.matching.dto.MatchingListResponse;
+import org.festimate.team.api.matching.dto.MatchingStatusResponse;
+import org.festimate.team.domain.festival.entity.Festival;
+import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.matching.entity.Matching;
 import org.festimate.team.domain.matching.entity.MatchingStatus;
 import org.festimate.team.domain.matching.repository.MatchingRepository;
 import org.festimate.team.domain.matching.service.MatchingService;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.entity.TypeResult;
+import org.festimate.team.domain.participant.service.ParticipantService;
+import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.domain.user.entity.Gender;
+import org.festimate.team.domain.user.service.UserService;
+import org.festimate.team.global.exception.FestimateException;
+import org.festimate.team.global.response.ResponseError;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,15 +27,55 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.festimate.team.domain.matching.validator.MatchingValidator.isMatchingDateValid;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MatchingServiceImpl implements MatchingService {
     private final MatchingRepository matchingRepository;
+    private final FestivalService festivalService;
+    private final ParticipantService participantService;
+    private final PointService pointService;
+    private final UserService userService;
 
-    @Override
     @Transactional
-    public Matching createMatching(Festival festival, Optional<Participant> targetParticipantOptional, Participant participant) {
+    public MatchingStatusResponse createMatching(Long userId, Long festivalId) {
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        Participant participant = getExistingParticipantOrThrow(userId, festival);
+
+        isMatchingDateValid(LocalDateTime.now(), festival.getMatchingStartAt());
+
+        pointService.usePoint(participant);
+
+        Optional<Participant> targetParticipantOptional = findBestCandidateByPriority(festivalId, participant);
+
+        Matching matching = saveMatching(festival, targetParticipantOptional, participant);
+        return MatchingStatusResponse.of(matching.getStatus(), matching.getMatchingId());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public MatchingListResponse getMatchingList(Long userId, Long festivalId) {
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        Participant participant = getExistingParticipantOrThrow(userId, festival);
+
+        List<MatchingInfo> matchings = getMatchingListByParticipant(participant);
+        return MatchingListResponse.from(matchings);
+    }
+
+    private Participant getExistingParticipantOrThrow(Long userId, Festival festival) {
+        Participant participant = participantService.getParticipant(
+                userService.getUserById(userId), festival
+        );
+        if (participant == null) {
+            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
+        }
+        return participant;
+    }
+
+    @Transactional
+    protected Matching saveMatching(Festival festival, Optional<Participant> targetParticipantOptional, Participant participant) {
         Matching matching;
 
         if (targetParticipantOptional.isEmpty()) {
@@ -78,8 +126,7 @@ public class MatchingServiceImpl implements MatchingService {
         }
     }
 
-    @Override
-    public List<MatchingInfo> getMatchingListByParticipant(Participant participant) {
+    private List<MatchingInfo> getMatchingListByParticipant(Participant participant) {
         List<Matching> matchings = matchingRepository.findAllMatchingsByApplicantParticipant(participant);
         return matchings.stream()
                 .map(MatchingInfo::fromMatching)

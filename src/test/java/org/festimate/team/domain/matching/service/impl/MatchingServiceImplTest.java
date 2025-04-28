@@ -1,14 +1,18 @@
 package org.festimate.team.domain.matching.service.impl;
 
+import org.festimate.team.api.matching.dto.MatchingListResponse;
 import org.festimate.team.domain.festival.entity.Festival;
-import org.festimate.team.api.matching.dto.MatchingInfo;
+import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.matching.entity.Matching;
 import org.festimate.team.domain.matching.entity.MatchingStatus;
 import org.festimate.team.domain.matching.repository.MatchingRepository;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.entity.TypeResult;
+import org.festimate.team.domain.participant.service.ParticipantService;
+import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.entity.User;
+import org.festimate.team.domain.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +34,18 @@ public class MatchingServiceImplTest {
     @Mock
     private MatchingRepository matchingRepository;
 
+    @Mock
+    private FestivalService festivalService;
+
+    @Mock
+    private ParticipantService participantService;
+
+    @Mock
+    private PointService pointService;
+
+    @Mock
+    private UserService userService;
+
     @InjectMocks
     private MatchingServiceImpl matchingService;
 
@@ -39,45 +55,46 @@ public class MatchingServiceImplTest {
     }
 
     @Test
-    @DisplayName("매칭 리스트 조회 - PENDING과 COMPLETED 매칭을 포함한 정상 케이스")
-    void getMatchingListByParticipant_success() {
-
+    @DisplayName("매칭 리스트 조회 - 정상 케이스")
+    void getMatchingList_success() {
         // given
-        User applicantUser = mockUser("신청자", Gender.MAN, 1L);
-        User targetUser = mockUser("타겟", Gender.WOMAN, 2L);
+        User user = mockUser("신청자", Gender.MAN, 1L);
+        Festival festival = mockFestival(user, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
 
-        Participant applicant = Participant.builder()
-                .user(applicantUser)
+        Participant participant = Participant.builder()
+                .user(user)
+                .festival(festival)
                 .build();
 
-        Participant matchedParticipant = Participant.builder()
-                .user(targetUser)
-                .build();
-
-        Matching completedMatching = Matching.builder()
-                .applicantParticipant(applicant)
-                .targetParticipant(matchedParticipant)
-                .status(MatchingStatus.COMPLETED)
-                .matchDate(LocalDateTime.now())
-                .build();
-
-        Matching pendingMatching = Matching.builder()
-                .applicantParticipant(applicant)
+        Matching matching1 = Matching.builder()
+                .applicantParticipant(participant)
                 .targetParticipant(null)
                 .status(MatchingStatus.PENDING)
                 .matchDate(LocalDateTime.now())
                 .build();
 
-        when(matchingRepository.findAllMatchingsByApplicantParticipant(applicant))
-                .thenReturn(List.of(completedMatching, pendingMatching));
+        Matching matching2 = Matching.builder()
+                .applicantParticipant(participant)
+                .targetParticipant(Participant.builder()
+                        .user(mockUser("상대방", Gender.WOMAN, 2L))
+                        .build())
+                .status(MatchingStatus.COMPLETED)
+                .matchDate(LocalDateTime.now())
+                .build();
+
+        when(festivalService.getFestivalByIdOrThrow(1L)).thenReturn(festival);
+        when(userService.getUserById(1L)).thenReturn(user);
+        when(participantService.getParticipant(user, festival)).thenReturn(participant);
+        when(matchingRepository.findAllMatchingsByApplicantParticipant(participant))
+                .thenReturn(List.of(matching2, matching1));
 
         // when
-        List<MatchingInfo> result = matchingService.getMatchingListByParticipant(applicant);
+        MatchingListResponse result = matchingService.getMatchingList(user.getUserId(), festival.getFestivalId());
 
         // then
-        assertThat(result).hasSize(2);
-        assertThat(result.get(0).nickname()).isEqualTo("타겟");
-        assertThat(result.get(1).nickname()).isNull();
+        assertThat(result.matchingList()).hasSize(2);
+        assertThat(result.matchingList().get(0).nickname()).isEqualTo("상대방");
+        assertThat(result.matchingList().get(1).nickname()).isNull();
     }
 
     @Test
