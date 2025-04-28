@@ -7,13 +7,13 @@ import org.festimate.team.domain.user.entity.User;
 import java.util.Optional;
 
 public interface UserService {
-    void duplicateNickname(String nickname);
+    void validateDuplicateNickname(String nickname);
 
     Long getUserIdByPlatformId(String platformId);
 
     void updateRefreshToken(Long userId, String refreshToken);
 
-    User saveUser(SignUpRequest request, String platformId);
+    User signUp(SignUpRequest request, String platformId);
 
     String getUserNickname(Long userId);
 
@@ -21,7 +21,5 @@ public interface UserService {
 
     void validateRefreshToken(User user, String refreshToken);
 
-    Optional<Long> getUserIdByPlatformAndPlatformId(Platform platform, String platformId);
-
-    void findByIdOrThrow(Long userId);
+    Optional<Long> getUserIdByPlatform(Platform platform, String platformId);
 }

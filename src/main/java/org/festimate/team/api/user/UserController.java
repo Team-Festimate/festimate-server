@@ -2,18 +2,17 @@ package org.festimate.team.api.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.festimate.team.global.response.ApiResponse;
-import org.festimate.team.global.response.ResponseBuilder;
+import org.festimate.team.api.auth.dto.TokenResponse;
 import org.festimate.team.api.facade.FestivalFacade;
 import org.festimate.team.api.facade.SignUpFacade;
-import org.festimate.team.infra.jwt.JwtService;
-import org.festimate.team.api.auth.dto.TokenResponse;
 import org.festimate.team.api.user.dto.SignUpRequest;
 import org.festimate.team.api.user.dto.UserFestivalResponse;
 import org.festimate.team.api.user.dto.UserNicknameResponse;
 import org.festimate.team.domain.user.service.UserService;
-import org.festimate.team.domain.user.validator.NicknameValidator;
 import org.festimate.team.domain.user.validator.UserRequestValidator;
+import org.festimate.team.global.response.ApiResponse;
+import org.festimate.team.global.response.ResponseBuilder;
+import org.festimate.team.infra.jwt.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,17 +25,16 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final NicknameValidator nicknameValidator;
     private final UserRequestValidator userRequestValidator;
     private final SignUpFacade signUpFacade;
     private final FestivalFacade festivalFacade;
     private final JwtService jwtService;
 
     @PostMapping("/validate-nickname")
-    public ResponseEntity<ApiResponse<Void>> validateNickname(@RequestParam("nickname") String nickname) {
-        nicknameValidator.validate(nickname);
-        userService.duplicateNickname(nickname);
-
+    public ResponseEntity<ApiResponse<Void>> validateNickname(
+            @RequestParam("nickname") String nickname
+    ) {
+        signUpFacade.validateNickname(nickname);
         return ResponseBuilder.ok(null);
     }
 
@@ -46,6 +44,7 @@ public class UserController {
             @RequestBody SignUpRequest request
     ) {
         log.info("Received Authorization Header: {}", accessToken);
+        signUpFacade.validateNickname(request.nickName());
 
         String platformId = jwtService.extractPlatformUserIdFromToken(accessToken);
         log.info("SignUp - platformId: {}", platformId);
@@ -64,7 +63,7 @@ public class UserController {
     }
 
     @GetMapping("/me/festivals")
-    public ResponseEntity<ApiResponse<List<UserFestivalResponse>>> getFestival(
+    public ResponseEntity<ApiResponse<List<UserFestivalResponse>>> getMyFestival(
             @RequestHeader("Authorization") String accessToken,
             @RequestParam("status") String status
     ) {
