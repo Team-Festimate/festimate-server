@@ -2,11 +2,11 @@ package org.festimate.team.api.facade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.festimate.team.domain.auth.service.KakaoLoginService;
-import org.festimate.team.infra.jwt.JwtService;
 import org.festimate.team.api.auth.dto.TokenResponse;
+import org.festimate.team.domain.auth.service.KakaoLoginService;
 import org.festimate.team.domain.user.entity.Platform;
 import org.festimate.team.domain.user.service.UserService;
+import org.festimate.team.infra.jwt.JwtService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +21,12 @@ public class LoginFacade {
 
     @Transactional
     public TokenResponse login(String platformId, Platform platform) {
-        return userService.getUserIdByPlatformAndPlatformId(platform, platformId)
-                .map(this::login)
+        return userService.getUserIdByPlatform(platform, platformId)
+                .map(this::loginExistingUser)
                 .orElseGet(() -> createTemporaryToken(platformId));
     }
 
-    private TokenResponse login(Long userId) {
+    private TokenResponse loginExistingUser(Long userId) {
         log.info("기존 유저 로그인 성공 - userId: {}", userId);
         String newRefreshToken = jwtService.createRefreshToken(userId);
 

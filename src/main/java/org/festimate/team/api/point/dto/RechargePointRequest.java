@@ -1,4 +1,4 @@
-package org.festimate.team.api.festival.dto;
+package org.festimate.team.api.point.dto;
 
 public record RechargePointRequest(
         long participantId,

@@ -17,7 +17,7 @@ public interface FestivalService {
 
     Festival getFestivalDetailByIdOrThrow(Long festivalId, Long userId);
 
-    boolean isFestivalExpired(Festival festival);
-
     boolean isHost(User user, Festival festival);
+
+    void validateCreateFestival(FestivalRequest request);
 }

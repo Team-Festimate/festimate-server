@@ -35,6 +35,7 @@ public class MockFactory {
                 .category(Category.LIFE)
                 .startDate(startDate)
                 .endDate(endDate)
+                .matchingStartAt(startDate.atStartOfDay().plusHours(1))
                 .inviteCode("MOCK123")
                 .build();
 

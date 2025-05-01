@@ -2,13 +2,13 @@ package org.festimate.team.api.auth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.festimate.team.global.response.ApiResponse;
-import org.festimate.team.global.response.ResponseBuilder;
-import org.festimate.team.api.facade.LoginFacade;
-import org.festimate.team.infra.jwt.JwtService;
 import org.festimate.team.api.auth.dto.TokenResponse;
+import org.festimate.team.api.facade.LoginFacade;
 import org.festimate.team.domain.user.entity.Platform;
 import org.festimate.team.domain.user.service.UserService;
+import org.festimate.team.global.response.ApiResponse;
+import org.festimate.team.global.response.ResponseBuilder;
+import org.festimate.team.infra.jwt.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +30,7 @@ public class AuthController {
 
         String platformId = loginFacade.getPlatformId(kakaoAccessToken);
 
-        return userService.getUserIdByPlatformAndPlatformId(Platform.KAKAO, platformId)
+        return userService.getUserIdByPlatform(Platform.KAKAO, platformId)
                 .map(userId -> loginFacade.login(platformId, Platform.KAKAO))
                 .map(ResponseBuilder::ok)
                 .orElseGet(() -> ResponseBuilder.created(loginFacade.login(platformId, Platform.KAKAO)));

@@ -2,13 +2,13 @@ package org.festimate.team.domain.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.festimate.team.global.response.ResponseError;
-import org.festimate.team.global.exception.FestimateException;
 import org.festimate.team.api.user.dto.SignUpRequest;
 import org.festimate.team.domain.user.entity.Platform;
 import org.festimate.team.domain.user.entity.User;
 import org.festimate.team.domain.user.repository.UserRepository;
 import org.festimate.team.domain.user.service.UserService;
+import org.festimate.team.global.exception.FestimateException;
+import org.festimate.team.global.response.ResponseError;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,13 +17,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
     @Override
-    public void duplicateNickname(String nickname) {
+    public void validateDuplicateNickname(String nickname) {
         log.info("Checking nickname duplication: {}", nickname);
         if (userRepository.existsUserByNickname(nickname)) {
             throw new FestimateException(ResponseError.USER_ALREADY_EXISTS);
@@ -32,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User saveUser(SignUpRequest request, String platformId) {
+    public User signUp(SignUpRequest request, String platformId) {
         User user = User.builder()
                 .name(request.name())
                 .phoneNumber(request.phoneNumber())
@@ -52,13 +51,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String getUserNickname(Long userId) {
-        findByIdOrThrow(userId);
+        getUserById(userId);
         return userRepository.findNicknameByUserId(userId);
     }
 
     @Override
     public User getUserById(Long userId) {
-        return findById(userId);
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateRefreshToken(Long userId, String refreshToken) {
-        User user = findById(userId);
+        User user = getUserById(userId);
         user.updateRefreshToken(refreshToken);
         userRepository.save(user);
     }
@@ -81,18 +81,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<Long> getUserIdByPlatformAndPlatformId(Platform platform, String platformId) {
+    public Optional<Long> getUserIdByPlatform(Platform platform, String platformId) {
         return Optional.ofNullable(userRepository.findByPlatformAndPlatformId(platform, platformId))
                 .map(User::getUserId);
-    }
-
-    @Override
-    public void findByIdOrThrow(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
-    }
-
-    private User findById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
     }
 }
