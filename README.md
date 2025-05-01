@@ -18,10 +18,35 @@ Festimate는 페스티벌에서 이성과의 네트워킹을 지원하는 **맞�
 | 이현진     | 👑 **BE 리드 개발자** 👑 <br> Public / Private Subnet 분리 작업 <br> HTTPS 설정 및 도메인 연결 <br> 무중단 배포를 위한 스크립트 작성 | 🧩 **인증 및 회원** <br> - 로그인 API / 로그아웃 API <br> - 회원가입 API <br> - 닉네임 중복확인 API <br><br> 👤 **유저 및 참가자** <br> - 닉네임 조회 API <br> - 참가자 유형 테스트 결과 조회 API / 내 유형 조회 API <br> - 참가자 프로필 생성 API <br> - 전달할 메세지 수정 API <br><br> 🎉 **페스티벌** <br> - 내가 참여하는 페스티벌 조회 API <br> - 페스티벌 초대코드 검증 API / 페스티벌 입장 API <br> - 매칭 추가하기 API / 매칭 리스트 조회 API <br> - 축제 이름 조회 API <br><br> 💰 **포인트 및 어드민 기능** <br> - 페스티벌 생성 API <br> - 페스티벌 참가자 전체 조회 API <br> - 포인트 충전 API / 포인트 내역 조회 API / 특정 유저의 포인트 내역 조회 API <br> - 닉네임 + 포인트 조회 API <br> - 페스티벌 전체 조회 API |
 
 ---
+## 🏗️ Architecture Overview
+![image](https://github.com/user-attachments/assets/6fb54cb2-aa60-41fd-ac98-ce0e6c26a85e)
 
+---
 ## 🧾 ERD
 
 ![festimate-erd (1)](https://github.com/user-attachments/assets/19b1721c-b572-4d7a-a46a-4b64b0a5b463)
+
+
+## Teck Stack ✨
+
+| 항목 | 내용 |
+| --- | --- |
+| **IDE** | IntelliJ IDEA |
+| **Language** | Java 21 |
+| **Framework** | Spring Boot 3.4.3 / Gradle |
+| **Build Tool** | Gradle |
+| **Authentication** | OAuth 2.0 (Kakao), JSON Web Token (JWT) |
+| **Security** | Spring Security |
+| **ORM** | Spring Data JPA + Hibernate |
+| **Database** | MySQL |
+| **Infra/Cloud** | AWS EC2, AWS RDS, Nginx, Route 53 |
+| **CI/CD** | GitHub Actions + Docker + Blue-Green Deployment |
+| **Monitoring/Logging** | AOP 기반 API 요청 로깅 |
+| **Documentation** | Notion (API 명세), ERDCloud (ERD 설계 도구) |
+| **API Test** | Postman |
+| **Collab Tools** | Discord, Figma, GitHub Projects |
+| **Design Tool** | Figma (UI/UX 시안 및 협업) |
+---
 
 ## API 명세서
 
@@ -29,33 +54,7 @@ Festimate는 페스티벌에서 이성과의 네트워킹을 지원하는 **맞�
 
 [API 명세서 바로가기](https://psychedelic-perigee-94e.notion.site/API-1ceaebccb8e480309a37d1ca2f466a93)
 
-| **HTTP Status**          | **Code** | **Message**                                   |
-|--------------------------|----------|-----------------------------------------------|
-| **400 Bad Request**      | 4000     | 잘못된 요청입니다.                           |
-|                          | 4001     | 유효하지 않은 플랫폼 타입입니다.             |
-|                          | 4002     | 요청 파라미터가 잘못되었습니다.             |
-|                          | 4003     | 입력된 글자수가 허용된 범위를 벗어났습니다. |
-|                          | 4004     | 닉네임은 한글로만 입력 가능합니다.          |
-|                          | 4005     | 유효하지 않은 인가 코드입니다.              |
-|                          | 4006     | 유효하지 않은 날짜 형식입니다.              |
-| **401 Unauthorized**     | 4011     | 액세스 토큰의 값이 올바르지 않습니다.         |
-|                          | 4012     | 액세스 토큰이 만료되었습니다. 재발급 받아주세요. |
-|                          | 4013     | 초대코드가 만료되었습니다.                   |
-|                          | 4014     | 페스티벌 기간이 종료되었습니다.             |
-|                          | 4015     | 토큰 값이 올바르지 않습니다.                |
-| **403 Forbidden**        | 4030     | 리소스 접근 권한이 없습니다.                |
-| **404 Not Found**        | 4040     | 대상을 찾을 수 없습니다.                   |
-|                          | 4041     | 존재하지 않는 회원입니다.                   |
-|                          | 4042     | 존재하지 않는 페스티벌입니다.               |
-|                          | 4043     | 존재하지 않는 참가자입니다.                |
-| **405 Method Not Allowed**| 4050     | 잘못된 HTTP method 요청입니다.               |
-| **409 Conflict**         | 4090     | 이미 존재하는 리소스입니다.                 |
-|                          | 4091     | 이미 존재하는 회원입니다.                   |
-|                          | 4092     | 이미 존재하는 참여자입니다.                 |
-|                          | 4093     | 포인트가 부족합니다.                       |
-| **500 Internal Server Error** | 5000 | 서버 내부 오류입니다.                       |
 ---
-
 ## 📋 Branch Convention
 
 - `release` : 프로덕트를 배포하는 브랜치입니다.
@@ -78,7 +77,7 @@ Festimate는 페스티벌에서 이성과의 네트워킹을 지원하는 **맞�
 - **fix** : 코드 오류 수정 `[fix] #23 회원가입 비즈니스 로직 오류 수정`
 - **refactor** : 내부 로직은 변경 하지 않고 기존의 코드를 개선하는 리팩터링 `[refactor] #15 클래스 분리`
 - **chore** : 의존성 추가, yml 추가와 수정, 패키지 구조 변경, 파일 이동 등의 작업 `[chore] #30 파일명 변경`
-- **test**: 테스트 코드 작성, 수정 `test: 로그인 API 테스트 코드 작성 (#20)`
+- **test**: 테스트 코드 작성, 수정 `[test] #20 로그인 API 테스트 코드 작성`
 
 ---
 
@@ -110,23 +109,6 @@ Festimate는 페스티벌에서 이성과의 네트워킹을 지원하는 **맞�
 | 8️⃣ **어드민 페이지** | 운영자가 사용자 정보 및 포인트를 실시간으로 관리 | - 관리자 전용 로그인 및 역할 분리<br>- 사용자/포인트/페스티벌 정보 실시간 조회 및 수정 |
 
 ---
-
-## Teck Stack ✨
-
-| IDE              | IntelliJ               |
-|------------------|------------------------|
-| Language         | Java 21                |
-| Framework        | Spring Boot 3.4.1, Gradle|
-| Authentication   | JSON Web Tokens        |
-| ORM              | Spring Data JPA        |
-| Database         | MySQL                  |
-| External         | AWS EC2, AWS RDS, Nginx|
-| CI/CD            | Github Action          |
-| API Docs         | Notion                 |
-| Other Tools      | Discord, Postman, Figma|
-
----
-
 ## 팀 소개
 
 ![image](https://github.com/user-attachments/assets/6cb8fc52-b037-459d-91aa-e233de98d1c1)

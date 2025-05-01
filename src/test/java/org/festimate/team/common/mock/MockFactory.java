@@ -1,10 +1,10 @@
 package org.festimate.team.common.mock;
 
-import org.festimate.team.festival.entity.Category;
-import org.festimate.team.festival.entity.Festival;
-import org.festimate.team.participant.entity.Participant;
-import org.festimate.team.participant.entity.TypeResult;
-import org.festimate.team.user.entity.*;
+import org.festimate.team.domain.festival.entity.Category;
+import org.festimate.team.domain.festival.entity.Festival;
+import org.festimate.team.domain.participant.entity.Participant;
+import org.festimate.team.domain.participant.entity.TypeResult;
+import org.festimate.team.domain.user.entity.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
@@ -35,6 +35,7 @@ public class MockFactory {
                 .category(Category.LIFE)
                 .startDate(startDate)
                 .endDate(endDate)
+                .matchingStartAt(startDate.atStartOfDay().plusHours(1))
                 .inviteCode("MOCK123")
                 .build();
 
