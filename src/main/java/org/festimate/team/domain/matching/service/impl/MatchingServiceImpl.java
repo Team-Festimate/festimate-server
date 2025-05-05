@@ -74,7 +74,7 @@ public class MatchingServiceImpl implements MatchingService {
     public MatchingDetailInfo getMatchingDetail(Long userId, Long festivalId, Long matchingId) {
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
         participantService.getParticipantOrThrow(userService.getUserByIdOrThrow(userId), festival);
-        Matching matching = Optional.ofNullable(matchingRepository.findByMatchingId(matchingId))
+        Matching matching = matchingRepository.findByMatchingId(matchingId)
                 .orElseThrow(() -> new FestimateException(ResponseError.TARGET_NOT_FOUND));
         if (!matching.getFestival().getFestivalId().equals(festivalId)) {
             throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
