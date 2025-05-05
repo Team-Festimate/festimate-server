@@ -10,10 +10,8 @@ import org.festimate.team.infra.jwt.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/festivals")
 @RequiredArgsConstructor
 public class ParticipantController {
 
@@ -21,18 +19,18 @@ public class ParticipantController {
     private final ParticipantService participantService;
     private final ParticipantFacade participantFacade;
 
-    @PostMapping("/participants/type")
+    @PostMapping("/{festivalId}/participants/type")
     public ResponseEntity<ApiResponse<TypeResponse>> getFestivalType(
             @RequestHeader("Authorization") String accessToken,
+            @PathVariable Long festivalId,
             @RequestBody TypeRequest request
     ) {
         jwtService.parseTokenAndGetUserId(accessToken);
-
         TypeResponse response = participantService.getTypeResult(request);
         return ResponseBuilder.ok(response);
     }
 
-    @PostMapping("/festivals/{festivalId}/entry")
+    @GetMapping("/{festivalId}/participants/me")
     public ResponseEntity<ApiResponse<EntryResponse>> entryFestival(
             @RequestHeader("Authorization") String accessToken,
             @PathVariable("festivalId") Long festivalId
@@ -43,7 +41,7 @@ public class ParticipantController {
         return ResponseBuilder.ok(response);
     }
 
-    @PostMapping("/festivals/{festivalId}/participants")
+    @PostMapping("/{festivalId}/participants")
     public ResponseEntity<ApiResponse<EntryResponse>> createParticipant(
             @RequestHeader("Authorization") String accessToken,
             @PathVariable("festivalId") Long festivalId,
@@ -54,7 +52,7 @@ public class ParticipantController {
         return ResponseBuilder.created(response);
     }
 
-    @GetMapping("/festivals/{festivalId}/me")
+    @GetMapping("/{festivalId}/participants/me/profile")
     public ResponseEntity<ApiResponse<ProfileResponse>> getMyProfile(
             @RequestHeader("Authorization") String accessToken,
             @PathVariable("festivalId") Long festivalId
@@ -64,7 +62,7 @@ public class ParticipantController {
         return ResponseBuilder.ok(response);
     }
 
-    @GetMapping("/festivals/{festivalId}/me/summary")
+    @GetMapping("/{festivalId}/participants/me/summary")
     public ResponseEntity<ApiResponse<MainUserInfoResponse>> getParticipantAndPoint(
             @RequestHeader("Authorization") String accessToken,
             @PathVariable("festivalId") Long festivalId
@@ -75,7 +73,7 @@ public class ParticipantController {
         return ResponseBuilder.ok(response);
     }
 
-    @GetMapping("/festivals/{festivalId}/me/type")
+    @GetMapping("/{festivalId}/participants/me/type")
     public ResponseEntity<ApiResponse<DetailProfileResponse>> getParticipantType(
             @RequestHeader("Authorization") String accessToken,
             @PathVariable("festivalId") Long festivalId
@@ -86,7 +84,7 @@ public class ParticipantController {
         return ResponseBuilder.ok(response);
     }
 
-    @PatchMapping("/festivals/{festivalId}/me/message")
+    @PatchMapping("/{festivalId}/participants/me/message")
     public ResponseEntity<ApiResponse<Void>> modifyMyMessage(
             @RequestHeader("Authorization") String accessToken,
             @PathVariable("festivalId") Long festivalId,
@@ -96,17 +94,5 @@ public class ParticipantController {
         participantFacade.modifyMessage(userId, festivalId, request);
 
         return ResponseBuilder.created(null);
-    }
-
-    @GetMapping("/admin/festivals/{festivalId}/participants/search")
-    public ResponseEntity<ApiResponse<List<SearchParticipantResponse>>> getParticipantByNickname(
-            @RequestHeader("Authorization") String accessToken,
-            @PathVariable("festivalId") Long festivalId,
-            @RequestParam("nickname") String nickname
-    ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-
-        List<SearchParticipantResponse> response = participantFacade.getParticipantByNickname(userId, festivalId, nickname);
-        return ResponseBuilder.ok(response);
     }
 }
