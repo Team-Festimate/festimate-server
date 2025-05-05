@@ -17,7 +17,7 @@ public interface UserService {
 
     String getUserNickname(Long userId);
 
-    User getUserById(Long userId);
+    User getUserByIdOrThrow(Long userId);
 
     void validateRefreshToken(User user, String refreshToken);
 

@@ -33,7 +33,7 @@ public class PointFacade {
 
     @Transactional(readOnly = true)
     public PointHistoryResponse getParticipantPointHistory(Long userId, Long festivalId, Long participantId) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
         isHost(user, festival);
         Participant participant = participantService.getParticipantById(participantId);
@@ -42,7 +42,7 @@ public class PointFacade {
 
     @Transactional
     public void rechargePoints(Long userId, Long festivalId, RechargePointRequest request) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
         isHost(user, festival);
 
@@ -54,7 +54,7 @@ public class PointFacade {
     }
 
     private Participant getExistingParticipantOrThrow(Long userId, Festival festival) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         Participant participant = participantService.getParticipant(user, festival);
         if (participant == null) {
             throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);

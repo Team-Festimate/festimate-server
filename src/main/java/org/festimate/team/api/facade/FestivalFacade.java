@@ -34,7 +34,7 @@ public class FestivalFacade {
 
     @Transactional(readOnly = true)
     public FestivalInfoResponse getFestivalInfo(Long userId, Long festivalId) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
         participantService.validateParticipation(user, festival);
         return FestivalInfoResponse.of(festival);
@@ -42,7 +42,7 @@ public class FestivalFacade {
 
     @Transactional
     public FestivalResponse createFestival(Long userId, FestivalRequest request) {
-        User host = userService.getUserById(userId);
+        User host = userService.getUserByIdOrThrow(userId);
 
         festivalService.validateCreateFestival(request);
 
@@ -52,7 +52,7 @@ public class FestivalFacade {
 
     @Transactional(readOnly = true)
     public List<UserFestivalResponse> getUserFestivals(Long userId, String status) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         return participantService.getFestivalsByUser(user, status)
                 .stream()
                 .map(UserFestivalResponse::from)
@@ -61,7 +61,7 @@ public class FestivalFacade {
 
     @Transactional(readOnly = true)
     public List<AdminFestivalResponse> getAllFestivals(Long userId) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         List<Festival> festivals = festivalService.getAllFestivals(user);
         return festivals.stream()
                 .map(AdminFestivalResponse::of)
