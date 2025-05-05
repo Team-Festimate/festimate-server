@@ -1,4 +1,4 @@
-package org.festimate.team.api.festival.dto;
+package org.festimate.team.api.admin.dto;
 
 public record FestivalResponse(
         Long festivalId,

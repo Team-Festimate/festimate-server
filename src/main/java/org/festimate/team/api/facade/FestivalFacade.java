@@ -1,7 +1,13 @@
 package org.festimate.team.api.facade;
 
 import lombok.RequiredArgsConstructor;
-import org.festimate.team.api.festival.dto.*;
+import org.festimate.team.api.admin.dto.AdminFestivalDetailResponse;
+import org.festimate.team.api.admin.dto.AdminFestivalResponse;
+import org.festimate.team.api.admin.dto.FestivalRequest;
+import org.festimate.team.api.admin.dto.FestivalResponse;
+import org.festimate.team.api.festival.dto.FestivalInfoResponse;
+import org.festimate.team.api.festival.dto.FestivalVerifyRequest;
+import org.festimate.team.api.festival.dto.FestivalVerifyResponse;
 import org.festimate.team.api.user.dto.UserFestivalResponse;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
@@ -28,16 +34,15 @@ public class FestivalFacade {
 
     @Transactional(readOnly = true)
     public FestivalInfoResponse getFestivalInfo(Long userId, Long festivalId) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        participantService.validateParticipation(user, festival);
+        participantService.getParticipantOrThrow(user, festival);
         return FestivalInfoResponse.of(festival);
     }
 
     @Transactional
     public FestivalResponse createFestival(Long userId, FestivalRequest request) {
-        User host = userService.getUserById(userId);
-
+        User host = userService.getUserByIdOrThrow(userId);
         festivalService.validateCreateFestival(request);
 
         Festival festival = festivalService.createFestival(host, request);
@@ -46,7 +51,7 @@ public class FestivalFacade {
 
     @Transactional(readOnly = true)
     public List<UserFestivalResponse> getUserFestivals(Long userId, String status) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         return participantService.getFestivalsByUser(user, status)
                 .stream()
                 .map(UserFestivalResponse::from)
@@ -55,7 +60,7 @@ public class FestivalFacade {
 
     @Transactional(readOnly = true)
     public List<AdminFestivalResponse> getAllFestivals(Long userId) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         List<Festival> festivals = festivalService.getAllFestivals(user);
         return festivals.stream()
                 .map(AdminFestivalResponse::of)

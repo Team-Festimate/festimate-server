@@ -17,8 +17,6 @@ import org.festimate.team.domain.participant.service.ParticipantService;
 import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.service.UserService;
-import org.festimate.team.global.exception.FestimateException;
-import org.festimate.team.global.response.ResponseError;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +40,9 @@ public class MatchingServiceImpl implements MatchingService {
     @Transactional
     public MatchingStatusResponse createMatching(Long userId, Long festivalId) {
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        Participant participant = getExistingParticipantOrThrow(userId, festival);
+        Participant participant = participantService.getParticipantOrThrow(
+                userService.getUserByIdOrThrow(userId), festival
+        );
 
         isMatchingDateValid(LocalDateTime.now(), festival.getMatchingStartAt());
 
@@ -58,20 +58,12 @@ public class MatchingServiceImpl implements MatchingService {
     @Override
     public MatchingListResponse getMatchingList(Long userId, Long festivalId) {
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        Participant participant = getExistingParticipantOrThrow(userId, festival);
+        Participant participant = participantService.getParticipantOrThrow(
+                userService.getUserByIdOrThrow(userId), festival
+        );
 
         List<MatchingInfo> matchings = getMatchingListByParticipant(participant);
         return MatchingListResponse.from(matchings);
-    }
-
-    private Participant getExistingParticipantOrThrow(Long userId, Festival festival) {
-        Participant participant = participantService.getParticipant(
-                userService.getUserById(userId), festival
-        );
-        if (participant == null) {
-            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
-        }
-        return participant;
     }
 
     @Transactional

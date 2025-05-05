@@ -1,6 +1,6 @@
 package org.festimate.team.api.facade;
 
-import org.festimate.team.api.festival.dto.FestivalRequest;
+import org.festimate.team.api.admin.dto.FestivalRequest;
 import org.festimate.team.api.festival.dto.FestivalVerifyRequest;
 import org.festimate.team.common.mock.MockFactory;
 import org.festimate.team.domain.festival.entity.Festival;
@@ -69,7 +69,7 @@ class FestivalFacadeTest {
         // given
         Festival festival = MockFactory.mockFestival(user, 1L, LocalDate.now(), LocalDate.now().plusDays(1));
 
-        when(userService.getUserById(1L)).thenReturn(user);
+        when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
         when(festivalService.getFestivalByIdOrThrow(1L)).thenReturn(festival);
 
         // user가 참가자인지 검증
@@ -97,7 +97,7 @@ class FestivalFacadeTest {
 
         Festival festival = MockFactory.mockFestival(user, 100L, request.startDate(), request.endDate());
 
-        when(userService.getUserById(1L)).thenReturn(user);
+        when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
         when(festivalService.createFestival(user, request)).thenReturn(festival);
 
         // when
@@ -113,7 +113,7 @@ class FestivalFacadeTest {
         // given
         Festival festival = MockFactory.mockFestival(user, 200L, LocalDate.now(), LocalDate.now().plusDays(2));
 
-        when(userService.getUserById(1L)).thenReturn(user);
+        when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
         when(participantService.getFestivalsByUser(user, "ALL")).thenReturn(List.of(festival));
 
         // when
@@ -131,7 +131,7 @@ class FestivalFacadeTest {
         Festival festival1 = MockFactory.mockFestival(user, 1L, LocalDate.now(), LocalDate.now().plusDays(1));
         Festival festival2 = MockFactory.mockFestival(user, 2L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(2));
 
-        when(userService.getUserById(1L)).thenReturn(user);
+        when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
         when(festivalService.getAllFestivals(user)).thenReturn(List.of(festival1, festival2));
 
         // when

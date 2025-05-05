@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,10 +47,9 @@ public class ParticipantServiceImpl implements ParticipantService {
     }
 
     @Override
-    public void validateParticipation(User user, Festival festival) {
-        if (getParticipant(user, festival) == null) {
-            throw new FestimateException(ResponseError.PARTICIPANT_NOT_FOUND);
-        }
+    public Participant getParticipantOrThrow(User user, Festival festival) {
+        return Optional.ofNullable(participantRepository.getParticipantByUserAndFestival(user, festival))
+                .orElseThrow(() -> new FestimateException(ResponseError.PARTICIPANT_NOT_FOUND));
     }
 
     @Override

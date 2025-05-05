@@ -15,9 +15,9 @@ public interface ParticipantService {
     @Transactional
     Participant createParticipant(User user, Festival festival, ProfileRequest request);
 
-    Participant getParticipant(User user, Festival festival);
+    Participant getParticipantOrThrow(User user, Festival festival);
 
-    void validateParticipation(User user, Festival festival);
+    Participant getParticipant(User user, Festival festival);
 
     Participant getParticipantById(Long participantId);
 
