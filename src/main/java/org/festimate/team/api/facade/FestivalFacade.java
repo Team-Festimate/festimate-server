@@ -36,14 +36,13 @@ public class FestivalFacade {
     public FestivalInfoResponse getFestivalInfo(Long userId, Long festivalId) {
         User user = userService.getUserByIdOrThrow(userId);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        participantService.validateParticipation(user, festival);
+        participantService.getParticipantOrThrow(user, festival);
         return FestivalInfoResponse.of(festival);
     }
 
     @Transactional
     public FestivalResponse createFestival(Long userId, FestivalRequest request) {
         User host = userService.getUserByIdOrThrow(userId);
-
         festivalService.validateCreateFestival(request);
 
         Festival festival = festivalService.createFestival(host, request);

@@ -84,7 +84,7 @@ public class MatchingServiceImplTest {
 
         when(festivalService.getFestivalByIdOrThrow(1L)).thenReturn(festival);
         when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
-        when(participantService.getParticipant(user, festival)).thenReturn(participant);
+        when(participantService.getParticipantOrThrow(user, festival)).thenReturn(participant);
         when(matchingRepository.findAllMatchingsByApplicantParticipant(participant))
                 .thenReturn(List.of(matching2, matching1));
 
