@@ -51,12 +51,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String getUserNickname(Long userId) {
-        getUserById(userId);
+        getUserByIdOrThrow(userId);
         return userRepository.findNicknameByUserId(userId);
     }
 
     @Override
-    public User getUserById(Long userId) {
+    public User getUserByIdOrThrow(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new FestimateException(ResponseError.USER_NOT_FOUND));
     }
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateRefreshToken(Long userId, String refreshToken) {
-        User user = getUserById(userId);
+        User user = getUserByIdOrThrow(userId);
         user.updateRefreshToken(refreshToken);
         userRepository.save(user);
     }

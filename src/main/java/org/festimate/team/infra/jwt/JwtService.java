@@ -79,7 +79,7 @@ public class JwtService {
     @Transactional
     public TokenResponse reIssueToken(final String refreshToken) {
         Long userId = parseTokenAndGetUserId(refreshToken);
-        User findUser = userService.getUserById(userId);
+        User findUser = userService.getUserByIdOrThrow(userId);
         String extractPrefixToken = refreshToken.split(" ")[1];
         isValidRefreshToken(findUser, extractPrefixToken);
         String renewRefreshToken = createRefreshToken(userId);
@@ -100,7 +100,7 @@ public class JwtService {
             SecretKey secretKey = getSecretKey();
             Long userId = parseTokenAndGetUserId(secretKey, splitToken);
 
-            if (userService.getUserById(userId).getRefreshToken() == null) {
+            if (userService.getUserByIdOrThrow(userId).getRefreshToken() == null) {
                 throw new FestimateException(ResponseError.INVALID_TOKEN);
             }
             return userId;

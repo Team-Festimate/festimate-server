@@ -61,7 +61,7 @@ class PointFacadeTest {
     void getMyPointHistory_success() {
         // given
         when(festivalService.getFestivalByIdOrThrow(100L)).thenReturn(festival);
-        when(userService.getUserById(2L)).thenReturn(participantUser);
+        when(userService.getUserByIdOrThrow(2L)).thenReturn(participantUser);
         when(participantService.getParticipant(participantUser, festival)).thenReturn(participant);
 
         PointHistoryResponse dummyResponse = PointHistoryResponse.from(5, List.of());
@@ -78,7 +78,7 @@ class PointFacadeTest {
     @DisplayName("다른 참가자의 포인트 내역 조회 성공 (호스트 권한)")
     void getParticipantPointHistory_success() {
         // given
-        when(userService.getUserById(1L)).thenReturn(host);
+        when(userService.getUserByIdOrThrow(1L)).thenReturn(host);
         when(festivalService.getFestivalByIdOrThrow(100L)).thenReturn(festival);
         when(festivalService.isHost(host, festival)).thenReturn(true);
         when(participantService.getParticipantById(200L)).thenReturn(participant);
@@ -99,7 +99,7 @@ class PointFacadeTest {
         // given
         RechargePointRequest request = new RechargePointRequest(200L, 5);
 
-        when(userService.getUserById(1L)).thenReturn(host);
+        when(userService.getUserByIdOrThrow(1L)).thenReturn(host);
         when(festivalService.getFestivalByIdOrThrow(100L)).thenReturn(festival);
         when(festivalService.isHost(host, festival)).thenReturn(true);
         when(participantService.getParticipantById(200L)).thenReturn(participant);
@@ -117,7 +117,7 @@ class PointFacadeTest {
         User attacker = MockFactory.mockUser("악당", Gender.MAN, 999L);
         RechargePointRequest request = new RechargePointRequest(200L, 5);
 
-        when(userService.getUserById(999L)).thenReturn(attacker);
+        when(userService.getUserByIdOrThrow(999L)).thenReturn(attacker);
         when(festivalService.getFestivalByIdOrThrow(100L)).thenReturn(festival);
         when(festivalService.isHost(attacker, festival)).thenReturn(false);
 
@@ -135,7 +135,7 @@ class PointFacadeTest {
 
         RechargePointRequest request = new RechargePointRequest(300L, 5);
 
-        when(userService.getUserById(1L)).thenReturn(host);
+        when(userService.getUserByIdOrThrow(1L)).thenReturn(host);
         when(festivalService.getFestivalByIdOrThrow(100L)).thenReturn(festival);
         when(festivalService.isHost(host, festival)).thenReturn(true);
         when(participantService.getParticipantById(300L)).thenReturn(otherParticipant);

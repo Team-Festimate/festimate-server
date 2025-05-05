@@ -66,7 +66,7 @@ public class MatchingServiceImpl implements MatchingService {
 
     private Participant getExistingParticipantOrThrow(Long userId, Festival festival) {
         Participant participant = participantService.getParticipant(
-                userService.getUserById(userId), festival
+                userService.getUserByIdOrThrow(userId), festival
         );
         if (participant == null) {
             throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
