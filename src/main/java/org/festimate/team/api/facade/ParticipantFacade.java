@@ -1,6 +1,7 @@
 package org.festimate.team.api.facade;
 
 import lombok.RequiredArgsConstructor;
+import org.festimate.team.api.admin.dto.SearchParticipantResponse;
 import org.festimate.team.api.participant.dto.*;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;

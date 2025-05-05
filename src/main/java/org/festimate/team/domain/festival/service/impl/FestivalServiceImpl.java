@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.festimate.team.global.response.ResponseError;
 import org.festimate.team.global.exception.FestimateException;
-import org.festimate.team.api.festival.dto.FestivalRequest;
+import org.festimate.team.api.admin.dto.FestivalRequest;
 import org.festimate.team.domain.festival.entity.Category;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.repository.FestivalRepository;
