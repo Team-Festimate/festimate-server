@@ -77,11 +77,7 @@ public class ParticipantFacade {
     public Participant getParticipant(Long userId, Long festivalId) {
         User user = userService.getUserByIdOrThrow(userId);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        Participant participant = participantService.getParticipant(user, festival);
-        if (participant == null) {
-            throw new FestimateException(ResponseError.PARTICIPANT_NOT_FOUND);
-        }
-        return participant;
+        return participantService.getParticipantOrThrow(user, festival);
     }
 
     @Transactional(readOnly = true)
