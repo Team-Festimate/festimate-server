@@ -29,17 +29,17 @@ public class ParticipantFacade {
 
     @Transactional(readOnly = true)
     public EntryResponse entryFestival(Long userId, Long festivalId) {
-        User user = userService.getUserById(userId);
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        Participant participant = participantService.getParticipant(user, festival);
+        Participant participant = getParticipant(userId, festivalId);
         return EntryResponse.of(participant);
     }
 
     @Transactional
     public EntryResponse createParticipant(Long userId, Long festivalId, ProfileRequest request) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-
+        if (participantService.getParticipant(user, festival) != null) {
+            throw new FestimateException(ResponseError.PARTICIPANT_ALREADY_EXISTS);
+        }
         Participant participant = participantService.createParticipant(user, festival, request);
         matchingService.matchPendingParticipants(participant);
 
@@ -74,7 +74,7 @@ public class ParticipantFacade {
 
     @Transactional(readOnly = true)
     public Participant getParticipant(Long userId, Long festivalId) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
         Participant participant = participantService.getParticipant(user, festival);
         if (participant == null) {
@@ -85,7 +85,7 @@ public class ParticipantFacade {
 
     @Transactional(readOnly = true)
     public List<SearchParticipantResponse> getParticipantByNickname(Long userId, Long festivalId, String nickname) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByIdOrThrow(userId);
         Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
         isHost(user, festival);
         List<Participant> participants = participantService.getParticipantByNickname(festival, nickname);
