@@ -62,7 +62,7 @@ class PointFacadeTest {
         // given
         when(festivalService.getFestivalByIdOrThrow(100L)).thenReturn(festival);
         when(userService.getUserByIdOrThrow(2L)).thenReturn(participantUser);
-        when(participantService.getParticipant(participantUser, festival)).thenReturn(participant);
+        when(participantService.getParticipantOrThrow(participantUser, festival)).thenReturn(participant);
 
         PointHistoryResponse dummyResponse = PointHistoryResponse.from(5, List.of());
         when(pointService.getPointHistory(participant)).thenReturn(dummyResponse);
