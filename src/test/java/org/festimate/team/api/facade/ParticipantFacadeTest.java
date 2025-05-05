@@ -61,7 +61,7 @@ class ParticipantFacadeTest {
     void entryFestival_success() {
         when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
         when(festivalService.getFestivalByIdOrThrow(1L)).thenReturn(festival);
-        when(participantService.getParticipant(user, festival)).thenReturn(participant);
+        when(participantService.getParticipantOrThrow(user, festival)).thenReturn(participant);
 
         var response = participantFacade.entryFestival(1L, 1L);
 
@@ -86,7 +86,7 @@ class ParticipantFacadeTest {
     void getParticipantProfile_success() {
         when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
         when(festivalService.getFestivalByIdOrThrow(1L)).thenReturn(festival);
-        when(participantService.getParticipant(user, festival)).thenReturn(participant);
+        when(participantService.getParticipantOrThrow(user, festival)).thenReturn(participant);
 
         var response = participantFacade.getParticipantProfile(1L, 1L);
 
@@ -98,7 +98,7 @@ class ParticipantFacadeTest {
     void getParticipantSummary_success() {
         when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
         when(festivalService.getFestivalByIdOrThrow(1L)).thenReturn(festival);
-        when(participantService.getParticipant(user, festival)).thenReturn(participant);
+        when(participantService.getParticipantOrThrow(user, festival)).thenReturn(participant);
         when(pointService.getTotalPointByParticipant(participant)).thenReturn(10);
 
         var response = participantFacade.getParticipantSummary(1L, 1L);
@@ -111,7 +111,7 @@ class ParticipantFacadeTest {
     void getParticipantType_success() {
         when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
         when(festivalService.getFestivalByIdOrThrow(1L)).thenReturn(festival);
-        when(participantService.getParticipant(user, festival)).thenReturn(participant);
+        when(participantService.getParticipantOrThrow(user, festival)).thenReturn(participant);
 
         var response = participantFacade.getParticipantType(1L, 1L);
 
@@ -123,7 +123,7 @@ class ParticipantFacadeTest {
     void modifyMessage_success() {
         when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
         when(festivalService.getFestivalByIdOrThrow(1L)).thenReturn(festival);
-        when(participantService.getParticipant(user, festival)).thenReturn(participant);
+        when(participantService.getParticipantOrThrow(user, festival)).thenReturn(participant);
 
         MessageRequest request = new MessageRequest("새로운 소개", "새로운 메세지");
 
@@ -138,7 +138,8 @@ class ParticipantFacadeTest {
     void getParticipant_fail() {
         when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
         when(festivalService.getFestivalByIdOrThrow(1L)).thenReturn(festival);
-        when(participantService.getParticipant(user, festival)).thenReturn(null);
+        when(participantService.getParticipantOrThrow(user, festival))
+                .thenThrow(new FestimateException(ResponseError.PARTICIPANT_NOT_FOUND));
 
         assertThatThrownBy(() -> participantFacade.getParticipant(1L, 1L))
                 .isInstanceOf(FestimateException.class)
@@ -148,20 +149,15 @@ class ParticipantFacadeTest {
     @Test
     @DisplayName("같은 유저가 같은 페스티벌에 중복 참가하려고 하면 예외가 발생해야 한다")
     void createParticipant_duplicate_fail() {
-        // given
         when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
         when(festivalService.getFestivalByIdOrThrow(1L)).thenReturn(festival);
-        // 이미 참가자가 존재한다고 설정
-        when(participantService.getParticipant(user, festival)).thenReturn(participant);
+        when(participantService.getParticipant(user, festival)).thenReturn(participant); // 이미 존재
 
-        // createParticipant 호출 시 예외를 직접 발생시키도록 설정
-        when(participantService.createParticipant(any(), any(), any()))
-                .thenThrow(new FestimateException(ResponseError.PARTICIPANT_ALREADY_EXISTS));
-
-        // when & then
         assertThatThrownBy(() -> participantFacade.createParticipant(1L, 1L,
                 new ProfileRequest(TypeResult.HEALING, "자기소개", "메시지")))
                 .isInstanceOf(FestimateException.class)
                 .hasMessageContaining(ResponseError.PARTICIPANT_ALREADY_EXISTS.getMessage());
+
+        verify(participantService, never()).createParticipant(any(), any(), any());
     }
 }
