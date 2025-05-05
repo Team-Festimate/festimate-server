@@ -73,7 +73,7 @@ public class AdminController {
     ) {
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
         pointFacade.rechargePoints(userId, festivalId, request);
-        return ResponseBuilder.created(null);
+        return ResponseBuilder.ok(null);
     }
 
     @GetMapping("/{festivalId}/participants/{participantId}/points")
