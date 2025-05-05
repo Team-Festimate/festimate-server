@@ -1,6 +1,6 @@
 package org.festimate.team.api.facade;
 
-import org.festimate.team.api.festival.dto.FestivalRequest;
+import org.festimate.team.api.admin.dto.FestivalRequest;
 import org.festimate.team.api.festival.dto.FestivalVerifyRequest;
 import org.festimate.team.common.mock.MockFactory;
 import org.festimate.team.domain.festival.entity.Festival;

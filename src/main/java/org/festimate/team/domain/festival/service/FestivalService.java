@@ -1,6 +1,6 @@
 package org.festimate.team.domain.festival.service;
 
-import org.festimate.team.api.festival.dto.FestivalRequest;
+import org.festimate.team.api.admin.dto.FestivalRequest;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.user.entity.User;
 
