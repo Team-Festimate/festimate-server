@@ -13,6 +13,8 @@ import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.entity.User;
 import org.festimate.team.domain.user.service.UserService;
+import org.festimate.team.global.exception.FestimateException;
+import org.festimate.team.global.response.ResponseError;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.festimate.team.common.mock.MockFactory.*;
 import static org.mockito.Mockito.when;
@@ -240,4 +243,31 @@ public class MatchingServiceImplTest {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    @DisplayName("매칭 상세 조회 - 매칭과 페스티벌이 일치하지 않는 경우 예외 발생")
+    void getMatchingDetail_invalidFestival_throwsException() {
+        // given
+        User user = mockUser("사용자", Gender.MAN, 1L);
+        Festival requestedFestival = mockFestival(user, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+        Festival otherFestival = mockFestival(user, 2L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+
+        Participant participant = mockParticipant(user, requestedFestival, TypeResult.INFLUENCER, 1L);
+        Matching mismatchedMatching = Matching.builder()
+                .festival(otherFestival)
+                .applicantParticipant(participant)
+                .targetParticipant(null)
+                .status(MatchingStatus.PENDING)
+                .matchDate(LocalDateTime.now())
+                .build();
+
+        when(userService.getUserByIdOrThrow(user.getUserId())).thenReturn(user);
+        when(festivalService.getFestivalByIdOrThrow(requestedFestival.getFestivalId())).thenReturn(requestedFestival);
+        when(participantService.getParticipantOrThrow(user, requestedFestival)).thenReturn(participant);
+        when(matchingRepository.findByMatchingId(1L)).thenReturn(mismatchedMatching);
+
+        // when & then
+        assertThatThrownBy(() -> matchingService.getMatchingDetail(user.getUserId(), requestedFestival.getFestivalId(), 1L))
+                .isInstanceOf(FestimateException.class)
+                .hasMessage(ResponseError.FORBIDDEN_RESOURCE.getMessage());
+    }
 }
