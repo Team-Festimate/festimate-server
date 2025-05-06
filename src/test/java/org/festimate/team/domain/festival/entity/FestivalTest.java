@@ -1,7 +1,5 @@
 package org.festimate.team.domain.festival.entity;
 
-import org.festimate.team.domain.festival.entity.Festival;
-import org.festimate.team.domain.festival.entity.FestivalStatus;
 import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +11,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.festimate.team.common.mock.MockFactory.mockFestival;
 import static org.festimate.team.common.mock.MockFactory.mockUser;
 
-public class FestivalTest {
+class FestivalTest {
 
     private final User mockHost = mockUser("호스트", Gender.MAN, 1L);
 

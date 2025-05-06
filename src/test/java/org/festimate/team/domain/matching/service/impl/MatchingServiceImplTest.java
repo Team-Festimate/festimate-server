@@ -30,7 +30,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.festimate.team.common.mock.MockFactory.*;
 import static org.mockito.Mockito.when;
 
-public class MatchingServiceImplTest {
+class MatchingServiceImplTest {
     @Mock
     private MatchingRepository matchingRepository;
 
