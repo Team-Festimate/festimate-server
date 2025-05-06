@@ -14,28 +14,22 @@ import java.util.Optional;
 public interface MatchingRepository extends JpaRepository<Matching, Long> {
     @Query("""
                 SELECT p FROM Participant p
+                JOIN FETCH p.user
                 WHERE p.festival.festivalId = :festivalId
                   AND p.typeResult = :typeResult
                   AND p.user.gender != :gender
                   AND p.participantId != :participantId
                   AND p.participantId NOT IN (
-                      SELECT m.targetParticipant.participantId FROM Matching m
+                      SELECT m.targetParticipant.participantId
+                      FROM Matching m
                       WHERE m.applicantParticipant.participantId = :participantId
                         AND m.status = 'COMPLETED'
                   )
-                  AND (SIZE(p.matchingsAsTarget) + SIZE(p.matchingsAsApplicant)) = (
-                      SELECT MIN(SIZE(p2.matchingsAsTarget) + SIZE(p2.matchingsAsApplicant))
-                      FROM Participant p2
-                      WHERE p2.festival.festivalId = :festivalId
-                        AND p2.typeResult = :typeResult
-                        AND p2.user.gender != :gender
-                        AND p2.participantId != :participantId
-                        AND p2.participantId NOT IN (
-                            SELECT m2.targetParticipant.participantId FROM Matching m2
-                            WHERE m2.applicantParticipant.participantId = :participantId
-                              AND m2.status = 'COMPLETED'
-                        )
-                  )
+                ORDER BY (
+                    SELECT COUNT(m1)
+                    FROM Matching m1
+                    WHERE m1.applicantParticipant = p OR m1.targetParticipant = p
+                ) ASC
             """)
     Optional<Participant> findMatchingCandidate(
             @Param("participantId") Long participantId,

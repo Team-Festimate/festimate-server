@@ -45,12 +45,12 @@ public class MatchingServiceImpl implements MatchingService {
         );
 
         isMatchingDateValid(LocalDateTime.now(), festival.getMatchingStartAt());
-
         pointService.usePoint(participant);
 
-        Optional<Participant> targetParticipantOptional = findBestCandidateByPriority(festivalId, participant);
+        Optional<Participant> targetOptional = findBestCandidateByPriority(festivalId, participant);
+        Participant target = targetOptional.orElse(null);
 
-        Matching matching = saveMatching(festival, targetParticipantOptional, participant);
+        Matching matching = saveMatching(festival, Optional.ofNullable(target), participant);
         return MatchingStatusResponse.of(matching.getStatus(), matching.getMatchingId());
     }
 
