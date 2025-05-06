@@ -33,7 +33,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.festimate.team.common.mock.MockFactory.*;
 import static org.mockito.Mockito.when;
 
-public class MatchingServiceImplTest {
+class MatchingServiceImplTest {
     @Mock
     private MatchingRepository matchingRepository;
 
@@ -263,7 +263,7 @@ public class MatchingServiceImplTest {
         when(userService.getUserByIdOrThrow(user.getUserId())).thenReturn(user);
         when(festivalService.getFestivalByIdOrThrow(requestedFestival.getFestivalId())).thenReturn(requestedFestival);
         when(participantService.getParticipantOrThrow(user, requestedFestival)).thenReturn(participant);
-        when(matchingRepository.findByMatchingId(1L)).thenReturn(mismatchedMatching);
+        when(matchingRepository.findByMatchingId(1L)).thenReturn(Optional.of(mismatchedMatching));
 
         // when & then
         assertThatThrownBy(() -> matchingService.getMatchingDetail(user.getUserId(), requestedFestival.getFestivalId(), 1L))
