@@ -75,5 +75,6 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
             """)
     List<Matching> findAllMatchingsByApplicantParticipant(Participant participant);
 
+    Optional<Matching> findByMatchingId(Long matchingId);
 }
 
