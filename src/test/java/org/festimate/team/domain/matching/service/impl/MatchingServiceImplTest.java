@@ -255,8 +255,10 @@ class MatchingServiceImplTest {
         Matching mismatchedMatching = Matching.builder()
                 .festival(otherFestival)
                 .applicantParticipant(participant)
-                .targetParticipant(null)
-                .status(MatchingStatus.PENDING)
+                .targetParticipant(Participant.builder()
+                        .user(mockUser("상대방", Gender.WOMAN, 3L))
+                        .build())
+                .status(MatchingStatus.COMPLETED)
                 .matchDate(LocalDateTime.now())
                 .build();
 
@@ -269,6 +271,63 @@ class MatchingServiceImplTest {
         assertThatThrownBy(() -> matchingService.getMatchingDetail(user.getUserId(), requestedFestival.getFestivalId(), 1L))
                 .isInstanceOf(FestimateException.class)
                 .hasMessage(ResponseError.FORBIDDEN_RESOURCE.getMessage());
+    }
+
+    @Test
+    @DisplayName("매칭 상세 조회 - 보류 중인 매칭을 조회할 경우 예외 발생")
+    void getMatchingDetail_pendingMatching_throwsException() {
+        // given
+        User user = mockUser("사용자", Gender.MAN, 1L);
+        Festival requestedFestival = mockFestival(user, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+        Festival otherFestival = mockFestival(user, 2L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+
+        Participant participant = mockParticipant(user, requestedFestival, TypeResult.INFLUENCER, 1L);
+        Matching mismatchedMatching = Matching.builder()
+                .festival(otherFestival)
+                .applicantParticipant(participant)
+                .targetParticipant(null)
+                .status(MatchingStatus.COMPLETED)
+                .matchDate(LocalDateTime.now())
+                .build();
+
+        when(userService.getUserByIdOrThrow(user.getUserId())).thenReturn(user);
+        when(festivalService.getFestivalByIdOrThrow(requestedFestival.getFestivalId())).thenReturn(requestedFestival);
+        when(participantService.getParticipantOrThrow(user, requestedFestival)).thenReturn(participant);
+        when(matchingRepository.findByMatchingId(1L)).thenReturn(Optional.of(mismatchedMatching));
+
+        // when & then
+        assertThatThrownBy(() -> matchingService.getMatchingDetail(user.getUserId(), requestedFestival.getFestivalId(), 1L))
+                .isInstanceOf(FestimateException.class)
+                .hasMessage(ResponseError.TARGET_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("매칭 상세 조회 - 없는 매칭 ID를 조회할 경우 예외 발생")
+    void getMatchingDetail_nonExistentMatchingId_throwsException() {
+        // given
+        User user = mockUser("사용자", Gender.MAN, 1L);
+        Festival festival = mockFestival(user, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+        Participant participant = mockParticipant(user, festival, TypeResult.INFLUENCER, 1L);
+        Matching mismatchedMatching = Matching.builder()
+                .festival(festival)
+                .applicantParticipant(participant)
+                .targetParticipant(Participant.builder()
+                        .user(mockUser("상대방", Gender.WOMAN, 3L))
+                        .build())
+                .status(MatchingStatus.COMPLETED)
+                .matchDate(LocalDateTime.now())
+                .build();
+
+        when(userService.getUserByIdOrThrow(user.getUserId())).thenReturn(user);
+        when(festivalService.getFestivalByIdOrThrow(festival.getFestivalId())).thenReturn(festival);
+        when(participantService.getParticipantOrThrow(user, festival)).thenReturn(participant);
+        when(matchingRepository.findByMatchingId(1L))
+                .thenReturn(Optional.ofNullable(mismatchedMatching));
+
+        // when & then
+        assertThatThrownBy(() -> matchingService.getMatchingDetail(user.getUserId(), festival.getFestivalId(), 2L))
+                .isInstanceOf(FestimateException.class)
+                .hasMessage(ResponseError.TARGET_NOT_FOUND.getMessage());
     }
 
     @Test
