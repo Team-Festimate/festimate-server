@@ -2,6 +2,7 @@ package org.festimate.team.domain.matching.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.festimate.team.api.matching.dto.MatchingDetailInfo;
 import org.festimate.team.api.matching.dto.MatchingInfo;
 import org.festimate.team.api.matching.dto.MatchingListResponse;
 import org.festimate.team.api.matching.dto.MatchingStatusResponse;
@@ -17,6 +18,8 @@ import org.festimate.team.domain.participant.service.ParticipantService;
 import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.service.UserService;
+import org.festimate.team.global.exception.FestimateException;
+import org.festimate.team.global.response.ResponseError;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +68,19 @@ public class MatchingServiceImpl implements MatchingService {
 
         List<MatchingInfo> matchings = getMatchingListByParticipant(participant);
         return MatchingListResponse.from(matchings);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public MatchingDetailInfo getMatchingDetail(Long userId, Long festivalId, Long matchingId) {
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        participantService.getParticipantOrThrow(userService.getUserByIdOrThrow(userId), festival);
+        Matching matching = matchingRepository.findByMatchingId(matchingId)
+                .orElseThrow(() -> new FestimateException(ResponseError.TARGET_NOT_FOUND));
+        if (!matching.getFestival().getFestivalId().equals(festivalId)) {
+            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
+        }
+        return MatchingDetailInfo.from(matching);
     }
 
     @Transactional
