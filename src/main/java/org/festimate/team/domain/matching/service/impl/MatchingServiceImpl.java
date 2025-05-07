@@ -20,6 +20,7 @@ import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.service.UserService;
 import org.festimate.team.global.exception.FestimateException;
 import org.festimate.team.global.response.ResponseError;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,12 +49,12 @@ public class MatchingServiceImpl implements MatchingService {
         );
 
         isMatchingDateValid(LocalDateTime.now(), festival.getMatchingStartAt());
-
         pointService.usePoint(participant);
 
-        Optional<Participant> targetParticipantOptional = findBestCandidateByPriority(festivalId, participant);
+        Optional<Participant> targetOptional = findBestCandidateByPriority(festivalId, participant);
+        Participant target = targetOptional.orElse(null);
 
-        Matching matching = saveMatching(festival, targetParticipantOptional, participant);
+        Matching matching = saveMatching(festival, Optional.ofNullable(target), participant);
         return MatchingStatusResponse.of(matching.getStatus(), matching.getMatchingId());
     }
 
@@ -76,6 +77,9 @@ public class MatchingServiceImpl implements MatchingService {
         participantService.getParticipantOrThrow(userService.getUserByIdOrThrow(userId), festival);
         Matching matching = matchingRepository.findByMatchingId(matchingId)
                 .orElseThrow(() -> new FestimateException(ResponseError.TARGET_NOT_FOUND));
+        if (matching.getTargetParticipant() == null || matching.getTargetParticipant().getUser() == null) {
+            throw new FestimateException(ResponseError.TARGET_NOT_FOUND);
+        }
         if (!matching.getFestival().getFestivalId().equals(festivalId)) {
             throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
         }
@@ -102,12 +106,14 @@ public class MatchingServiceImpl implements MatchingService {
         Gender myGender = participant.getUser().getGender();
 
         for (TypeResult priorityType : priorities) {
-            Optional<Participant> candidate = matchingRepository.findMatchingCandidate(
+            Optional<Participant> candidate = matchingRepository.findMatchingCandidates(
                     participant.getParticipantId(),
                     priorityType,
                     myGender,
-                    festivalId
-            );
+                    festivalId,
+                    PageRequest.of(0, 1)
+            ).stream().findFirst();
+
             if (candidate.isPresent()) {
                 return candidate;
             }

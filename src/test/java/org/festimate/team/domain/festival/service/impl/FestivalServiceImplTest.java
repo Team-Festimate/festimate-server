@@ -18,7 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.when;
 
-public class FestivalServiceImplTest {
+class FestivalServiceImplTest {
     @Mock
     private FestivalRepository festivalRepository;
 
