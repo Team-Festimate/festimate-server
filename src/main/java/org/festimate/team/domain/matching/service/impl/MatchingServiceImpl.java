@@ -17,6 +17,7 @@ import org.festimate.team.domain.participant.service.ParticipantService;
 import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.service.UserService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,12 +87,14 @@ public class MatchingServiceImpl implements MatchingService {
         Gender myGender = participant.getUser().getGender();
 
         for (TypeResult priorityType : priorities) {
-            Optional<Participant> candidate = matchingRepository.findMatchingCandidate(
+            Optional<Participant> candidate = matchingRepository.findMatchingCandidates(
                     participant.getParticipantId(),
                     priorityType,
                     myGender,
-                    festivalId
-            );
+                    festivalId,
+                    PageRequest.of(0, 1)
+            ).stream().findFirst();
+
             if (candidate.isPresent()) {
                 return candidate;
             }

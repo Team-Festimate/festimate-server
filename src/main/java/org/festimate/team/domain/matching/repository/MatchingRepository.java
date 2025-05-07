@@ -4,17 +4,19 @@ import org.festimate.team.domain.matching.entity.Matching;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.entity.TypeResult;
 import org.festimate.team.domain.user.entity.Gender;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MatchingRepository extends JpaRepository<Matching, Long> {
     @Query("""
                 SELECT p FROM Participant p
                 JOIN FETCH p.user
+                LEFT JOIN Matching m1
+                       ON (m1.applicantParticipant = p OR m1.targetParticipant = p)
                 WHERE p.festival.festivalId = :festivalId
                   AND p.typeResult = :typeResult
                   AND p.user.gender != :gender
@@ -25,18 +27,17 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
                       WHERE m.applicantParticipant.participantId = :participantId
                         AND m.status = 'COMPLETED'
                   )
-                ORDER BY (
-                    SELECT COUNT(m1)
-                    FROM Matching m1
-                    WHERE m1.applicantParticipant = p OR m1.targetParticipant = p
-                ) ASC
+                GROUP BY p
+                ORDER BY COUNT(m1) ASC
             """)
-    Optional<Participant> findMatchingCandidate(
+    List<Participant> findMatchingCandidates(
             @Param("participantId") Long participantId,
             @Param("typeResult") TypeResult typeResult,
             @Param("gender") Gender gender,
-            @Param("festivalId") Long festivalId
+            @Param("festivalId") Long festivalId,
+            Pageable pageable
     );
+
 
     @Query("""
                 SELECT m FROM Matching m
