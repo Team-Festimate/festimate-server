@@ -1,6 +1,7 @@
 package org.festimate.team.domain.user.service;
 
 import org.festimate.team.api.user.dto.SignUpRequest;
+import org.festimate.team.domain.user.dto.UserInfoDto;
 import org.festimate.team.domain.user.entity.Platform;
 import org.festimate.team.domain.user.entity.User;
 
@@ -15,7 +16,7 @@ public interface UserService {
 
     User signUp(SignUpRequest request, String platformId);
 
-    String getUserNickname(Long userId);
+    UserInfoDto getUserNicknameAndAppearanceType(Long userId);
 
     User getUserByIdOrThrow(Long userId);
 
