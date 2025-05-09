@@ -3,6 +3,7 @@ package org.festimate.team.domain.user.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.festimate.team.api.user.dto.SignUpRequest;
+import org.festimate.team.domain.user.dto.UserInfoDto;
 import org.festimate.team.domain.user.entity.Platform;
 import org.festimate.team.domain.user.entity.User;
 import org.festimate.team.domain.user.repository.UserRepository;
@@ -50,9 +51,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getUserNickname(Long userId) {
-        getUserByIdOrThrow(userId);
-        return userRepository.findNicknameByUserId(userId);
+    public UserInfoDto getUserNicknameAndAppearanceType(Long userId) {
+        User user = getUserByIdOrThrow(userId);
+        return new UserInfoDto(user.getNickname(), user.getAppearanceType());
     }
 
     @Override

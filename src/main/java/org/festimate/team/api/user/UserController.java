@@ -7,7 +7,8 @@ import org.festimate.team.api.facade.FestivalFacade;
 import org.festimate.team.api.facade.SignUpFacade;
 import org.festimate.team.api.user.dto.SignUpRequest;
 import org.festimate.team.api.user.dto.UserFestivalResponse;
-import org.festimate.team.api.user.dto.UserNicknameResponse;
+import org.festimate.team.api.user.dto.UserInfoResponse;
+import org.festimate.team.domain.user.dto.UserInfoDto;
 import org.festimate.team.domain.user.service.UserService;
 import org.festimate.team.domain.user.validator.UserRequestValidator;
 import org.festimate.team.global.response.ApiResponse;
@@ -54,12 +55,12 @@ public class UserController {
     }
 
     @GetMapping("/me/nickname")
-    public ResponseEntity<ApiResponse<UserNicknameResponse>> getNickname(
+    public ResponseEntity<ApiResponse<UserInfoResponse>> getNickname(
             @RequestHeader("Authorization") String accessToken
     ) {
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
-        String nickName = userService.getUserNickname(userId);
-        return ResponseBuilder.ok(UserNicknameResponse.from(nickName));
+        UserInfoDto userInfoDto = userService.getUserNicknameAndAppearanceType(userId);
+        return ResponseBuilder.ok(UserInfoResponse.from(userInfoDto.nickname(), userInfoDto.appearanceType()));
     }
 
     @GetMapping("/me/festivals")
