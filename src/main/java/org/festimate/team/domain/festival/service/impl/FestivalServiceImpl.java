@@ -2,20 +2,19 @@ package org.festimate.team.domain.festival.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.festimate.team.global.response.ResponseError;
-import org.festimate.team.global.exception.FestimateException;
 import org.festimate.team.api.admin.dto.FestivalRequest;
 import org.festimate.team.domain.festival.entity.Category;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.repository.FestivalRepository;
 import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.user.entity.User;
+import org.festimate.team.global.exception.FestimateException;
+import org.festimate.team.global.response.ResponseError;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 import static org.festimate.team.domain.festival.validator.DateValidator.isFestivalDateValid;
@@ -35,7 +34,6 @@ public class FestivalServiceImpl implements FestivalService {
         String inviteCode = generateUniqueInviteCode().trim();
 
         Festival festival = Festival.builder()
-                .host(host)
                 .title(request.title())
                 .category(Category.toCategory(request.category()))
                 .startDate(request.startDate())
@@ -43,6 +41,8 @@ public class FestivalServiceImpl implements FestivalService {
                 .matchingStartAt(request.matchingStartAt())
                 .inviteCode(inviteCode)
                 .build();
+
+        festival.addHost(host);
 
         return festivalRepository.save(festival);
     }
@@ -66,13 +66,13 @@ public class FestivalServiceImpl implements FestivalService {
     @Override
     public List<Festival> getAllFestivals(User user) {
         log.info("user: {}", user);
-        return festivalRepository.findFestivalByHost(user);
+        return festivalRepository.findDistinctByFestivalHosts_Host(user);
     }
 
     @Override
-    public Festival getFestivalDetailByIdOrThrow(Long festivalId, Long userId) {
+    public Festival getFestivalDetailByIdOrThrow(Long festivalId, User user) {
         Festival festival = getFestivalByIdOrThrow(festivalId);
-        if (!Objects.equals(festival.getHost().getUserId(), userId)) {
+        if (!isHost(user, festival)) {
             throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
         }
         return festival;
@@ -80,8 +80,8 @@ public class FestivalServiceImpl implements FestivalService {
 
     @Override
     public boolean isHost(User user, Festival festival) {
-        log.info("user is: {}, host is {}", user, festival.getHost());
-        return festival.getHost().equals(user);
+        return festival.getFestivalHosts().stream()
+                .anyMatch(fh -> fh.getHost().getUserId().equals(user.getUserId()));
     }
 
     @Override

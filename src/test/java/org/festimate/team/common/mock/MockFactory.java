@@ -2,6 +2,7 @@ package org.festimate.team.common.mock;
 
 import org.festimate.team.domain.festival.entity.Category;
 import org.festimate.team.domain.festival.entity.Festival;
+import org.festimate.team.domain.festival.entity.FestivalHost;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.entity.TypeResult;
 import org.festimate.team.domain.user.entity.*;
@@ -30,13 +31,17 @@ public class MockFactory {
 
     public static Festival mockFestival(User host, long id, LocalDate startDate, LocalDate endDate) {
         Festival festival = Festival.builder()
-                .host(host)
                 .title("모의 페스티벌")
                 .category(Category.LIFE)
                 .startDate(startDate)
                 .endDate(endDate)
                 .matchingStartAt(startDate.atStartOfDay().plusHours(1))
                 .inviteCode("MOCK123")
+                .build();
+
+        FestivalHost festivalHost = FestivalHost.builder()
+                .festival(festival)
+                .host(host)
                 .build();
 
         ReflectionTestUtils.setField(festival, "festivalId", id);

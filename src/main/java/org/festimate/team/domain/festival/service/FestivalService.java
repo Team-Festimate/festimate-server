@@ -15,7 +15,7 @@ public interface FestivalService {
 
     List<Festival> getAllFestivals(User user);
 
-    Festival getFestivalDetailByIdOrThrow(Long festivalId, Long userId);
+    Festival getFestivalDetailByIdOrThrow(Long festivalId, User user);
 
     boolean isHost(User user, Festival festival);
 

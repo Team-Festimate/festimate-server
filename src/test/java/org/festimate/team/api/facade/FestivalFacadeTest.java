@@ -22,6 +22,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.festimate.team.global.util.DateFormatter.formatPeriod;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 class FestivalFacadeTest {
@@ -147,7 +149,8 @@ class FestivalFacadeTest {
         // given
         Festival festival = MockFactory.mockFestival(user, 1L, LocalDate.now(), LocalDate.now().plusDays(1));
 
-        when(festivalService.getFestivalDetailByIdOrThrow(1L, 1L)).thenReturn(festival);
+        when(userService.getUserByIdOrThrow(eq(1L))).thenReturn(user);
+        when(festivalService.getFestivalDetailByIdOrThrow(eq(1L), any(User.class))).thenReturn(festival); // ⭐ 핵심
 
         // when
         var response = festivalFacade.getFestivalDetail(1L, 1L);

@@ -5,14 +5,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.festimate.team.global.entity.BaseTimeEntity;
 import org.festimate.team.domain.matching.entity.Matching;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.user.entity.User;
+import org.festimate.team.global.entity.BaseTimeEntity;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -26,9 +27,8 @@ public class Festival extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long festivalId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "host_id", nullable = false)
-    private User host;
+    @OneToMany(mappedBy = "festival", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FestivalHost> festivalHosts = new ArrayList<>();
 
     @Column(nullable = false)
     private String title;
@@ -56,8 +56,7 @@ public class Festival extends BaseTimeEntity {
     private List<Matching> matchings;
 
     @Builder
-    public Festival(User host, String title, Category category, LocalDate startDate, LocalDate endDate, LocalDateTime matchingStartAt, String inviteCode) {
-        this.host = host;
+    public Festival(String title, Category category, LocalDate startDate, LocalDate endDate, LocalDateTime matchingStartAt, String inviteCode) {
         this.title = title;
         this.category = category;
         this.startDate = startDate;
@@ -90,4 +89,22 @@ public class Festival extends BaseTimeEntity {
             return FestivalStatus.BEFORE;
         } else return getFestivalStatus();
     }
+
+    public void addHost(User user) {
+        boolean alreadyExists = festivalHosts.stream()
+                .anyMatch(fh -> fh.getHost().getUserId().equals(user.getUserId()));
+
+        if (!alreadyExists) {
+            FestivalHost host = FestivalHost.builder()
+                    .festival(this)
+                    .host(user)
+                    .build();
+            festivalHosts.add(host);
+        }
+    }
+
+    public void removeHost(User user) {
+        festivalHosts.removeIf(fh -> fh.getHost().equals(user));
+    }
+
 }

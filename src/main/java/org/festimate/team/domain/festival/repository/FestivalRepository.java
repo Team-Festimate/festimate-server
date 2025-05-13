@@ -14,5 +14,5 @@ public interface FestivalRepository extends JpaRepository<Festival, Integer> {
 
     Optional<Festival> findByFestivalId(Long festivalId);
 
-    List<Festival> findFestivalByHost(User host);
+    List<Festival> findDistinctByFestivalHosts_Host(User host);
 }
