@@ -13,7 +13,15 @@ import java.util.Objects;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "festival_host")
+@Table(
+        name = "festival_host",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_festival_host_festival_user",
+                        columnNames = {"festival_id", "user_id"}
+                )
+        }
+)
 public class FestivalHost {
 
     @Id
