@@ -91,11 +91,16 @@ public class Festival extends BaseTimeEntity {
     }
 
     public void addHost(User user) {
-        FestivalHost host = FestivalHost.builder()
-                .festival(this)
-                .host(user)
-                .build();
-        festivalHosts.add(host);
+        boolean alreadyExists = festivalHosts.stream()
+                .anyMatch(fh -> fh.getHost().getUserId().equals(user.getUserId()));
+
+        if (!alreadyExists) {
+            FestivalHost host = FestivalHost.builder()
+                    .festival(this)
+                    .host(user)
+                    .build();
+            festivalHosts.add(host);
+        }
     }
 
     public void removeHost(User user) {
