@@ -69,7 +69,8 @@ public class FestivalFacade {
 
     @Transactional(readOnly = true)
     public AdminFestivalDetailResponse getFestivalDetail(Long userId, Long festivalId) {
-        Festival festival = festivalService.getFestivalDetailByIdOrThrow(festivalId, userId);
+        User user = userService.getUserByIdOrThrow(userId);
+        Festival festival = festivalService.getFestivalDetailByIdOrThrow(festivalId, user);
         return AdminFestivalDetailResponse.of(festival);
     }
 
