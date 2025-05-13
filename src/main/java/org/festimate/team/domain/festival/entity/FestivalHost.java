@@ -51,13 +51,18 @@ public class FestivalHost {
         if (this == o) return true;
         if (!(o instanceof FestivalHost)) return false;
         FestivalHost that = (FestivalHost) o;
-        return Objects.equals(getFestival(), that.getFestival()) &&
-                Objects.equals(getHost(), that.getHost());
+        return Objects.equals(
+                this.festival != null ? this.festival.getFestivalId() : null,
+                that.festival != null ? that.festival.getFestivalId() : null) &&
+                Objects.equals(
+                        this.host != null ? this.host.getUserId() : null,
+                        that.host != null ? that.host.getUserId() : null);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFestival(), getHost());
+        return Objects.hash(
+                festival != null ? festival.getFestivalId() : null,
+                host != null ? host.getUserId() : null);
     }
-
 }
