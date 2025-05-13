@@ -39,7 +39,7 @@ class FestivalServiceImplTest {
         Festival festival2 = MockFactory.mockFestival(host, 2L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
         List<Festival> expectedFestivals = List.of(festival1, festival2);
 
-        when(festivalRepository.findFestivalByHost(host)).thenReturn(expectedFestivals);
+        when(festivalRepository.findDistinctByFestivalHosts_Host(host)).thenReturn(expectedFestivals);
 
         // when
         List<Festival> result = festivalService.getAllFestivals(host);
@@ -47,5 +47,32 @@ class FestivalServiceImplTest {
         // then
         assertThat(result).hasSize(2);
         assertThat(result).containsExactly(festival1, festival2);
+    }
+
+
+    @Test
+    @DisplayName("동일한 페스티벌에 여러 호스트가 있을 때, 각 호스트의 조회 결과에 동일한 페스티벌이 반환된다")
+    void getAllFestivals_multipleHosts_returnSameFestival() {
+        // given
+        User host1 = MockFactory.mockUser("1호스트", Gender.MAN, 1L);
+        User host2 = MockFactory.mockUser("2호스트", Gender.MAN, 2L);
+        Festival festival = MockFactory.mockFestival(host1, 1L, LocalDate.now(), LocalDate.now().plusDays(2));
+        festival.addHost(host2);
+
+        List<Festival> expectedFestival1 = List.of(festival);
+        List<Festival> expectedFestival2 = List.of(festival);
+
+        when(festivalRepository.findDistinctByFestivalHosts_Host(host1)).thenReturn(expectedFestival1);
+        when(festivalRepository.findDistinctByFestivalHosts_Host(host2)).thenReturn(expectedFestival2);
+
+        // when
+        List<Festival> result1 = festivalService.getAllFestivals(host1);
+        List<Festival> result2 = festivalService.getAllFestivals(host2);
+
+        // then
+        assertThat(result1).hasSize(1);
+        assertThat(result2).hasSize(1);
+        assertThat(result1).containsExactly(festival);
+        assertThat(result2).containsExactly(festival);
     }
 }
