@@ -54,6 +54,13 @@ public class PointServiceImpl implements PointService {
         pointRepository.save(pointUsage);
     }
 
+    @Transactional
+    @Override
+    public void dischargePoint(Participant participant, int amount) {
+        Point pointUsage = createPointTransaction(participant, amount, TransactionType.DEBIT);
+        pointRepository.save(pointUsage);
+    }
+
     private Point createPointTransaction(Participant participant, int amount, TransactionType type) {
         return Point.builder()
                 .participant(participant)

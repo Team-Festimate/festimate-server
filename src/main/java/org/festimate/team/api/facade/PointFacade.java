@@ -58,7 +58,7 @@ public class PointFacade {
         if (Objects.equals(request.type(), TransactionType.CREDIT)) {
             pointService.rechargePoint(participant, request.point());
         } else if (Objects.equals(request.type(), TransactionType.DEBIT)) {
-            pointService.rechargePoint(participant, request.point());
+            pointService.dischargePoint(participant, request.point());
         }
     }
 
