@@ -7,6 +7,7 @@ import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.service.ParticipantService;
+import org.festimate.team.domain.point.entity.TransactionType;
 import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.entity.User;
@@ -97,7 +98,7 @@ class PointFacadeTest {
     @DisplayName("포인트 충전 성공 (호스트 권한)")
     void rechargePoints_success() {
         // given
-        RechargePointRequest request = new RechargePointRequest(200L, 5);
+        RechargePointRequest request = new RechargePointRequest(TransactionType.CREDIT, 200L, 5);
 
         when(userService.getUserByIdOrThrow(1L)).thenReturn(host);
         when(festivalService.getFestivalByIdOrThrow(100L)).thenReturn(festival);
@@ -115,7 +116,7 @@ class PointFacadeTest {
     @DisplayName("포인트 충전 실패 - 호스트가 아님")
     void rechargePoints_notHost_throws() {
         User attacker = MockFactory.mockUser("악당", Gender.MAN, 999L);
-        RechargePointRequest request = new RechargePointRequest(200L, 5);
+        RechargePointRequest request = new RechargePointRequest(TransactionType.CREDIT, 200L, 5);
 
         when(userService.getUserByIdOrThrow(999L)).thenReturn(attacker);
         when(festivalService.getFestivalByIdOrThrow(100L)).thenReturn(festival);
@@ -133,7 +134,7 @@ class PointFacadeTest {
         Festival otherFestival = MockFactory.mockFestival(host, 999L, LocalDate.now(), LocalDate.now().plusDays(1));
         Participant otherParticipant = MockFactory.mockParticipant(participantUser, otherFestival, null, 300L);
 
-        RechargePointRequest request = new RechargePointRequest(300L, 5);
+        RechargePointRequest request = new RechargePointRequest(TransactionType.CREDIT, 300L, 5);
 
         when(userService.getUserByIdOrThrow(1L)).thenReturn(host);
         when(festivalService.getFestivalByIdOrThrow(100L)).thenReturn(festival);
