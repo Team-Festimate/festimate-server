@@ -7,6 +7,7 @@ import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.service.ParticipantService;
+import org.festimate.team.domain.point.entity.TransactionType;
 import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.domain.user.entity.User;
 import org.festimate.team.domain.user.service.UserService;
@@ -51,7 +52,12 @@ public class PointFacade {
         if (participant.getFestival() != festival) {
             throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
         }
-        pointService.rechargePoint(participant, request.point());
+
+        if(request.type().equals(TransactionType.CREDIT)) {
+            pointService.rechargePoint(participant, request.point());
+        }else if (request.type().equals(TransactionType.DEBIT)) {
+            pointService.dischargePoint(participant, request.point());
+        }
     }
 
     private void isHost(User user, Festival festival) {
