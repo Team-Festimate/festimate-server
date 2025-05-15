@@ -2,7 +2,9 @@ package org.festimate.team.api.festival;
 
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.api.facade.FestivalFacade;
-import org.festimate.team.api.festival.dto.*;
+import org.festimate.team.api.festival.dto.FestivalInfoResponse;
+import org.festimate.team.api.festival.dto.FestivalVerifyRequest;
+import org.festimate.team.api.festival.dto.FestivalVerifyResponse;
 import org.festimate.team.global.response.ApiResponse;
 import org.festimate.team.global.response.ResponseBuilder;
 import org.festimate.team.infra.jwt.JwtService;
@@ -21,8 +23,8 @@ public class FestivalController {
             @RequestHeader("Authorization") String accessToken,
             @RequestBody FestivalVerifyRequest request
     ) {
-        jwtService.parseTokenAndGetUserId(accessToken);
-        FestivalVerifyResponse response = festivalFacade.verifyFestival(request);
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        FestivalVerifyResponse response = festivalFacade.verifyFestival(userId, request);
         return ResponseBuilder.ok(response);
     }
 

@@ -58,7 +58,7 @@ class FestivalFacadeTest {
         when(festivalService.getFestivalByInviteCode("MOCK123")).thenReturn(festival);
 
         // when
-        var response = festivalFacade.verifyFestival(request);
+        var response = festivalFacade.verifyFestival(user.getUserId(), request);
 
         // then
         assertThat(response.festivalId()).isEqualTo(1L);
