@@ -10,7 +10,7 @@ public enum ResponseError {
     INVALID_PLATFORM_TYPE(4001, "유효하지 않은 플랫폼 타입입니다."),
     INVALID_REQUEST_PARAMETER(4002, "요청 파라미터가 잘못되었습니다."),
     INVALID_INPUT_LENGTH(4003, "입력된 글자수가 허용된 범위를 벗어났습니다."),
-    INVALID_INPUT_NICKNAME(4004, "닉네임은 한글로만 입력 가능합니다."),
+    INVALID_INPUT_NICKNAME(4004, "닉네임은 한글 혹은 영어로만 입력 가능합니다."),
     INVALID_GRANT(4005, "유효하지 않은 인가 코드입니다."),
     INVALID_DATE_TYPE(4006, "유효하지 않은 날짜 형식입니다."),
     INVALID_TIME_TYPE(4007, "유효하지 않은 시간입니다."),

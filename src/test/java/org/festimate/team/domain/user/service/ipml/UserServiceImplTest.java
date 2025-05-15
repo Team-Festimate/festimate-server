@@ -84,16 +84,11 @@ class UserServiceImplTest {
     @DisplayName("닉네임 한글 검증 - 한글이 아닌 경우")
     void nicknameValidatorKorea() {
         // given
-        String englishNickname = "nick";
         String numberNickname = "닉123";
         String emojiNickname = "😊😊";
         String consonantVowelNickname = "현진ㄴ";
 
-        // when & then (한글이 아닌 경우 예외 발생)
-        assertThatThrownBy(() -> nicknameValidator.validate(englishNickname))
-                .isInstanceOf(FestimateException.class)
-                .hasMessageContaining(ResponseError.INVALID_INPUT_NICKNAME.getMessage());
-
+        // when & then
         assertThatThrownBy(() -> nicknameValidator.validate(numberNickname))
                 .isInstanceOf(FestimateException.class)
                 .hasMessageContaining(ResponseError.INVALID_INPUT_NICKNAME.getMessage());
