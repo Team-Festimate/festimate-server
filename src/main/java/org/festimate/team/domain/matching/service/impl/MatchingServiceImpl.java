@@ -8,17 +8,14 @@ import org.festimate.team.api.matching.dto.MatchingInfo;
 import org.festimate.team.api.matching.dto.MatchingListResponse;
 import org.festimate.team.api.matching.dto.MatchingStatusResponse;
 import org.festimate.team.domain.festival.entity.Festival;
-import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.matching.entity.Matching;
 import org.festimate.team.domain.matching.entity.MatchingStatus;
 import org.festimate.team.domain.matching.repository.MatchingRepository;
 import org.festimate.team.domain.matching.service.MatchingService;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.entity.TypeResult;
-import org.festimate.team.domain.participant.service.ParticipantService;
 import org.festimate.team.domain.point.service.PointService;
 import org.festimate.team.domain.user.entity.Gender;
-import org.festimate.team.domain.user.service.UserService;
 import org.festimate.team.global.exception.FestimateException;
 import org.festimate.team.global.response.ResponseError;
 import org.springframework.data.domain.PageRequest;
@@ -37,22 +34,14 @@ import static org.festimate.team.domain.matching.validator.MatchingValidator.isM
 @Slf4j
 public class MatchingServiceImpl implements MatchingService {
     private final MatchingRepository matchingRepository;
-    private final FestivalService festivalService;
-    private final ParticipantService participantService;
     private final PointService pointService;
-    private final UserService userService;
 
     @Transactional
-    public MatchingStatusResponse createMatching(Long userId, Long festivalId) {
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        Participant participant = participantService.getParticipantOrThrow(
-                userService.getUserByIdOrThrow(userId), festival
-        );
-
+    public MatchingStatusResponse createMatching(Participant participant, Festival festival) {
         isMatchingDateValid(LocalDateTime.now(), festival.getMatchingStartAt());
         pointService.usePoint(participant);
 
-        Optional<Participant> targetOptional = findBestCandidateByPriority(festivalId, participant);
+        Optional<Participant> targetOptional = findBestCandidateByPriority(festival.getFestivalId(), participant);
         Participant target = targetOptional.orElse(null);
 
         Matching matching = saveMatching(festival, Optional.ofNullable(target), participant);
@@ -61,12 +50,7 @@ public class MatchingServiceImpl implements MatchingService {
 
     @Transactional(readOnly = true)
     @Override
-    public MatchingListResponse getMatchingList(Long userId, Long festivalId) {
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        Participant participant = participantService.getParticipantOrThrow(
-                userService.getUserByIdOrThrow(userId), festival
-        );
-
+    public MatchingListResponse getMatchingList(Participant participant) {
         List<MatchingInfo> matchings = getMatchingListByParticipant(participant);
         return MatchingListResponse.from(matchings);
     }
@@ -81,15 +65,13 @@ public class MatchingServiceImpl implements MatchingService {
 
     @Transactional(readOnly = true)
     @Override
-    public MatchingDetailInfo getMatchingDetail(Long userId, Long festivalId, Long matchingId) {
-        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
-        participantService.getParticipantOrThrow(userService.getUserByIdOrThrow(userId), festival);
+    public MatchingDetailInfo getMatchingDetail(Participant participant, Festival festival, Long matchingId) {
         Matching matching = matchingRepository.findByMatchingId(matchingId)
                 .orElseThrow(() -> new FestimateException(ResponseError.TARGET_NOT_FOUND));
         if (matching.getTargetParticipant() == null || matching.getTargetParticipant().getUser() == null) {
             throw new FestimateException(ResponseError.TARGET_NOT_FOUND);
         }
-        if (!matching.getFestival().getFestivalId().equals(festivalId)) {
+        if (!matching.getFestival().getFestivalId().equals(festival.getFestivalId())) {
             throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
         }
         return MatchingDetailInfo.from(matching);

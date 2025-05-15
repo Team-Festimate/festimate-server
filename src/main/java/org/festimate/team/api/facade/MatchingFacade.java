@@ -2,6 +2,9 @@ package org.festimate.team.api.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.api.admin.dto.AdminMatchingResponse;
+import org.festimate.team.api.matching.dto.MatchingDetailInfo;
+import org.festimate.team.api.matching.dto.MatchingListResponse;
+import org.festimate.team.api.matching.dto.MatchingStatusResponse;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.matching.service.MatchingService;
@@ -22,6 +25,33 @@ public class MatchingFacade {
     private final FestivalService festivalService;
     private final ParticipantService participantService;
     private final MatchingService matchingService;
+
+    @Transactional
+    public MatchingStatusResponse createMatching(Long userId, Long festivalId) {
+        User user = userService.getUserByIdOrThrow(userId);
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        Participant participant = participantService.getParticipant(user, festival);
+
+        return matchingService.createMatching(participant, festival);
+    }
+
+    @Transactional(readOnly = true)
+    public MatchingListResponse getMatchingList(Long userId, Long festivalId) {
+        User user = userService.getUserByIdOrThrow(userId);
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        Participant participant = participantService.getParticipant(user, festival);
+
+        return matchingService.getMatchingList(participant);
+    }
+
+    @Transactional(readOnly = true)
+    public MatchingDetailInfo getMatchingDetail(Long userId, Long festivalId, Long matchingId) {
+        User user = userService.getUserByIdOrThrow(userId);
+        Festival festival = festivalService.getFestivalByIdOrThrow(festivalId);
+        Participant participant = participantService.getParticipant(user, festival);
+
+        return matchingService.getMatchingDetail(participant, festival, matchingId);
+    }
 
     @Transactional(readOnly = true)
     public AdminMatchingResponse getMatchingSize(Long userId, Long festivalId, Long participantId) {
