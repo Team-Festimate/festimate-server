@@ -2,6 +2,7 @@ package org.festimate.team.domain.matching.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.festimate.team.api.admin.dto.AdminMatchingResponse;
 import org.festimate.team.api.matching.dto.MatchingDetailInfo;
 import org.festimate.team.api.matching.dto.MatchingInfo;
 import org.festimate.team.api.matching.dto.MatchingListResponse;
@@ -68,6 +69,14 @@ public class MatchingServiceImpl implements MatchingService {
 
         List<MatchingInfo> matchings = getMatchingListByParticipant(participant);
         return MatchingListResponse.from(matchings);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public AdminMatchingResponse getMatchingSize(Participant participant) {
+        int allMatchingSize = matchingRepository.countAllByApplicant(participant);
+        int completeMatchingSize = matchingRepository.countCompletedByApplicant(participant);
+        return AdminMatchingResponse.from(completeMatchingSize, allMatchingSize);
     }
 
     @Transactional(readOnly = true)
