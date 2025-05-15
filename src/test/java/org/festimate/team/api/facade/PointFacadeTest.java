@@ -1,7 +1,7 @@
 package org.festimate.team.api.facade;
 
 import org.festimate.team.api.point.dto.PointHistoryResponse;
-import org.festimate.team.api.point.dto.RechargePointRequest;
+import org.festimate.team.api.admin.dto.RechargePointRequest;
 import org.festimate.team.common.mock.MockFactory;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
