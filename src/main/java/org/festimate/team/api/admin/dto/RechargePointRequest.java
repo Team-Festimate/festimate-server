@@ -1,4 +1,4 @@
-package org.festimate.team.api.point.dto;
+package org.festimate.team.api.admin.dto;
 
 import org.festimate.team.domain.point.entity.TransactionType;
 

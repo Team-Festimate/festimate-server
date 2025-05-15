@@ -2,7 +2,7 @@ package org.festimate.team.api.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.api.point.dto.PointHistoryResponse;
-import org.festimate.team.api.point.dto.RechargePointRequest;
+import org.festimate.team.api.admin.dto.RechargePointRequest;
 import org.festimate.team.domain.festival.entity.Festival;
 import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.participant.entity.Participant;
