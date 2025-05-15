@@ -71,6 +71,12 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
             """)
     List<Matching> findAllMatchingsByApplicantParticipant(Participant participant);
 
+    @Query("SELECT COUNT(m) FROM Matching m WHERE m.applicantParticipant = :participant")
+    int countAllByApplicant(@Param("participant") Participant participant);
+
+    @Query("SELECT COUNT(m) FROM Matching m WHERE m.applicantParticipant = :participant AND m.status = 'COMPLETED'")
+    int countCompletedByApplicant(@Param("participant") Participant participant);
+
     Optional<Matching> findByMatchingId(Long matchingId);
 }
 

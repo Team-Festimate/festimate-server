@@ -3,10 +3,10 @@ package org.festimate.team.api.admin;
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.api.admin.dto.*;
 import org.festimate.team.api.facade.FestivalFacade;
+import org.festimate.team.api.facade.MatchingFacade;
 import org.festimate.team.api.facade.ParticipantFacade;
 import org.festimate.team.api.facade.PointFacade;
 import org.festimate.team.api.point.dto.PointHistoryResponse;
-import org.festimate.team.api.point.dto.RechargePointRequest;
 import org.festimate.team.global.response.ApiResponse;
 import org.festimate.team.global.response.ResponseBuilder;
 import org.festimate.team.infra.jwt.JwtService;
@@ -23,6 +23,7 @@ public class AdminController {
     private final FestivalFacade festivalFacade;
     private final ParticipantFacade participantFacade;
     private final PointFacade pointFacade;
+    private final MatchingFacade matchingFacade;
 
     @PostMapping()
     public ResponseEntity<ApiResponse<FestivalResponse>> createFestival(
@@ -84,6 +85,17 @@ public class AdminController {
     ) {
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
         PointHistoryResponse response = pointFacade.getParticipantPointHistory(userId, festivalId, participantId);
+        return ResponseBuilder.ok(response);
+    }
+
+    @GetMapping("/{festivalId}/participants/{participantId}/matchings")
+    public ResponseEntity<ApiResponse<AdminMatchingResponse>> getParticipantMatchingHistory(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId,
+            @PathVariable("participantId") Long participantId
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        AdminMatchingResponse response = matchingFacade.getMatchingSize(userId, festivalId, participantId);
         return ResponseBuilder.ok(response);
     }
 }

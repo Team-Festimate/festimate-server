@@ -94,7 +94,7 @@ class MatchingServiceImplTest {
                 .thenReturn(List.of(matching2, matching1));
 
         // when
-        MatchingListResponse result = matchingService.getMatchingList(user.getUserId(), festival.getFestivalId());
+        MatchingListResponse result = matchingService.getMatchingList(participant);
 
         // then
         assertThat(result.matchingList()).hasSize(2);
@@ -268,7 +268,7 @@ class MatchingServiceImplTest {
         when(matchingRepository.findByMatchingId(1L)).thenReturn(Optional.of(mismatchedMatching));
 
         // when & then
-        assertThatThrownBy(() -> matchingService.getMatchingDetail(user.getUserId(), requestedFestival.getFestivalId(), 1L))
+        assertThatThrownBy(() -> matchingService.getMatchingDetail(participant, requestedFestival, 1L))
                 .isInstanceOf(FestimateException.class)
                 .hasMessage(ResponseError.FORBIDDEN_RESOURCE.getMessage());
     }
@@ -296,7 +296,7 @@ class MatchingServiceImplTest {
         when(matchingRepository.findByMatchingId(1L)).thenReturn(Optional.of(mismatchedMatching));
 
         // when & then
-        assertThatThrownBy(() -> matchingService.getMatchingDetail(user.getUserId(), requestedFestival.getFestivalId(), 1L))
+        assertThatThrownBy(() -> matchingService.getMatchingDetail(participant, requestedFestival, 1L))
                 .isInstanceOf(FestimateException.class)
                 .hasMessage(ResponseError.TARGET_NOT_FOUND.getMessage());
     }
@@ -325,7 +325,7 @@ class MatchingServiceImplTest {
                 .thenReturn(Optional.ofNullable(mismatchedMatching));
 
         // when & then
-        assertThatThrownBy(() -> matchingService.getMatchingDetail(user.getUserId(), festival.getFestivalId(), 2L))
+        assertThatThrownBy(() -> matchingService.getMatchingDetail(participant, festival, 2L))
                 .isInstanceOf(FestimateException.class)
                 .hasMessage(ResponseError.TARGET_NOT_FOUND.getMessage());
     }
