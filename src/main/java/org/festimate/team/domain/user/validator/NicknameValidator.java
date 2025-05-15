@@ -16,7 +16,7 @@ public class NicknameValidator {
     public void validate(String nickname) {
         if (!LengthValidator.rangeLengthCheck(nickname, MIN_LENGTH, MAX_LENGTH))
             throw new FestimateException(ResponseError.INVALID_INPUT_LENGTH);
-        if (!nicknamePattern.matcher(nickname).find())
+        if (!nicknamePattern.matcher(nickname).matches())
             throw new FestimateException(ResponseError.INVALID_INPUT_NICKNAME);
     }
 }
