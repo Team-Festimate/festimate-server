@@ -14,6 +14,8 @@ import org.festimate.team.domain.festival.service.FestivalService;
 import org.festimate.team.domain.participant.service.ParticipantService;
 import org.festimate.team.domain.user.entity.User;
 import org.festimate.team.domain.user.service.UserService;
+import org.festimate.team.global.exception.FestimateException;
+import org.festimate.team.global.response.ResponseError;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +29,12 @@ public class FestivalFacade {
     private final ParticipantService participantService;
 
     @Transactional(readOnly = true)
-    public FestivalVerifyResponse verifyFestival(FestivalVerifyRequest request) {
+    public FestivalVerifyResponse verifyFestival(Long userId, FestivalVerifyRequest request) {
+        User user = userService.getUserByIdOrThrow(userId);
         Festival festival = festivalService.getFestivalByInviteCode(request.inviteCode().trim());
+        if (participantService.getParticipant(user, festival) != null) {
+            throw new FestimateException(ResponseError.PARTICIPANT_ALREADY_EXISTS);
+        }
         return FestivalVerifyResponse.of(festival);
     }
 
