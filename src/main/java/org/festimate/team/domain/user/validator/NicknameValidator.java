@@ -1,8 +1,8 @@
 package org.festimate.team.domain.user.validator;
 
+import org.festimate.team.global.exception.FestimateException;
 import org.festimate.team.global.response.ResponseError;
 import org.festimate.team.global.validator.LengthValidator;
-import org.festimate.team.global.exception.FestimateException;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
@@ -11,12 +11,12 @@ import java.util.regex.Pattern;
 public class NicknameValidator {
     private static final int MIN_LENGTH = 2;
     private static final int MAX_LENGTH = 6;
-    private static final Pattern koreanPattern = Pattern.compile("^[가-힣]+$");
+    private static final Pattern nicknamePattern = Pattern.compile("^[가-힣a-zA-Z]+$");
 
     public void validate(String nickname) {
         if (!LengthValidator.rangeLengthCheck(nickname, MIN_LENGTH, MAX_LENGTH))
             throw new FestimateException(ResponseError.INVALID_INPUT_LENGTH);
-        if (!koreanPattern.matcher(nickname).find())
+        if (!nicknamePattern.matcher(nickname).matches())
             throw new FestimateException(ResponseError.INVALID_INPUT_NICKNAME);
     }
 }
