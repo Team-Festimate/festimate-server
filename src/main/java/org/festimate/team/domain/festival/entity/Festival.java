@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.festimate.team.domain.festivalHost.entity.FestivalHost;
 import org.festimate.team.domain.matching.entity.Matching;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.user.entity.User;

@@ -2,7 +2,7 @@ package org.festimate.team.common.mock;
 
 import org.festimate.team.domain.festival.entity.Category;
 import org.festimate.team.domain.festival.entity.Festival;
-import org.festimate.team.domain.festival.entity.FestivalHost;
+import org.festimate.team.domain.festivalHost.entity.FestivalHost;
 import org.festimate.team.domain.participant.entity.Participant;
 import org.festimate.team.domain.participant.entity.TypeResult;
 import org.festimate.team.domain.user.entity.*;
