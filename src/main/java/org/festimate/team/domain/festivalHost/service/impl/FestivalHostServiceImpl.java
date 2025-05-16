@@ -26,5 +26,6 @@ public class FestivalHostServiceImpl implements FestivalHostService {
                 .build();
 
         festivalHostRepository.save(newFestivalHost);
+        log.info("Added user {} as a host for festival {}", newFestivalHost.getFestivalHostId(), festival.getFestivalId());
     }
 }
