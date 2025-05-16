@@ -2,10 +2,7 @@ package org.festimate.team.api.admin;
 
 import lombok.RequiredArgsConstructor;
 import org.festimate.team.api.admin.dto.*;
-import org.festimate.team.api.facade.FestivalFacade;
-import org.festimate.team.api.facade.MatchingFacade;
-import org.festimate.team.api.facade.ParticipantFacade;
-import org.festimate.team.api.facade.PointFacade;
+import org.festimate.team.api.facade.*;
 import org.festimate.team.api.point.dto.PointHistoryResponse;
 import org.festimate.team.global.response.ApiResponse;
 import org.festimate.team.global.response.ResponseBuilder;
@@ -21,6 +18,7 @@ import java.util.List;
 public class AdminController {
     private final JwtService jwtService;
     private final FestivalFacade festivalFacade;
+    private final FestivalHostFacade festivalHostFacade;
     private final ParticipantFacade participantFacade;
     private final PointFacade pointFacade;
     private final MatchingFacade matchingFacade;
@@ -75,6 +73,17 @@ public class AdminController {
         Long userId = jwtService.parseTokenAndGetUserId(accessToken);
         pointFacade.rechargePoints(userId, festivalId, request);
         return ResponseBuilder.ok(null);
+    }
+
+    @PostMapping("/{festivalId}/hosts")
+    public ResponseEntity<ApiResponse<Void>> addHost(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable("festivalId") Long festivalId,
+            @RequestBody AddHostRequest request
+    ) {
+        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
+        festivalHostFacade.addHost(userId, festivalId, request);
+        return ResponseBuilder.created(null);
     }
 
     @GetMapping("/{festivalId}/participants/{participantId}/points")
