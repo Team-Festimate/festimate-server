@@ -56,20 +56,18 @@ public class UserController {
 
     @GetMapping("/me/nickname")
     public ResponseEntity<ApiResponse<UserInfoResponse>> getNickname(
-            @RequestHeader("Authorization") String accessToken
+            @RequestAttribute("userId") Long userId
     ) {
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
         UserInfoDto userInfoDto = userService.getUserNicknameAndAppearanceType(userId);
         return ResponseBuilder.ok(UserInfoResponse.from(userInfoDto.nickname(), userInfoDto.appearanceType()));
     }
 
     @GetMapping("/me/festivals")
     public ResponseEntity<ApiResponse<List<UserFestivalResponse>>> getMyFestival(
-            @RequestHeader("Authorization") String accessToken,
+            @RequestAttribute("userId") Long userId,
             @RequestParam("status") String status
     ) {
         userRequestValidator.statusValidate(status);
-        Long userId = jwtService.parseTokenAndGetUserId(accessToken);
         return ResponseBuilder.ok(festivalFacade.getUserFestivals(userId, status));
     }
 }

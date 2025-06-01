@@ -6,7 +6,7 @@ import org.festimate.team.api.auth.dto.TokenResponse;
 import org.festimate.team.domain.auth.service.KakaoLoginService;
 import org.festimate.team.domain.user.entity.Platform;
 import org.festimate.team.domain.user.service.UserService;
-import org.festimate.team.infra.jwt.JwtService;
+import org.festimate.team.infra.jwt.JwtTokenProvider;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class LoginFacade {
 
-    private final JwtService jwtService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final KakaoLoginService kakaoLoginService;
 
@@ -28,10 +28,10 @@ public class LoginFacade {
 
     private TokenResponse loginExistingUser(Long userId) {
         log.info("기존 유저 로그인 성공 - userId: {}", userId);
-        String newRefreshToken = jwtService.createRefreshToken(userId);
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(userId);
 
         userService.updateRefreshToken(userId, newRefreshToken);
-        return new TokenResponse(userId, jwtService.createAccessToken(userId), newRefreshToken);
+        return new TokenResponse(userId, jwtTokenProvider.createAccessToken(userId), newRefreshToken);
     }
 
     public String getPlatformId(String authorization) {
@@ -39,7 +39,7 @@ public class LoginFacade {
     }
 
     private TokenResponse createTemporaryToken(String platformId) {
-        return new TokenResponse(null, jwtService.createTempAccessToken(platformId), jwtService.createTempRefreshToken(platformId));
+        return new TokenResponse(null, jwtTokenProvider.createTempAccessToken(platformId), jwtTokenProvider.createTempRefreshToken(platformId));
     }
 }
 
