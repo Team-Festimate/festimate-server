@@ -8,7 +8,6 @@ import org.festimate.team.domain.user.service.UserService;
 import org.festimate.team.domain.user.validator.NicknameValidator;
 import org.festimate.team.global.exception.FestimateException;
 import org.festimate.team.global.response.ResponseError;
-import org.festimate.team.infra.jwt.JwtService;
 import org.festimate.team.infra.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +25,6 @@ class SignUpFacadeTest {
 
     @Mock
     private UserService userService;
-    @Mock
-    private JwtService jwtService;
     @Mock
     private JwtTokenProvider jwtTokenProvider;
     @Mock
