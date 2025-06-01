@@ -35,6 +35,14 @@ public class JwtParser {
         Claims claims = parseClaims(token);
         Object userId = claims.get(USER_ID);
         if (userId instanceof Number) return ((Number) userId).longValue();
+        if (userId instanceof String) {
+            try {
+                return Long.parseLong((String) userId);
+            } catch (NumberFormatException e) {
+                log.error("Invalid userId format in token: {}", userId);
+            }
+        }
+        log.error("userId claim missing or invalid type: {}", userId);
         throw new FestimateException(ResponseError.INVALID_TOKEN);
     }
 
@@ -50,7 +58,7 @@ public class JwtParser {
             throw new FestimateException(ResponseError.INVALID_TOKEN);
         }
         try {
-            String splitToken = token.split(" ")[1];
+            String splitToken = token.substring(BEARER.length());
             parseClaims(splitToken);
         } catch (Exception e) {
             log.error("JWT 유효성 오류: {}", e.getMessage());
