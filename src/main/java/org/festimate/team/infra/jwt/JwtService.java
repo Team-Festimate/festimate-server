@@ -25,7 +25,7 @@ import java.util.Date;
 @Slf4j
 public class JwtService {
     private static final String USER_ID = "userId";
-    private static final String PLATFROM_ID = "platformId";
+    private static final String PLATFORM_ID = "platformId";
     private static final String BEARER = "Bearer ";
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final JwtProperties jwtProperties;
@@ -51,7 +51,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(platformId)
                 .expiration(new Date(System.currentTimeMillis() + jwtProperties.getAccessExpiration()))
-                .claim(PLATFROM_ID, platformId)
+                .claim(PLATFORM_ID, platformId)
                 .signWith(secretKey)
                 .compact();
     }
@@ -61,7 +61,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(platformId)
                 .expiration(new Date(System.currentTimeMillis() + jwtProperties.getRefreshExpiration()))
-                .claim(PLATFROM_ID, platformId)
+                .claim(PLATFORM_ID, platformId)
                 .signWith(secretKey)
                 .compact();
     }
@@ -154,7 +154,7 @@ public class JwtService {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .get(PLATFROM_ID)
+                .get(PLATFORM_ID)
                 .toString();
     }
 
