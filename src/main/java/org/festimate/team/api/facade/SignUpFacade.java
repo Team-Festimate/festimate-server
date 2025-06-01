@@ -9,14 +9,14 @@ import org.festimate.team.domain.user.service.UserService;
 import org.festimate.team.domain.user.validator.NicknameValidator;
 import org.festimate.team.global.exception.FestimateException;
 import org.festimate.team.global.response.ResponseError;
-import org.festimate.team.infra.jwt.JwtService;
+import org.festimate.team.infra.jwt.JwtTokenProvider;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SignUpFacade {
-    private final JwtService jwtService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final NicknameValidator nicknameValidator;
 
@@ -36,8 +36,8 @@ public class SignUpFacade {
 
     private TokenResponse createTokenResponse(User user) {
         log.info("signup success - userId : {}, nickname : {}", user.getUserId(), user.getNickname());
-        String accessToken = jwtService.createAccessToken(user.getUserId());
-        String refreshToken = jwtService.createRefreshToken(user.getUserId());
+        String accessToken = jwtTokenProvider.createAccessToken(user.getUserId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getUserId());
         userService.updateRefreshToken(user.getUserId(), refreshToken);
         return TokenResponse.of(user.getUserId(), accessToken, refreshToken);
     }
