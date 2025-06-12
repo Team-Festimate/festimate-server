@@ -27,11 +27,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.festimate.team.domain.matching.validator.MatchingValidator.isMatchingDateValid;
+import static org.festimate.team.domain.matching.validator.MatchingValidator.*;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class MatchingServiceImpl implements MatchingService {
     private final MatchingRepository matchingRepository;
     private final PointService pointService;
@@ -48,14 +49,12 @@ public class MatchingServiceImpl implements MatchingService {
         return MatchingStatusResponse.of(matching.getStatus(), matching.getMatchingId());
     }
 
-    @Transactional(readOnly = true)
     @Override
     public MatchingListResponse getMatchingList(Participant participant) {
         List<MatchingInfo> matchings = getMatchingListByParticipant(participant);
         return MatchingListResponse.from(matchings);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public AdminMatchingResponse getMatchingSize(Participant participant) {
         int allMatchingSize = matchingRepository.countAllByApplicant(participant);
@@ -63,7 +62,6 @@ public class MatchingServiceImpl implements MatchingService {
         return AdminMatchingResponse.from(completeMatchingSize, allMatchingSize);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public MatchingDetailInfo getMatchingDetail(Participant participant, Festival festival, Long matchingId) {
         Matching matching = matchingRepository.findByMatchingId(matchingId)
@@ -71,9 +69,8 @@ public class MatchingServiceImpl implements MatchingService {
         if (matching.getTargetParticipant() == null || matching.getTargetParticipant().getUser() == null) {
             throw new FestimateException(ResponseError.TARGET_NOT_FOUND);
         }
-        if (!matching.getFestival().getFestivalId().equals(festival.getFestivalId())) {
-            throw new FestimateException(ResponseError.FORBIDDEN_RESOURCE);
-        }
+        isFestivalMatchValid(matching, festival);
+        isApplicantParticipantValid(matching, participant);
         return MatchingDetailInfo.from(matching);
     }
 
