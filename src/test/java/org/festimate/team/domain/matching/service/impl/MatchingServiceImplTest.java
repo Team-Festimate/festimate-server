@@ -274,6 +274,38 @@ class MatchingServiceImplTest {
     }
 
     @Test
+    @DisplayName("매칭 상세 조회 - 다른 사람이 신청한 매칭을 조회할 경우 예외 발생")
+    void getMatchingDetail_invalidApplicant_throwsException() {
+        // given
+        User user = mockUser("사용자1", Gender.MAN, 1L);
+        User otherUser = mockUser("사용자2", Gender.MAN, 2L);
+        Festival festival = mockFestival(user, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+
+        Participant myParticipant = mockParticipant(user, festival, TypeResult.INFLUENCER, 1L);
+        Participant otherParticipant = mockParticipant(otherUser, festival, TypeResult.INFLUENCER, 2L);
+
+        Matching otherMatching = Matching.builder()
+                .festival(festival)
+                .applicantParticipant(otherParticipant)
+                .targetParticipant(Participant.builder()
+                        .user(mockUser("상대방", Gender.WOMAN, 3L))
+                        .build())
+                .status(MatchingStatus.COMPLETED)
+                .matchDate(LocalDateTime.now())
+                .build();
+
+        when(userService.getUserByIdOrThrow(user.getUserId())).thenReturn(user);
+        when(festivalService.getFestivalByIdOrThrow(festival.getFestivalId())).thenReturn(festival);
+        when(participantService.getParticipantOrThrow(user, festival)).thenReturn(myParticipant);
+        when(matchingRepository.findByMatchingId(1L)).thenReturn(Optional.of(otherMatching));
+
+        // when & then
+        assertThatThrownBy(() -> matchingService.getMatchingDetail(myParticipant, festival, 1L))
+                .isInstanceOf(FestimateException.class)
+                .hasMessage(ResponseError.FORBIDDEN_RESOURCE.getMessage());
+    }
+
+    @Test
     @DisplayName("매칭 상세 조회 - 보류 중인 매칭을 조회할 경우 예외 발생")
     void getMatchingDetail_pendingMatching_throwsException() {
         // given
