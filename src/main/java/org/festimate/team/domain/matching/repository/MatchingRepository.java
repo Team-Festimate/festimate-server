@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface MatchingRepository extends JpaRepository<Matching, Long> {
+public interface MatchingRepository extends JpaRepository<Matching, Long>, MatchingRepositoryCustom {
     @Query("""
                 SELECT p FROM Participant p
                 JOIN FETCH p.user
