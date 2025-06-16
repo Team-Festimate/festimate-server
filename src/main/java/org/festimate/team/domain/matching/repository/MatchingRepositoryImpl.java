@@ -24,14 +24,8 @@ public class MatchingRepositoryImpl implements MatchingRepositoryCustom {
     private final QUser u = QUser.user;
 
     @Override
-    public List<Participant> findMatchingCandidatesDsl(
-            Long applicantId,
-            TypeResult typeResult,
-            Gender gender,
-            Long festivalId,
-            Pageable pageable
-    ) {
-        List<Long> excludedIds = queryFactory
+    public List<Long> findExcludeIds(Long applicantId) {
+        return queryFactory
                 .select(mSub.targetParticipant.participantId)
                 .from(mSub)
                 .where(
@@ -39,7 +33,17 @@ public class MatchingRepositoryImpl implements MatchingRepositoryCustom {
                                 .and(mSub.status.eq(MatchingStatus.COMPLETED))
                 )
                 .fetch();
+    }
 
+    @Override
+    public List<Participant> findMatchingCandidatesDsl(
+            Long applicantId,
+            TypeResult typeResult,
+            Gender gender,
+            Long festivalId,
+            Pageable pageable,
+            List<Long> excludedIds
+    ) {
         return queryFactory
                 .selectFrom(p)
                 .join(p.user, u).fetchJoin()

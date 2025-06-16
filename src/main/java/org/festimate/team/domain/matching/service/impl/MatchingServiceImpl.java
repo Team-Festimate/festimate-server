@@ -90,6 +90,7 @@ public class MatchingServiceImpl implements MatchingService {
     @Transactional
     @Override
     public Optional<Participant> findBestCandidateByPriority(long festivalId, Participant participant) {
+        List<Long> excludedIds = matchingRepository.findExcludeIds(participant.getParticipantId());
         List<TypeResult> priorities = MATCHING_PRIORITIES.get(participant.getTypeResult());
         Gender myGender = participant.getUser().getGender();
 
@@ -99,7 +100,8 @@ public class MatchingServiceImpl implements MatchingService {
                     priorityType,
                     myGender,
                     festivalId,
-                    PageRequest.of(0, 1)
+                    PageRequest.of(0, 1),
+                    excludedIds
             ).stream().findFirst();
 
             if (candidate.isPresent()) {
