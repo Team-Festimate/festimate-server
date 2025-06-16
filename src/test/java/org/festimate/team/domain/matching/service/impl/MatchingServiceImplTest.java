@@ -123,7 +123,7 @@ class MatchingServiceImplTest {
                 .festival(festival)
                 .build();
 
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
                 .thenReturn(List.of(target));
 
         var result = matchingService.findBestCandidateByPriority(festival.getFestivalId(), applicant);
@@ -147,7 +147,7 @@ class MatchingServiceImplTest {
         ReflectionTestUtils.setField(applicant, "participantId", 1L);
 
         // 1순위 PHOTO에 대상 없음
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
                 .thenReturn(Collections.emptyList());
 
         // 2순위 INFLUENCER에 대상 있음
@@ -157,7 +157,7 @@ class MatchingServiceImplTest {
                 .festival(festival)
                 .build();
 
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1)))
                 .thenReturn(List.of(secondPriorityCandidate));
 
         var result = matchingService.findBestCandidateByPriority(festival.getFestivalId(), applicant);
@@ -180,12 +180,12 @@ class MatchingServiceImplTest {
         Participant thirdPriorityCandidate = mockParticipant(thirdPriorityUser, festival, TypeResult.NEWBIE, 2L);
 
         // 1순위 PHOTO, 2순위 INFLUENCER 대상 없음
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
                 .thenReturn(Collections.emptyList());
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1)))
                 .thenReturn(Collections.emptyList());
         // 3순위 대상 있음
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.NEWBIE, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.NEWBIE, Gender.MAN, 1L, PageRequest.of(0, 1)))
                 .thenReturn(List.of(thirdPriorityCandidate));
 
         var result = matchingService.findBestCandidateByPriority(festival.getFestivalId(), applicant);
@@ -208,11 +208,11 @@ class MatchingServiceImplTest {
         ReflectionTestUtils.setField(applicant, "participantId", 1L);
 
         // 대상이 존재하나 이미 매칭됨 (Repository에서 필터링 됨)
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
                 .thenReturn(Collections.emptyList());
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1)))
                 .thenReturn(Collections.emptyList());
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.NEWBIE, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.NEWBIE, Gender.MAN, 1L, PageRequest.of(0, 1)))
                 .thenReturn(Collections.emptyList());
 
         Optional<Participant> result = matchingService.findBestCandidateByPriority(festival.getFestivalId(), applicant);
@@ -232,7 +232,7 @@ class MatchingServiceImplTest {
                 .festival(festival)
                 .build();
 
-        when(matchingRepository.findMatchingCandidates(
+        when(matchingRepository.findMatchingCandidatesDsl(
                 applicant.getParticipantId(), TypeResult.PHOTO, Gender.MAN, festival.getFestivalId(), PageRequest.of(0, 1)
         )).thenReturn(Collections.emptyList());
 
@@ -376,7 +376,7 @@ class MatchingServiceImplTest {
         Participant p2 = mockParticipant(candidate2, festival, TypeResult.PHOTO, 3L);
 
         // 후보 2명 반환
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
                 .thenReturn(List.of(p1, p2));
 
         // when
