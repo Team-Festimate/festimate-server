@@ -94,7 +94,7 @@ public class MatchingServiceImpl implements MatchingService {
         Gender myGender = participant.getUser().getGender();
 
         for (TypeResult priorityType : priorities) {
-            Optional<Participant> candidate = matchingRepository.findMatchingCandidates(
+            Optional<Participant> candidate = matchingRepository.findMatchingCandidatesDsl(
                     participant.getParticipantId(),
                     priorityType,
                     myGender,
