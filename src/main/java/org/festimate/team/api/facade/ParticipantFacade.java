@@ -42,6 +42,7 @@ public class ParticipantFacade {
             throw new FestimateException(ResponseError.PARTICIPANT_ALREADY_EXISTS);
         }
         Participant participant = participantService.createParticipant(user, festival, request);
+        pointService.rechargePoint(participant, 10);
         matchingService.matchPendingParticipants(participant);
 
         return EntryResponse.of(participant);
