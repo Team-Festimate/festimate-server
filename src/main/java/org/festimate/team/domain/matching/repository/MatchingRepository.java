@@ -12,34 +12,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface MatchingRepository extends JpaRepository<Matching, Long> {
-    @Query("""
-                SELECT p FROM Participant p
-                JOIN FETCH p.user
-                LEFT JOIN Matching m1
-                       ON (m1.applicantParticipant = p OR m1.targetParticipant = p)
-                WHERE p.festival.festivalId = :festivalId
-                  AND p.typeResult = :typeResult
-                  AND p.user.gender != :gender
-                  AND p.participantId != :participantId
-                  AND p.participantId NOT IN (
-                      SELECT m.targetParticipant.participantId
-                      FROM Matching m
-                      WHERE m.applicantParticipant.participantId = :participantId
-                        AND m.status = 'COMPLETED'
-                  )
-                GROUP BY p
-                ORDER BY COUNT(m1) ASC
-            """)
-    List<Participant> findMatchingCandidates(
-            @Param("participantId") Long participantId,
-            @Param("typeResult") TypeResult typeResult,
-            @Param("gender") Gender gender,
-            @Param("festivalId") Long festivalId,
-            Pageable pageable
-    );
-
-
+public interface MatchingRepository extends JpaRepository<Matching, Long>, MatchingRepositoryCustom {
     @Query("""
                 SELECT m FROM Matching m
                 WHERE m.festival.festivalId = :festivalId

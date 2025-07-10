@@ -5,6 +5,7 @@ import org.festimate.team.domain.auth.service.KakaoLoginService;
 import org.festimate.team.domain.user.entity.Platform;
 import org.festimate.team.domain.user.service.UserService;
 import org.festimate.team.infra.jwt.JwtService;
+import org.festimate.team.infra.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,8 @@ class LoginFacadeTest {
 
     @Mock
     private JwtService jwtService;
+    @Mock
+    private JwtTokenProvider jwtTokenProvider;
     @Mock
     private UserService userService;
     @Mock
@@ -41,8 +44,8 @@ class LoginFacadeTest {
         when(userService.getUserIdByPlatform(Platform.KAKAO, "platformId"))
                 .thenReturn(Optional.of(1L));
 
-        when(jwtService.createAccessToken(1L)).thenReturn("access-token");
-        when(jwtService.createRefreshToken(1L)).thenReturn("refresh-token");
+        when(jwtTokenProvider.createAccessToken(1L)).thenReturn("access-token");
+        when(jwtTokenProvider.createRefreshToken(1L)).thenReturn("refresh-token");
 
         // when
         TokenResponse response = loginFacade.login("platformId", Platform.KAKAO);
@@ -60,8 +63,8 @@ class LoginFacadeTest {
         when(userService.getUserIdByPlatform(Platform.KAKAO, "platformId"))
                 .thenReturn(Optional.empty());
 
-        when(jwtService.createTempAccessToken("platformId")).thenReturn("temp-access-token");
-        when(jwtService.createTempRefreshToken("platformId")).thenReturn("temp-refresh-token");
+        when(jwtTokenProvider.createTempAccessToken("platformId")).thenReturn("temp-access-token");
+        when(jwtTokenProvider.createTempRefreshToken("platformId")).thenReturn("temp-refresh-token");
 
         // when
         TokenResponse response = loginFacade.login("platformId", Platform.KAKAO);

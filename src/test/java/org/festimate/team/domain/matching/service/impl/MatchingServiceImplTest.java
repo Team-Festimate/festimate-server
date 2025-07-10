@@ -116,6 +116,7 @@ class MatchingServiceImplTest {
                 .festival(festival)
                 .build();
         ReflectionTestUtils.setField(applicant, "participantId", 1L);
+        List<Long> excludedIds = matchingRepository.findExcludeIds(applicant.getParticipantId());
 
         Participant target = Participant.builder()
                 .user(targetUser)
@@ -123,7 +124,7 @@ class MatchingServiceImplTest {
                 .festival(festival)
                 .build();
 
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1), excludedIds))
                 .thenReturn(List.of(target));
 
         var result = matchingService.findBestCandidateByPriority(festival.getFestivalId(), applicant);
@@ -145,9 +146,10 @@ class MatchingServiceImplTest {
                 .festival(festival)
                 .build();
         ReflectionTestUtils.setField(applicant, "participantId", 1L);
+        List<Long> excludedIds = matchingRepository.findExcludeIds(applicant.getParticipantId());
 
         // 1순위 PHOTO에 대상 없음
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1), excludedIds))
                 .thenReturn(Collections.emptyList());
 
         // 2순위 INFLUENCER에 대상 있음
@@ -157,7 +159,7 @@ class MatchingServiceImplTest {
                 .festival(festival)
                 .build();
 
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1), excludedIds))
                 .thenReturn(List.of(secondPriorityCandidate));
 
         var result = matchingService.findBestCandidateByPriority(festival.getFestivalId(), applicant);
@@ -176,16 +178,18 @@ class MatchingServiceImplTest {
 
         // 신청자
         Participant applicant = mockParticipant(applicantUser, festival, TypeResult.INFLUENCER, 1L);
+        List<Long> excludedIds = matchingRepository.findExcludeIds(applicant.getParticipantId());
+
         // 3순위 NEWBIE에 대상 있음
         Participant thirdPriorityCandidate = mockParticipant(thirdPriorityUser, festival, TypeResult.NEWBIE, 2L);
 
         // 1순위 PHOTO, 2순위 INFLUENCER 대상 없음
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1), excludedIds))
                 .thenReturn(Collections.emptyList());
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1), excludedIds))
                 .thenReturn(Collections.emptyList());
         // 3순위 대상 있음
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.NEWBIE, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.NEWBIE, Gender.MAN, 1L, PageRequest.of(0, 1), excludedIds))
                 .thenReturn(List.of(thirdPriorityCandidate));
 
         var result = matchingService.findBestCandidateByPriority(festival.getFestivalId(), applicant);
@@ -206,13 +210,14 @@ class MatchingServiceImplTest {
                 .festival(festival)
                 .build();
         ReflectionTestUtils.setField(applicant, "participantId", 1L);
+        List<Long> excludedIds = matchingRepository.findExcludeIds(applicant.getParticipantId());
 
         // 대상이 존재하나 이미 매칭됨 (Repository에서 필터링 됨)
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1), excludedIds))
                 .thenReturn(Collections.emptyList());
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.INFLUENCER, Gender.MAN, 1L, PageRequest.of(0, 1), excludedIds))
                 .thenReturn(Collections.emptyList());
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.NEWBIE, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.NEWBIE, Gender.MAN, 1L, PageRequest.of(0, 1), excludedIds))
                 .thenReturn(Collections.emptyList());
 
         Optional<Participant> result = matchingService.findBestCandidateByPriority(festival.getFestivalId(), applicant);
@@ -231,9 +236,10 @@ class MatchingServiceImplTest {
                 .typeResult(TypeResult.INFLUENCER)
                 .festival(festival)
                 .build();
+        List<Long> excludedIds = matchingRepository.findExcludeIds(applicant.getParticipantId());
 
-        when(matchingRepository.findMatchingCandidates(
-                applicant.getParticipantId(), TypeResult.PHOTO, Gender.MAN, festival.getFestivalId(), PageRequest.of(0, 1)
+        when(matchingRepository.findMatchingCandidatesDsl(
+                applicant.getParticipantId(), TypeResult.PHOTO, Gender.MAN, festival.getFestivalId(), PageRequest.of(0, 1), excludedIds
         )).thenReturn(Collections.emptyList());
 
         Optional<Participant> result = matchingService.findBestCandidateByPriority(
@@ -269,6 +275,38 @@ class MatchingServiceImplTest {
 
         // when & then
         assertThatThrownBy(() -> matchingService.getMatchingDetail(participant, requestedFestival, 1L))
+                .isInstanceOf(FestimateException.class)
+                .hasMessage(ResponseError.FORBIDDEN_RESOURCE.getMessage());
+    }
+
+    @Test
+    @DisplayName("매칭 상세 조회 - 다른 사람이 신청한 매칭을 조회할 경우 예외 발생")
+    void getMatchingDetail_invalidApplicant_throwsException() {
+        // given
+        User user = mockUser("사용자1", Gender.MAN, 1L);
+        User otherUser = mockUser("사용자2", Gender.MAN, 2L);
+        Festival festival = mockFestival(user, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+
+        Participant myParticipant = mockParticipant(user, festival, TypeResult.INFLUENCER, 1L);
+        Participant otherParticipant = mockParticipant(otherUser, festival, TypeResult.INFLUENCER, 2L);
+
+        Matching otherMatching = Matching.builder()
+                .festival(festival)
+                .applicantParticipant(otherParticipant)
+                .targetParticipant(Participant.builder()
+                        .user(mockUser("상대방", Gender.WOMAN, 3L))
+                        .build())
+                .status(MatchingStatus.COMPLETED)
+                .matchDate(LocalDateTime.now())
+                .build();
+
+        when(userService.getUserByIdOrThrow(user.getUserId())).thenReturn(user);
+        when(festivalService.getFestivalByIdOrThrow(festival.getFestivalId())).thenReturn(festival);
+        when(participantService.getParticipantOrThrow(user, festival)).thenReturn(myParticipant);
+        when(matchingRepository.findByMatchingId(1L)).thenReturn(Optional.of(otherMatching));
+
+        // when & then
+        assertThatThrownBy(() -> matchingService.getMatchingDetail(myParticipant, festival, 1L))
                 .isInstanceOf(FestimateException.class)
                 .hasMessage(ResponseError.FORBIDDEN_RESOURCE.getMessage());
     }
@@ -337,6 +375,7 @@ class MatchingServiceImplTest {
         User applicantUser = mockUser("신청자", Gender.MAN, 1L);
         Festival festival = mockFestival(applicantUser, 1L, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
         Participant applicant = mockParticipant(applicantUser, festival, TypeResult.INFLUENCER, 1L);
+        List<Long> excludedIds = matchingRepository.findExcludeIds(applicant.getParticipantId());
 
         User candidate1 = mockUser("후보1", Gender.WOMAN, 2L);
         User candidate2 = mockUser("후보2", Gender.WOMAN, 3L);
@@ -344,7 +383,7 @@ class MatchingServiceImplTest {
         Participant p2 = mockParticipant(candidate2, festival, TypeResult.PHOTO, 3L);
 
         // 후보 2명 반환
-        when(matchingRepository.findMatchingCandidates(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1)))
+        when(matchingRepository.findMatchingCandidatesDsl(1L, TypeResult.PHOTO, Gender.MAN, 1L, PageRequest.of(0, 1), excludedIds))
                 .thenReturn(List.of(p1, p2));
 
         // when

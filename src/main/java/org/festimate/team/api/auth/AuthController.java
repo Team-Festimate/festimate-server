@@ -26,7 +26,7 @@ public class AuthController {
     public ResponseEntity<ApiResponse<TokenResponse>> login(
             @RequestHeader("Authorization") String kakaoAccessToken
     ) {
-        log.info("social login - Code: {}", kakaoAccessToken);
+        log.info("social login - kakaoAccessToken: {}", kakaoAccessToken);
 
         String platformId = loginFacade.getPlatformId(kakaoAccessToken);
 

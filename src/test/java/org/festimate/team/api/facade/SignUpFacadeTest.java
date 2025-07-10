@@ -8,7 +8,7 @@ import org.festimate.team.domain.user.service.UserService;
 import org.festimate.team.domain.user.validator.NicknameValidator;
 import org.festimate.team.global.exception.FestimateException;
 import org.festimate.team.global.response.ResponseError;
-import org.festimate.team.infra.jwt.JwtService;
+import org.festimate.team.infra.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class SignUpFacadeTest {
     @Mock
     private UserService userService;
     @Mock
-    private JwtService jwtService;
+    private JwtTokenProvider jwtTokenProvider;
     @Mock
     private NicknameValidator nicknameValidator;
 
@@ -71,8 +71,8 @@ class SignUpFacadeTest {
 
         when(userService.getUserIdByPlatformId("platformId")).thenReturn(null);
         when(userService.signUp(signUpRequest, "platformId")).thenReturn(user);
-        when(jwtService.createAccessToken(1L)).thenReturn("access-token");
-        when(jwtService.createRefreshToken(1L)).thenReturn("refresh-token");
+        when(jwtTokenProvider.createAccessToken(1L)).thenReturn("access-token");
+        when(jwtTokenProvider.createRefreshToken(1L)).thenReturn("refresh-token");
 
         // when
         TokenResponse response = signUpFacade.signUp("platformId", signUpRequest);
