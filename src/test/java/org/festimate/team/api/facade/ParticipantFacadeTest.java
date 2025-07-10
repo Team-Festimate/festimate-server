@@ -82,6 +82,24 @@ class ParticipantFacadeTest {
     }
 
     @Test
+    @DisplayName("참가자 생성 시 10포인트가 충전된다")
+    void createParticipant_success_point() {
+        when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
+        when(festivalService.getFestivalByIdOrThrow(1L)).thenReturn(festival);
+        when(participantService.getParticipant(user, festival)).thenReturn(null);
+        when(participantService.createParticipant(any(), any(), any())).thenReturn(participant);
+
+        var response = participantFacade.createParticipant(1L, 1L, null);
+
+        // then
+        assertThat(response.participantId()).isNotNull();
+        // 포인트 충전 메서드 호출 여부 검증
+        verify(pointService).rechargePoint(participant, 10);
+        // 매칭 메서드 호출 여부 검증
+        verify(matchingService).matchPendingParticipants(participant);
+    }
+
+    @Test
     @DisplayName("내 프로필 조회 성공")
     void getParticipantProfile_success() {
         when(userService.getUserByIdOrThrow(1L)).thenReturn(user);
