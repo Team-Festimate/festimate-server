@@ -32,7 +32,7 @@ public class Point extends BaseTimeEntity {
     private TransactionType transactionType;
 
     @Builder
-    public Point(Participant participant, Integer point, TransactionType transactionType) {
+    private Point(Participant participant, Integer point, TransactionType transactionType) {
         this.participant = participant;
         this.point = point;
         this.transactionType = transactionType;

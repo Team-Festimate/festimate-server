@@ -57,7 +57,7 @@ public class Festival extends BaseTimeEntity {
     private List<Matching> matchings;
 
     @Builder
-    public Festival(String title, Category category, LocalDate startDate, LocalDate endDate, LocalDateTime matchingStartAt, String inviteCode) {
+    private Festival(String title, Category category, LocalDate startDate, LocalDate endDate, LocalDateTime matchingStartAt, String inviteCode) {
         this.title = title;
         this.category = category;
         this.startDate = startDate;

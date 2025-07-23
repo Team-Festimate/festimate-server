@@ -41,7 +41,7 @@ public class FestivalHost {
     private LocalDateTime addedAt;
 
     @Builder
-    public FestivalHost(Festival festival, User host) {
+    private FestivalHost(Festival festival, User host) {
         this.festival = festival;
         this.host = host;
         this.addedAt = LocalDateTime.now();

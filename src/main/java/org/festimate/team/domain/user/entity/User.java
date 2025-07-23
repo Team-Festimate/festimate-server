@@ -53,7 +53,7 @@ public class User extends BaseTimeEntity {
     private String refreshToken;
 
     @Builder
-    public User(String name, String phoneNumber, String nickname, Integer birthYear, Gender gender, Mbti mbti,
+    private User(String name, String phoneNumber, String nickname, Integer birthYear, Gender gender, Mbti mbti,
                 AppearanceType appearanceType, String platformId, Platform platform, String refreshToken) {
         this.name = name;
         this.phoneNumber = phoneNumber;
