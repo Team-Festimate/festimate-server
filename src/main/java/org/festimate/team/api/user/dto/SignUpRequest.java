@@ -5,14 +5,15 @@ import org.festimate.team.domain.user.entity.Gender;
 import org.festimate.team.domain.user.entity.Mbti;
 import org.festimate.team.domain.user.entity.Platform;
 
-public record SignUpRequest(String name,
-                            String phoneNumber,
-                            String nickName,
-                            int birthYear,
-                            Gender gender,
-                            Mbti mbti,
-                            AppearanceType appearanceType,
-                            Platform platform
+public record SignUpRequest(
+        String name,
+        String phoneNumber,
+        String nickName,
+        int birthYear,
+        Gender gender,
+        Mbti mbti,
+        AppearanceType appearanceType,
+        Platform platform
 ) {
     public static SignUpRequest toUserSignUp(SignUpRequest request) {
         return new SignUpRequest(

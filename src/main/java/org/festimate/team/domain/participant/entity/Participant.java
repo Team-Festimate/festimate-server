@@ -52,7 +52,7 @@ public class Participant extends BaseTimeEntity {
     private List<Matching> matchingsAsTarget;
 
     @Builder
-    public Participant(User user, Festival festival, TypeResult typeResult, String introduction, String message) {
+    private Participant(User user, Festival festival, TypeResult typeResult, String introduction, String message) {
         this.user = user;
         this.festival = festival;
         this.typeResult = typeResult;

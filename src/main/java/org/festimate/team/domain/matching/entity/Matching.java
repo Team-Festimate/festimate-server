@@ -43,7 +43,7 @@ public class Matching extends BaseTimeEntity {
     private LocalDateTime matchDate;
 
     @Builder
-    public Matching(Festival festival, Participant applicantParticipant, Participant targetParticipant,
+    private Matching(Festival festival, Participant applicantParticipant, Participant targetParticipant,
                     MatchingStatus status, LocalDateTime matchDate) {
         this.festival = festival;
         this.applicantParticipant = applicantParticipant;
