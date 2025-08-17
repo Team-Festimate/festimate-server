@@ -24,7 +24,7 @@ Festimate는 페스티벌에서 이성과의 네트워킹을 지원하는 **맞�
 ---
 ## 🧾 ERD
 
-![festimate-erd (1)](https://github.com/user-attachments/assets/19b1721c-b572-4d7a-a46a-4b64b0a5b463)
+<img width="1132" height="752" alt="festimate-erd" src="https://github.com/user-attachments/assets/a9b2f1d9-9e87-49a3-a9e0-da2ec06d4d88" />
 
 
 ## Teck Stack ✨
