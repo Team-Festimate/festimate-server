@@ -1,8 +1,9 @@
 # Festimate ✨
 
-![image](https://github.com/user-attachments/assets/baf7e6f4-741c-43d6-a26e-538143d613fa)
+<img width="5760" height="3240" alt="표지" src="https://github.com/user-attachments/assets/08d91daf-2c8f-4ec4-b151-4fa92c39b381" />
 
-**축제 매칭 플랫폼, Festimate!**  
+[**축제 매칭 플랫폼, Festimate!**](https://festimate.kr/)
+
 Festimate는 페스티벌에서 이성과의 네트워킹을 지원하는 **맞춤형 매칭 서비스**입니다.  
 간단한 **페스티벌 취향 테스트**를 통해 나의 **페스티벌 유형**을 분석하고, 나와 잘 맞는 유형의 **페스티벌 메이트를 매칭**해줍니다.
 
